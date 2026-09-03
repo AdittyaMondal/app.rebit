@@ -12,13 +12,6 @@
                 </ContentTabs>
                 <Border></Border>
 
-                <TimelineCallout
-					iconName="star-04"
-					iconType="solid"
-					v-bind:title="$t('info.explore_posts.title')"
-				v-bind:desc="$t('info.explore_posts.desc')"></TimelineCallout>
-                <Border></Border>
-
                 <div class="block" v-if="state.isLoading">
                     <TimelinePublicationSkeleton v-for="i in 3" v-bind:key="i"></TimelinePublicationSkeleton>
                 </div>
@@ -56,7 +49,7 @@
     import { defineComponent, reactive, computed, onMounted, onUnmounted } from 'vue';
     import { useExplorePostsStore } from '@D/store/explore/posts.store.js';
     import { useInfiniteScroll } from '@/kernel/vue/composables/infinite-scroll/index.js';
-    
+
     import SidedContentLayout from '@D/components/layout/SidedContentLayout.vue';
     import TimelineContainer from '@D/components/layout/TimelineContainer.vue';
     import FollowRecommendationList from '@D/components/recommend/follow/list/FollowRecommendationList.vue';
@@ -66,7 +59,6 @@
     import FluidEmptyState from '@D/components/page-states/empty/FluidEmptyState.vue';
     import ContentTabs from '@D/components/general/tabs/content/ContentTabs.vue';
     import TabsLink from '@D/components/general/tabs/content/parts/TabsLink.vue';
-    import TimelineCallout from '@D/components/timeline/info/TimelineCallout.vue';
     import ScrollTopButton from '@D/components/inter-ui/buttons/ScrollTopButton.vue';
     import FeedUpdate from '@D/components/timeline/update/FeedUpdate.vue';
 
@@ -130,11 +122,11 @@
                             }
                             else {
                                 state.isUpdating = true;
-        
+
                                 await explorePostsStore.updateFeed();
-        
+
                                 state.isUpdating = false;
-    
+
                                 updateAttempts++;
                             }
                         }
@@ -167,7 +159,6 @@
             TimelinePublicationSkeleton: TimelinePublicationSkeleton,
             ContentTabs: ContentTabs,
             TabsLink: TabsLink,
-            TimelineCallout: TimelineCallout,
             ScrollTopButton: ScrollTopButton,
             FeedUpdate: FeedUpdate
         }

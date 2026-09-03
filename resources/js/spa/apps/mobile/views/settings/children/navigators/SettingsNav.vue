@@ -21,16 +21,18 @@
 		v-bind:routeData="{ name: 'settings_language' }"></LinkItem>
 
 		<LinkItem
+			v-if="$config('features.dark_theme.enabled')"
 			iconName="moon-02"
 			v-bind:textLabel="$t('labels.theme')"
 		v-bind:routeData="{ name: 'settings_theme' }"></LinkItem>
-		
+
 		<div class="mb-4 mt-2">
 			<Border height="h-2" opacity="opacity-50"></Border>
 		</div>
 
 		<LinksGroupTitle v-bind:textLabel="$t('settings.blocked_accounts')"></LinksGroupTitle>
-		<NavItem v-bind:disabled="true" iconName="slash-circle-01" v-bind:textLabel="$t('settings.blocked_people')"></NavItem>
+
+		<LinkItem v-bind:routeData="{ name: 'settings_blocked' }" iconName="slash-circle-01" v-bind:textLabel="$t('settings.blocked_people')"></LinkItem>
 
 		<div class="mb-4 mt-2">
 			<Border height="h-2" opacity="opacity-50"></Border>
@@ -71,7 +73,7 @@
 
 			<div class="leading-5">
 				<span class="text-par-s text-lab-tr">
-					{{ $config('app.name') }} &copy; {{ currentYear }} - Created by Team Rebit
+					{{ $config('app.name') }} &copy; {{ currentYear }} - <a href="https://www.terla.me" target="_blank" class="underline">Created by Mansur Terla</a>
 				</span>
 			</div>
 		</div>

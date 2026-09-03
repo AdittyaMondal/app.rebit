@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Settings;
 
@@ -15,17 +27,16 @@ class LanguageSettingsController extends Controller
 
     public $availableLanguages;
 
-    public function __construct(Languages $availableLanguages)
-    {
+    public function __construct(Languages $availableLanguages) {
         $this->availableLanguages = $availableLanguages;
     }
 
     public function getLanguages()
     {
         return $this->responseSuccess([
-            'data' => $this->availableLanguages->getLanguages()->map(function ($localeItem) {
-            return LanguageResource::make($localeItem);
-        })
+            'data' => $this->availableLanguages->getLanguages()->map(function($localeItem) {
+                return LanguageResource::make($localeItem);
+            })
         ]);
     }
 

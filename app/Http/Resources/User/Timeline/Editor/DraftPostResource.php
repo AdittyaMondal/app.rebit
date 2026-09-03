@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Resources\User\Timeline\Editor;
 
@@ -24,9 +36,9 @@ class DraftPostResource extends JsonResource
             'content' => $this->resource->content,
             'type' => $this->resource->type,
             'relations' => [
-                'media' => $this->resource->media->map(function ($item) {
-            return MediaResource::make($item);
-        }),
+                'media' => $this->resource->media->map(function($item) {
+                    return MediaResource::make($item);
+                }),
                 'poll' => $this->resource->poll,
                 'link_snapshot' => $this->getLinkSnapshot()
             ]
@@ -39,7 +51,7 @@ class DraftPostResource extends JsonResource
     {
         $linkSnapshot = $this->resource->linkSnapshot;
 
-        if ($linkSnapshot) {
+        if($linkSnapshot) {
             return LinkSnapshotResource::make($linkSnapshot);
         }
 

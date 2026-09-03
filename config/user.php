@@ -21,9 +21,11 @@ return [
     'authorize_users' => false,
     'require' => [
         'last_name' => false,
+        'password' => true
     ],
     'theme' => 'dark',
     'country' => 'US',
+    'city' => 'New York',
     'category' => null,
     'username_prefix' => 'user',
     'password_strength_control' => true,
@@ -103,4 +105,22 @@ return [
         'compress_rate' => 20
     ],
     'auto_follow_list' => env('AUTO_FOLLOW_LIST', ''),
+    'onboarding_steps' => [
+        'profile' => [
+            'component' => 'user.onboarding.profile',
+            'is_skippable' => false, // Never change this for this step.
+        ],
+        'country' => [
+            'component' => 'user.onboarding.country',
+            'is_skippable' => true,
+        ],
+        'city' => [
+            'component' => 'user.onboarding.city',
+            'is_skippable' => true,
+        ],
+        'username' => [
+            'component' => 'user.onboarding.username',
+            'is_skippable' => false, // Never change this for this step.
+        ],
+    ]
 ];

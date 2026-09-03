@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Settings;
 
@@ -12,47 +24,46 @@ use App\Traits\Http\Api\SupportsApiResponses;
 class PersonalInfoSettingsController extends Controller
 {
     use SupportsApiResponses;
-
+    
     private $me;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->me = me();
     }
 
     public function getCountrySettings(WorldService $worldService)
     {
         return $this->responseSuccess([
-            'data' => [
+           'data' => [
                 'country' => $this->me->country,
                 'privacy_settings' => [
                     'country_privacy' => $this->me->privacySettings->country_privacy
                 ],
-                'countries' => collect($worldService->countries())->map(function ($value, $key) {
-            return [
+                'countries' => collect($worldService->countries())->map(function($value, $key) {
+                    return [
                         'value' => $key,
                         'label' => $value
                     ];
-        })->values()->toArray()
-            ]
+                })->values()->toArray()
+            ] 
         ]);
     }
 
     public function getPersonalInfoSettings(Request $request)
     {
         return $this->responseSuccess([
-            'data' => [
+           'data' => [
                 'country' => empty($this->me->country) ? null : $this->me->countryName,
                 'birth_date' => $this->me->birthdate,
                 'city' => (empty($this->me->city)) ? null : $this->me->city
-            ]
+            ] 
         ]);
     }
 
     public function getBirthdateSettings()
     {
         return $this->responseSuccess([
-            'data' => [
+           'data' => [
                 'birth_date' => [
                     'day' => $this->me->birth_day,
                     'month' => $this->me->birth_month,
@@ -62,26 +73,26 @@ class PersonalInfoSettingsController extends Controller
                     'birthdate_privacy' => $this->me->privacySettings->birthdate_privacy
                 ],
                 'calendar' => [
-                    'days' => collect(month_days($this->me->birth_month, $this->me->birth_year))->map(function ($day) {
-                return [
-                                'value' => $day['key'],
-                                'label' => $day['value']
-                            ];
-            }),
-                    'years' => collect(birth_years())->map(function ($year) {
-                return [
-                                'value' => $year['key'],
-                                'label' => $year['value']
-                            ];
-            }),
-                    'months' => collect(year_months())->map(function ($month) {
-                return [
-                                'value' => $month['key'],
-                                'label' => $month['value']
-                            ];
-            })
+                    'days' => collect(month_days($this->me->birth_month, $this->me->birth_year))->map(function($day) {
+                        return [
+                            'value' => $day['key'],
+                            'label' => $day['value']
+                        ];
+                    }),
+                    'years' => collect(birth_years())->map(function($year) {
+                        return [
+                            'value' => $year['key'],
+                            'label' => $year['value']
+                        ];
+                    }),
+                    'months' => collect(year_months())->map(function($month) {
+                        return [
+                            'value' => $month['key'],
+                            'label' => $month['value']
+                        ];
+                    })
                 ]
-            ]
+           ]
         ]);
     }
 
@@ -133,15 +144,14 @@ class PersonalInfoSettingsController extends Controller
         ]);
     }
 
-    public function getCitySettings()
-    {
+    public function getCitySettings() {
         return $this->responseSuccess([
-            'data' => [
-                'city' => (string)$this->me->city,
+           'data' => [
+                'city' => (string) $this->me->city,
                 'privacy_settings' => [
                     'city_privacy' => $this->me->privacySettings->city_privacy
                 ]
-            ]
+            ] 
         ]);
     }
 
@@ -152,7 +162,7 @@ class PersonalInfoSettingsController extends Controller
 
         $request->validate([
             'city' => ['nullable', 'string', 'max:255']
-        ]);
+        ]); 
 
         $this->me->update([
             'city' => $city

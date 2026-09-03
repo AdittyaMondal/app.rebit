@@ -7,7 +7,6 @@ return [
     'ads' => 'Advertising',
     'marketplace' => 'Marketplace',
     'jobs' => 'Jobs',
-    'affiliate_program' => 'Affiliate program',
     'wallet' => 'Wallet',
     'business_account' => 'Business account',
     'information' => 'Information',

@@ -2,6 +2,6 @@
 
 @section('pageContent')
     <div class="block">
-        @livewire('user.auth.login-form')
+        @livewire('user.auth.login')
     </div>
 @endsection

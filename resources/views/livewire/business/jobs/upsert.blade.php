@@ -43,6 +43,7 @@
             <div class="mb-6">
                 <x-form.select
                         :options="$categories"
+                        placeholder="{{ __('business/jobs.form.category_placeholder') }}"
                         name="formData.category_id"
                         wire:model="formData.category_id"
                     labelText="{{ __('business/jobs.form.category') }} *">
@@ -100,6 +101,7 @@
                         :options="$currencies"
                         name="formData.currency"
                         wire:model="formData.currency"
+                        placeholder="{{ __('business/jobs.form.currency_placeholder') }}"
                     labelText="{{ __('business/jobs.form.currency') }} *">
 
                     <x-slot:feedbackInfo>
@@ -142,23 +144,27 @@
                     @if($this->upsertType == 'create')
                         <x-ui.buttons.pill
                             type="submit"
+                            size="sm"
                         btnText="{{ __('business/jobs.form.submit') }}"></x-ui.buttons.pill>
 
                         <a href="{{ route('business.jobs.index') }}">
                             <x-ui.buttons.pill
                                 variant="danger"
+                                size="sm"
                                 type="button"
                             btnText="{{ __('business/jobs.form.cancel') }}"></x-ui.buttons.pill>
                         </a>
                     @else
                         <x-ui.buttons.pill
                             type="submit"
+                            size="sm"
                         btnText="{{ __('business/jobs.form.save') }}"></x-ui.buttons.pill>
 
                         <a href="{{ route('business.jobs.show', $this->jobData->id) }}">
                             <x-ui.buttons.pill
                                 variant="danger"
                                 type="button"
+                                size="sm"
                             btnText="{{ __('business/jobs.form.cancel') }}"></x-ui.buttons.pill>
                         </a>
                     @endif

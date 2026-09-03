@@ -15,10 +15,18 @@ class VideoThumbnailService extends AbstractFFMpegService
 
     protected $ffmpegService;
     private string $imageTemporaryLocation = 'tmp/images';
+    private int $secondsOffset = 1;
 
     public function __construct(FFMpegService $ffmpegService)
     {
         $this->ffmpegService = $ffmpegService;
+    }
+
+    public function setSecondsOffset(int $secondsOffset)
+    {
+        $this->secondsOffset = $secondsOffset;
+
+        return $this;
     }
 
     public function getFFMpeg()
@@ -52,17 +60,16 @@ class VideoThumbnailService extends AbstractFFMpegService
                 }
 
                 $ffmpeg = $this->getFFMpeg();
-        
+
                 $video = $ffmpeg->open(storage_local_path($videoLocalPath, 'local'));
 
-                
-                $video->frame(TimeCode::fromSeconds(0))->save($tempThumbnailPath);
-    
+                $video->frame(TimeCode::fromSeconds($this->secondsOffset))->save($tempThumbnailPath);
+
                 return $tempThumbnailPath;
-    
-            }, 1000); 
-        } 
-        
+
+            }, 1000);
+        }
+
         catch (Exception $e) {
             $this->makeFFMpegException("FFMpeg failed to generate thumbnail after {$retries} attempts. {$e->getMessage()}");
         }
@@ -71,7 +78,7 @@ class VideoThumbnailService extends AbstractFFMpegService
     public function generateImageTemporaryFilePath($imageExtension = null)
     {
         $uuid = Str::uuid();
-        
+
         return "$this->imageTemporaryLocation/{$uuid}.{$imageExtension}";
     }
 }

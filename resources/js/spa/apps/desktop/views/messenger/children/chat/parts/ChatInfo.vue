@@ -15,13 +15,12 @@
 
         <ModalRowButton v-if="chatData.meta.is_archived" v-on:click="unarchiveChat" v-bind:buttonText="$t('chat.unarchive_chat')" iconName="archive"></ModalRowButton>
         <ModalRowButton v-else v-on:click="archiveChat" v-bind:buttonText="$t('chat.archive_chat')" iconName="archive"></ModalRowButton>
-        
+
         <ModalRowButton v-on:click="clearConversation" v-bind:buttonText="$t('chat.clear_conversation')" iconName="brush-03"></ModalRowButton>
 
-        <ModalRowButton v-on:click="reportInterlocutor" buttonRole="danger" v-bind:buttonText="$t('labels.report_this_user', { user_name: chatData.chat_info.name })" iconName="annotation-alert"></ModalRowButton>
+        <ModalRowButton v-if="! chatData.chat_info.meta.relationship.block.blocking" v-on:click="reportInterlocutor" buttonRole="danger" v-bind:buttonText="$t('labels.report_this_user', { user_name: chatData.chat_info.name })" iconName="annotation-alert"></ModalRowButton>
 
-
-        <ModalRowButton v-on:click="$comingSoon" buttonRole="danger" v-bind:buttonText="$t('labels.block_this_user', { user_name: chatData.chat_info.name })" iconName="slash-circle-01"></ModalRowButton>
+        <!-- <ModalRowButton v-on:click="$comingSoon" buttonRole="danger" v-bind:buttonText="$t('labels.block_this_user', { user_name: chatData.chat_info.name })" iconName="slash-circle-01"></ModalRowButton> -->
 
         <ModalRowButton v-on:click="deleteChat" buttonRole="danger" v-bind:buttonText="isGroup ? $t('chat.delete_group') : $t('chat.delete_chat')" iconName="trash-04"></ModalRowButton>
         <Border height="h-3" bg="bg-fill-qt" opacity="opacity-70"></Border>
@@ -128,7 +127,7 @@
                 },
                 reportInterlocutor: () => {
                     closeInfo();
-                    
+
                     colibriEventBus.emit('report:open', {
                         type: 'user',
                         reportableId: chatData.value.chat_info.id

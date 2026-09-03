@@ -20,7 +20,7 @@ class ConvertAndCompressPostVideo implements ShouldQueue
     use Queueable;
 
     public $timeout = (60 * 30); // 30 minutes
-    
+
     private $postData;
 
     public function __construct(Post $postData)
@@ -60,12 +60,15 @@ class ConvertAndCompressPostVideo implements ShouldQueue
             $video = $ffmpeg->open($videoOldAbsLocalPath);
             $format = new X264();
             $format = $format->setKiloBitrate(1000);
-            $watermarkConfig = config('assets.watermark');
-            $video->filters()->watermark($watermarkConfig['local_path'], [
-                'position' => $watermarkConfig['position'],
-                'x' => $watermarkConfig['x'],
-                'y' => $watermarkConfig['y'],
-            ]);
+
+            if(config('brand.videos_watermark_enabled')) {
+                $watermarkConfig = config('assets.watermark');
+                $video->filters()->watermark(public_path($watermarkConfig['local_path']), [
+                    'position' => $watermarkConfig['video']['position'],
+                    'x' => $watermarkConfig['video']['x'],
+                    'y' => $watermarkConfig['video']['y'],
+                ]);
+            }
 
             $video->save($format, $videoNewAbsLocalPath);
 
@@ -76,7 +79,7 @@ class ConvertAndCompressPostVideo implements ShouldQueue
 
                 $videoData = $videoUploadService
                     ->setStorageDisk($postMedia->disk)
-                    ->setNamespace(Filesystem::getPostVideoNamespace())
+                    ->setNamespace(Filesystem::mediaNamespace('posts/videos'))
                     ->upload($videoNewAbsLocalPath);
 
                 $postMedia->source_path = $videoData['video_path'];
@@ -95,10 +98,10 @@ class ConvertAndCompressPostVideo implements ShouldQueue
 
                 $fileDeleteService->setStorageDisk('local')->deleteFile($videoTempOldPath);
                 $fileDeleteService->setStorageDisk('local')->deleteFile($videoTempNewPath);
-                
+
                 // Broadcast video processed event with updated post media and user id
                 // to notify users that video has been processed.
-                
+
                 try {
                     event(new MediaProcessedEvent($postMedia->refresh(), $this->postData->user_id));
                 } catch (Exception $e) {
@@ -106,7 +109,7 @@ class ConvertAndCompressPostVideo implements ShouldQueue
                 }
             }
         }
-        
+
         catch (Exception $e) {
             Log::error('Post video processing failed after 5 attempts. Error: ' . $e->getMessage());
 

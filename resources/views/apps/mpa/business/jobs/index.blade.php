@@ -2,12 +2,7 @@
 
 @section('pageContent')
     <div class="mb-6">
-        <div class="mb-4">
-            <x-page-title titleText="{{ __('business/jobs.index_title') }}"></x-page-title>
-            <x-page-desc>
-                {{ __('business/jobs.index_desc') }} <a href="{{ asset(config('jobs.document_links.jobs_board_guide')) }}" target="_blank" class="text-brand-900 underline">{{ __('labels.learn_more') }} &raquo;</a>
-            </x-page-desc>
-        </div>
+        <x-page-title titleText="{{ __('business/jobs.index_title') }}"></x-page-title>
         <x-tabs.tabs>
             <x-tabs.tab-item :active="$type == 'all'" href="{{ route('business.jobs.index', ['type' => 'all']) }}" textLabel="{{ __('business/jobs.tabs.all') }}"></x-tabs.tab-item>
             <x-tabs.tab-item :active="$type == 'active'" href="{{ route('business.jobs.index', ['type' => 'active']) }}" textLabel="{{ __('business/jobs.tabs.active') }}"></x-tabs.tab-item>

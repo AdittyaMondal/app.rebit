@@ -2,21 +2,16 @@
 
 @section('pageContent')
 <div x-data="alpineComponent">
-	<div class="mb-4">
-		<x-page-title titleText=" {{ __('admin/ads.show_title') }}"></x-page-title>
-		<x-page-desc>
-			{{ __('admin/ads.show_desc') }}
-		</x-page-desc>
-	</div>
-	
+    <x-page-title titleText=" {{ __('admin/ads.show_title') }}"></x-page-title>
+
 	<x-sided-content>
 		<x-slot:sideContent>
 			<x-entity.previews.ad :adData="$adData"></x-entity.previews.ad>
 		</x-slot:sideContent>
-	
+
 		<div class="mb-8">
-			<x-entity.header 
-				avatarUrl="{{ $adData->user->avatar_url }}" 
+			<x-entity.header
+				avatarUrl="{{ $adData->user->avatar_url }}"
 				name="{{ $adData->user->name }}"
 			caption="{{ $adData->user->caption }}">
 				<x-slot:controlOptions>
@@ -26,7 +21,7 @@
 								<x-ui.buttons.icon></x-ui.buttons.icon>
 							</span>
 						</x-slot:dropdownButton>
-	
+
 						<x-ui.dropdown.item tag="a" href="{{ $adData->user->profile_url }}" target="_blank" itemText="{{ __('admin/dd.user.view_profile') }}">
 							<x-slot:itemIcon>
 								<x-ui-icon type="line" name="user-02"></x-ui-icon>
@@ -55,7 +50,7 @@
 				</x-slot:controlOptions>
 			</x-entity.header>
 		</div>
-	
+
 		<div class="mb-4">
 			<x-entity.title title="{{ __('admin/ads.about_ad') }}" caption="{{ $adData->created_at->getFormatted() }}"></x-entity.title>
 		</div>
@@ -66,7 +61,7 @@
 				<x-counter.counter-item counterValue="{{ $adData->views_count }}" captionText="{{ __('labels.views') }}"></x-counter.counter-item>
 			</x-counter.counter>
 		</div>
-	
+
 		<div class="mb-6">
 			<x-line-table.table>
 				<x-line-table.row>
@@ -144,7 +139,7 @@
 		<div class="mb-4">
 			<x-entity.title title="{{ __('labels.additional_info') }}"></x-entity.title>
 		</div>
-	
+
 		<x-striped-table.table>
 			<x-striped-table.row>
 				<x-slot:labelText>

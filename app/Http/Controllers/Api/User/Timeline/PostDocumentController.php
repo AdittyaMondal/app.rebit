@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Timeline;
 
@@ -20,22 +32,20 @@ use App\Traits\Http\Controllers\Api\User\Timeline\InteractsWithDraftPost;
 class PostDocumentController extends Controller
 {
     use InteractsWithDraftPost,
-    SupportsApiResponses,
-    ValidatesPostDocument;
+        SupportsApiResponses,
+        ValidatesPostDocument;
 
     private $documentUploadService;
     private $roundRobinService;
 
 
-    public function __construct(DocumentUploadService $documentUploadService, RoundRobinService $roundRobinService)
-    {
+    public function __construct(DocumentUploadService $documentUploadService, RoundRobinService $roundRobinService) {
         $this->documentUploadService = $documentUploadService;
         $this->roundRobinService = $roundRobinService;
     }
 
-    public function uploadDocument(Request $request)
-    {
-        $postDocumentFile = $request->file('document');
+    public function uploadDocument(Request $request) {
+        $postDocumentFile =  $request->file('document');
 
         $this->validatePostDocument([
             'document' => $postDocumentFile
@@ -43,20 +53,20 @@ class PostDocumentController extends Controller
 
         $this->fetchOrInitializeDraftPost();
 
-        if ($this->draftPost->type->isTextified()) {
-            if (!$this->draftPost->exists) {
+        if($this->draftPost->type->isTextified()) {
+            if(! $this->draftPost->exists) {
 
                 $this->draftPost->save();
             }
 
-            if ($this->draftPost->type->isTextified()) {
+            if($this->draftPost->type->isTextified()) {
                 $this->draftPost->type = PostType::DOCUMENT;
                 $this->draftPost->save();
             }
 
             try {
                 $documentData = $this->documentUploadService
-                    ->setNamespace(Filesystem::getPostDocumentNamespace())
+                    ->setNamespace(Filesystem::mediaNamespace('documents'))
                     ->setStorageDisk($this->roundRobinService->getNextDisk())
                     ->upload($postDocumentFile);
 
@@ -78,8 +88,7 @@ class PostDocumentController extends Controller
                         'url' => storage_url($documentData['document_path'], $documentData['disk'])
                     ]
                 ]);
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 return $this->responseError([
                     'message' => $e->getMessage(),
                     'errors' => [
@@ -91,7 +100,7 @@ class PostDocumentController extends Controller
             }
         }
 
-        else {
+        else{
 
             $errorMessage = __('post.validation.wrong_type_attachment', ['file_type' => __('labels.document')]);
 

@@ -3,14 +3,16 @@ import { defineStore } from 'pinia';
 const useAudioStore = defineStore('mobile_audio_store', {
     state: function() {
 		return {
+            label: null,
 			audioData: null,
             playerState: {}
 		}
 	},
     actions: {
-        add: function(audioData) {
+        add: function(audioData, label = null) {
             if(this.audioData === null || (this.audioData !== null && this.audioData.id !== audioData.id)) {
                 this.audioData = audioData;
+                this.label = label;
                 this.refreshState();
             }
         },

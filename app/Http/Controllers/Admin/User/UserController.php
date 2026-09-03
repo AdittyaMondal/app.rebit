@@ -24,7 +24,7 @@ class UserController extends Controller
             'type' => $type,
         ];
 
-        $users = User::when((! empty($this->filters['search'])), function ($query) {
+        $users = User::onboarded()->when((! empty($this->filters['search'])), function ($query) {
             $query->where(function($query) {
                 $query->where('first_name', 'like', "%{$this->filters['search']}%")
                 ->orWhere('last_name', 'like', "%{$this->filters['search']}%")
@@ -35,7 +35,7 @@ class UserController extends Controller
         })->when(($this->filters['type'] != 'all'), function ($query) {
             $query->where('type', ($this->filters['type'] == 'author') ? UserType::AUTHOR : UserType::READER);
         })->latest()->paginate(10);
-        
+
         return view('admin::users.index.index', [
             'users' => $users,
             'filters' => $this->filters,
@@ -47,21 +47,30 @@ class UserController extends Controller
         $userData = $this->fetchUserById($userId);
 
         $authorshipRequest = $userData->authorshipRequest()->pending()->first();
-        
+
         return view('admin::users.show.index', [
             'userData' => $userData,
             'authorshipRequest' => $authorshipRequest
         ]);
     }
 
+    public function wallet(int $userId)
+    {
+        $userData = $this->fetchUserById($userId);
+
+        return view('admin::users.wallet.index', [
+            'userData' => $userData
+        ]);
+    }
+
     public function destroy(int $userId)
     {
         $userData = $this->fetchUserById($userId);
-        
+
         if(me()->id == $userData->id) {
             return redirect()->route('admin.users.index')->with('flashMessage', (new Flash(content: __('admin/flash.user.delete_self')))->get());
         }
-        
+
         (new DeleteUserAction($userData))->execute();
 
         return redirect()->route('admin.users.index')->with('flashMessage', (new Flash(content: __('admin/flash.user.delete_success')))->get());
@@ -70,20 +79,20 @@ class UserController extends Controller
     public function authorize(int $userId)
     {
         $userData = $this->fetchUserById($userId);
-        
+
         $userData->update([
             'type' => UserType::AUTHOR,
         ]);
 
         $userData->authorshipRequest()->delete();
-        
+
         return redirect()->route('admin.users.show', $userId)->with('flashMessage', (new Flash(content: __('admin/flash.user.authorize_success')))->get());
     }
 
     public function unauthorize(int $userId)
     {
         $userData = $this->fetchUserById($userId);
-        
+
         $userData->update([
             'type' => UserType::READER,
         ]);
@@ -94,7 +103,7 @@ class UserController extends Controller
     public function rejectAuthorization(int $userId)
     {
         $userData = $this->fetchUserById($userId);
-        
+
         $userData->update([
             'type' => UserType::READER,
         ]);
@@ -109,7 +118,7 @@ class UserController extends Controller
     public function verify(int $userId)
     {
         $userData = $this->fetchUserById($userId);
-        
+
         $userData->update([
             'verified' => true,
         ]);
@@ -120,7 +129,7 @@ class UserController extends Controller
     public function unverify(int $userId)
     {
         $userData = $this->fetchUserById($userId);
-        
+
         $userData->update([
             'verified' => false,
         ]);
@@ -130,6 +139,6 @@ class UserController extends Controller
 
     private function fetchUserById(int $userId)
     {
-        return User::active()->findOrFail($userId);
+        return User::onboarded()->findOrFail($userId);
     }
 }

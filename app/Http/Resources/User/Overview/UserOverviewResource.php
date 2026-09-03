@@ -2,9 +2,10 @@
 
 namespace App\Http\Resources\User\Overview;
 
+use App\Constants\Relationship;
+use App\Services\Relations\FollowService;
 use App\Support\Num;
 use Illuminate\Http\Request;
-use App\Constants\Relationship;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserOverviewResource extends JsonResource
@@ -31,18 +32,15 @@ class UserOverviewResource extends JsonResource
             'meta' => [
                 'relationship' => [
                     Relationship::FOLLOW_GROUP => [
-                        Relationship::FOLLOWED_BY => $this->isFollowing(me()),
-                        Relationship::FOLLOWING => me()->isFollowing($this->resource),
-                        Relationship::REQUESTED_BY => false,
-                        Relationship::REQUESTED => me()->followRequested($this->resource)
+                        Relationship::FOLLOWED_BY => (new FollowService($this->resource, me()))->isFollowing(),
+                        Relationship::FOLLOWING => (new FollowService(me(), $this->resource))->isFollowing(),
+                        Relationship::REQUESTED => (new FollowService(me(), $this->resource))->followRequested()
                     ],
                     Relationship::BLOCK_GROUP => [
-                        Relationship::BLOCKING => false,
-                        Relationship::BLOCKED_BY => false
+                        Relationship::BLOCKING => false
                     ],
                     Relationship::MUTING_GROUP => [
                         Relationship::MUTING => false,
-                        Relationship::MUTING_NOTIFICATIONS => false
                     ]
                 ]
             ]

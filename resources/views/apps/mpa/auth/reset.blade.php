@@ -2,6 +2,6 @@
 
 @section('pageContent')
     <div class="block">
-        @livewire('user.auth.reset-form', ['confirmationData' => $confirmationData])
+        @livewire('user.auth.reset', ['confirmationData' => $confirmationData])
     </div>
 @endsection

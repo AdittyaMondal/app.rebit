@@ -4,6 +4,7 @@ import { colibriAPI } from '@/kernel/services/api-client/native/index.js';
 const useRecommendStore = defineStore('recommend_store', {
     state: function() {
 		return {
+            lastUpdate: null,
 			followRecommendations: [],
 		}
 	},

@@ -58,12 +58,13 @@
         <x-accordion.form title="{{ __('business/settings.form.business_address') }}">
             <div class="mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <x-form.select 
-                        :options="$countries" 
-                        name="formData.country" 
+                    <x-form.select
+                        :options="$countries"
+                        name="formData.country"
                         wire:model="formData.country"
+                        placeholder="{{ __('business/settings.form.country_placeholder') }}"
                     labelText="{{ __('business/settings.form.country') }} *">
-    
+
                         <x-slot:feedbackInfo>
                             {{ __('business/settings.form.country_helper') }}
                         </x-slot:feedbackInfo>
@@ -153,11 +154,12 @@
 
             <div class="block">
                 <div class="flex mb-6 gap-2">
-                    <x-ui.buttons.pill wire:attr.loading="disabled" type="submit" btnText="{{ __('business/settings.form.save_button') }}"></x-ui.buttons.pill>
+                    <x-ui.buttons.pill wire:attr.loading="disabled" size="sm" type="submit" btnText="{{ __('business/settings.form.save_button') }}"></x-ui.buttons.pill>
 
                     <a href="{{ route('business.settings.index') }}">
                         <x-ui.buttons.pill
                             variant="danger"
+                            size="sm"
                         btnText="{{ __('business/settings.form.cancel_button') }}"></x-ui.buttons.pill>
                     </a>
                 </div>

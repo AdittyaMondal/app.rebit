@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Notification;
 
@@ -16,10 +28,10 @@ class NotificationController extends Controller
     public function getAll(Request $request)
     {
         $notifications = me()->notifications()->all()->get();
-
+        
         $responseData = NotificationCollection::make($notifications);
 
-        defer(function () use ($notifications) {
+        defer(function() use ($notifications) {
             $notifications->markAsRead();
         });
 
@@ -34,7 +46,7 @@ class NotificationController extends Controller
 
         $responseData = NotificationCollection::make($mentionNotifications);
 
-        defer(function () use ($mentionNotifications) {
+        defer(function() use ($mentionNotifications) {
             $mentionNotifications->markAsRead();
         });
 
@@ -49,7 +61,7 @@ class NotificationController extends Controller
 
         $responseData = NotificationCollection::make($importantNotifications);
 
-        defer(function () use ($importantNotifications) {
+        defer(function() use ($importantNotifications) {
             $importantNotifications->markAsRead();
         });
 
@@ -57,7 +69,7 @@ class NotificationController extends Controller
             'data' => $responseData
         ]);
     }
-
+    
     public function getUnreadCount()
     {
         $unreadCount = me()->getUnreadNotificationsCount();
@@ -71,15 +83,15 @@ class NotificationController extends Controller
     }
 
     public function deleteNotification(Request $request)
-    {
+    {   
         $notificationId = $request->string('notification_id', null);
 
-        if ($notificationId->isUuid()) {
+        if($notificationId->isUuid()) {
             $notificationData = me()->notifications()->where([
                 'id' => $notificationId
             ])->first();
 
-            if ($notificationData) {
+            if($notificationData) {
                 $notificationData->delete();
             }
         }

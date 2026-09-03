@@ -1,11 +1,11 @@
 @php($flashMessage = session('flashMessage'))
 
 @if($flashMessage)
-	<div x-data="{ show: true }" x-show="show" class="mb-4 shadow-2xl shadow-fill-qt p-1.5 rounded-lg {{ $flashMessage['type'] === 'success' ? 'callout-success' : 'callout-error' }}">
+	<div x-data="{ show: true }" x-show="show" class="mb-4 border p-1.5 rounded-lg {{ $flashMessage['type'] === 'success' ? 'callout-success' : 'callout-error' }}">
 		<div class="flex">
 			<div class="shrink-0 flex-center size-10 cursor-pointer">
 				<div class="size-6">
-					@if($flashMessage['type'] === 'success')	
+					@if($flashMessage['type'] === 'success')
 						<x-ui-icon name="check-circle" type="line"></x-ui-icon>
 					@else
 						<x-ui-icon name="alert-circle" type="line"></x-ui-icon>

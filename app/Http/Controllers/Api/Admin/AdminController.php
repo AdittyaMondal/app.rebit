@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\Admin;
 
@@ -19,8 +31,7 @@ class AdminController extends Controller
 
     private BlacklistService $blacklistService;
 
-    public function __construct(BlacklistService $blacklistService)
-    {
+    public function __construct(BlacklistService $blacklistService) {
         $this->blacklistService = $blacklistService;
     }
 
@@ -31,15 +42,14 @@ class AdminController extends Controller
 
         $userId = $request->integer('user_id');
 
-        if (me()->isAdmin()) {
+        if(me()->isRoot()) {
 
             $deletedUser = User::find($userId);
 
             try {
                 $this->blacklistService->setType(BlacklistType::IP)->add($deletedUser->ip_address);
                 $this->blacklistService->setType(BlacklistType::EMAIL)->add($deletedUser->email);
-            }
-            catch (Throwable $th) {
+            } catch (Throwable $th) {
                 Log::error($th->getMessage());
             }
 

@@ -1,13 +1,23 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Resources\User\Chat;
 
 use App\Support\Num;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\User\User\UserDeletedResource;
-use App\Http\Resources\User\User\UserPreviewResource;
 
 class ChatResource extends JsonResource
 {
@@ -35,7 +45,7 @@ class ChatResource extends JsonResource
         if ($this->type->isDirect()) {
             $interlocutor = $this->interlocutor;
 
-            if (isset($interlocutor->user) && $interlocutor->user) {
+            if(isset($interlocutor->user) && $interlocutor->user) {
                 $chatItem['chat_info'] = [
                     'id' => $interlocutor->user->id,
                     'name' => $interlocutor->user->name,
@@ -61,7 +71,7 @@ class ChatResource extends JsonResource
             ];
         }
 
-        if (!empty($this->lastMessage)) {
+        if (! empty($this->lastMessage)) {
             if ($this->lastMessage->is_deleted) {
                 $chatItem['is_deleted'] = true;
             }

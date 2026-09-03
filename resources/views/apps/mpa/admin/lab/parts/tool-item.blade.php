@@ -12,7 +12,7 @@
 					<p class="text-lab-sc text-par-s mb-4">
 						{{ $toolData['description'] }}
 					</p>
-		
+
 					<div class="mt-auto">
 						<x-ui.buttons.pill btnText="{{ __('labels.open') }}" width="w-full" size="sm"></x-ui.buttons.pill>
 					</div>

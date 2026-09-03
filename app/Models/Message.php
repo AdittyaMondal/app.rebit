@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Database\Configs\Table;
+use App\Enums\Chat\MessageType;
+use App\Models\Media;
 use App\Support\Casts\ModelTimestampCast;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +14,7 @@ class Message extends Model
 
     public $casts = [
         'is_deleted' => 'boolean',
+        'type' => MessageType::class,
         'created_at' => ModelTimestampCast::class
     ];
 
@@ -55,6 +58,11 @@ class Message extends Model
     public function linkSnapshot()
     {
         return $this->morphOne(LinkSnapshot::class, 'linkable', 'linkable_type', 'linkable_id', 'id');
+    }
+
+    public function media()
+    {
+        return $this->morphOne(Media::class, 'mediaable', 'mediaable_type', 'mediaable_id', 'id');
     }
 
     public function isMessageTranslatable()

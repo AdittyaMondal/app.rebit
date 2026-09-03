@@ -2,11 +2,9 @@
 
 return [
 	'index_title' => 'My ads',
-	'index_desc' => 'Here you can view and manage all your ads. Please make sure you read advertising rules and guide.',
 	'create_title' => 'Create new Ad',
 	'edit_title' => 'Edit ad',
 	'show_title' => 'Ad overview',
-	'show_desc' => 'You can view ad details, metrics and manage it here.',
 	'ad_show_stats' => 'Ad show stats',
 	'allocated_budget' => 'Allocated budget',
 	'ad_is_paused' => 'This Ad is currently paused and not visible to the public.',

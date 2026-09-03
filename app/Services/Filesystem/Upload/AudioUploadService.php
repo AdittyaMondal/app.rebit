@@ -14,7 +14,7 @@ use App\Services\Filesystem\Abstract\AbstractUploadService;
 class AudioUploadService extends AbstractUploadService
 {
     use ThrowsUploadExceptions, ThrowsFFMpegExceptions;
-    
+
     protected $ffmpegService;
     public string $audioDefaultExtension = 'mp3';
     private string $audioTemporaryLocation = 'tmp/audios';
@@ -22,6 +22,13 @@ class AudioUploadService extends AbstractUploadService
     public function __construct(FFMpegService $ffmpegService)
     {
         $this->ffmpegService = $ffmpegService;
+    }
+
+    public function setDefaultExtension(string $extension)
+    {
+        $this->audioDefaultExtension = $extension;
+
+        return $this;
     }
 
     public function getFFMpeg()
@@ -45,9 +52,11 @@ class AudioUploadService extends AbstractUploadService
                 $this->makeUploadException("Processed audio uploading to disk ({$this->storageDisk}) failed.");
             }
 
+            unlink($audioFileLocalPath);
+
             return [
                 'disk' => $this->storageDisk,
-                'audio_path' => $audioPath 
+                'audio_path' => $audioPath
             ];
         }
 
@@ -92,8 +101,8 @@ class AudioUploadService extends AbstractUploadService
                 return parse_duration($durationInSeconds);
 
             }, 1000);
-        } 
-        
+        }
+
         catch (Exception $e) {
             $this->makeFFMpegException("FFprobe failed to get audio duration after {$retries} attempts. {$e->getMessage()}");
         }
@@ -102,7 +111,7 @@ class AudioUploadService extends AbstractUploadService
     public function generateAudioTemporaryFilePath($audioExtension = null)
     {
         $uuid = Str::uuid();
-        
+
         return "$this->audioTemporaryLocation/{$uuid}.{$audioExtension}";
     }
 }

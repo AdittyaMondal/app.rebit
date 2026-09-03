@@ -9,16 +9,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Notifications\Traits\HasSystemActor;
 use App\Notifications\Traits\BaseNotification;
 use Illuminate\Notifications\Messages\MailMessage;
-    
+
 class DepositSuccessNotification extends Notification implements ShouldQueue
 {
     use Queueable,
         HasSystemActor,
         BaseNotification;
 
-    private array $actorData;
+    public array $actorData;
 
-    private $notificationType = Notifications::WALLET_DEPOSIT;
+    public $notificationType = Notifications::WALLET_DEPOSIT;
 
     public function __construct()
     {

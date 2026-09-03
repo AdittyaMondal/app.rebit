@@ -1,12 +1,7 @@
 @extends('adminLayout::index')
 
 @section('pageContent')
-	<div class="mb-4">
-		<x-page-title titleText=" {{ __('admin/chats.show_title') }}"></x-page-title>
-		<x-page-desc>
-			{{ __('admin/chats.show_desc') }}
-		</x-page-desc>
-	</div>
+	<x-page-title titleText=" {{ __('admin/chats.show_title') }}"></x-page-title>
 
 	<div x-data="alpineComponent">
 		<x-sided-content>
@@ -19,8 +14,8 @@
 			</x-slot:sideContent>
 
 			<div class="mb-8">
-				<x-entity.header 
-					avatarUrl="{{ asset('assets/icons/avatar/message-chat-circle.png') }}" 
+				<x-entity.header
+					avatarUrl="{{ asset('assets/icons/avatar/message-chat-circle.png') }}"
 					name="{{ $chatData->type->label() }} {{ $chatData->type->emoji() }}">
 
 					<x-slot:controlOptions>

@@ -1,12 +1,7 @@
 @extends('businessLayout::index')
 
 @section('pageContent')
-    <div class="mb-4">
-        <x-page-title titleText=" {{ __('business/ads.show_title') }}"></x-page-title>
-        <x-page-desc>
-            {{ __('business/ads.show_desc') }}
-        </x-page-desc>
-    </div>
+    <x-page-title titleText=" {{ __('business/ads.show_title') }}"></x-page-title>
     <div x-data="alpineComponent">
         <x-sided-content>
             <x-slot:sideContent>
@@ -22,8 +17,8 @@
                 @endif
             </x-slot:sideContent>
             <div class="mb-4">
-                <x-entity.header 
-                    avatarUrl="{{ $adData->user->avatar_url }}" 
+                <x-entity.header
+                    avatarUrl="{{ $adData->user->avatar_url }}"
                     name="{{ $adData->user->name }}"
                 caption="{{ $adData->user->caption }}">
 

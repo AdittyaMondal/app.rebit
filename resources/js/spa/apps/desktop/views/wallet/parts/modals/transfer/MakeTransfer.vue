@@ -31,14 +31,14 @@
 		<div class="block pb-3">
 			<textarea
 				v-model="formData.message"
-				class="resize-none w-full pl-4 pr-12 leading-5 pt-3.5 pb-6 bg-transparent text-par-n text-lab-pr2 max-h-96 overflow-y-auto min-h-28 outline-hidden placeholder:font-light placeholder:text-par-s" 
+				class="resize-none w-full pl-4 pr-12 leading-5 pt-3.5 pb-6 bg-transparent text-par-n text-lab-pr2 max-h-96 overflow-y-auto min-h-28 outline-hidden placeholder:font-light placeholder:text-par-s"
 			v-bind:placeholder="$t('wallet.transfer_message')"></textarea>
 			<span class="block text-cap-l px-4"
 			v-bind:class="[formData.message.length > 140 ? 'text-red-900' : 'text-lab-sc']">{{ formData.message.length }}/140</span>
 		</div>
 		<Border></Border>
 	</div>
-	
+
 	<div class="mb-12 px-4">
 		<PrimaryPillButton
 			v-on:click="makeTransfer"
@@ -92,7 +92,7 @@
 				formData: formData,
 				state: state,
 				commissionAmount: computed(() => {
-					return formData.amount * config('payment.commission.transfer') / 100;
+					return formData.amount * config('wallet.transfer.commission') / 100;
 				}),
 				makeTransfer: function() {
 					state.isSubmitting = true;

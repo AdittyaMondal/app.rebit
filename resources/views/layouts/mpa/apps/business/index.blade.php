@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name') }}</title>
-        
+
         @include('layouts.parts.meta')
         @include('layouts.parts.favicons')
 
@@ -23,20 +23,17 @@
         @endif
 
         @stack('styles')
-        
+
         @stack('scripts')
 
         @livewireStyles
     </head>
 
-    <body @class(['pt-24', (theme_name() == 'dark' ? 'bg-black' : 'bg-fill-fv')])
+    <body @class(['pt-20', (theme_name() == 'dark' ? 'bg-black' : 'bg-pr')])
         x-data="{ sidebarOpen: false }"
         x-on:keydown.escape.window="sidebarOpen = false"
         :class="{ 'overflow-hidden': sidebarOpen }"
     >
-        @if(theme_name() == 'light')
-            <img src="{{ asset('assets/backgrounds/modal-bg.png') }}" alt="Background" class="fixed opacity-50 w-full inset-0 -z-10">
-        @endif
         <x-main>
             {{-- Mobile sidebar backdrop --}}
             <div
@@ -53,17 +50,19 @@
             ></div>
 
             @include('businessLayout::parts.sidebar')
-    
+
             @include('businessLayout::parts.header')
-            
+
             <x-container>
+                <x-messages.primary></x-messages.primary>
+
                 <div class="app-min-vh px-4 md:px-8">
                     @yield('pageContent')
                 </div>
             </x-container>
-    
+
             <x-modals.confirm.confirm></x-modals.confirm.confirm>
-    
+
             @livewireScripts
         </x-main>
     </body>

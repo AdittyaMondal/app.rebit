@@ -3,7 +3,7 @@
 		<x-table.avatar :avatarSrc="$userData->avatar_url" :name="$userData->name" :link="route('admin.users.show', $userData->id)" />
 	</x-table.td>
 	<x-table.td>
-		{{ $userData->email }}
+		{{ hide_email_address($userData->email) }}
 	</x-table.td>
 	<x-table.td variant="muted">
 		{{ $userData->type->label() }} {{ $userData->type->emoji() }}

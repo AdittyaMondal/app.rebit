@@ -10,7 +10,33 @@
 				<h5 class="text-par-s font-medium leading-none">
 					{{ messageData.relations.user.name }} <span class="text-par-xs text-lab-sc leading-none ml-1 font-normal">{{ messageData.date.time_ago }}</span>
 				</h5>
-				<p class="text-par-n truncate text-lab-pr3 mt-0.5" v-html="messageData.content"></p>
+                <template v-if="messageData.type === 'image'">
+                    <div class="mt-1 flex items-center gap-2">
+                        <img v-bind:src="messageData.relations.media.source_url" v-bind:alt="messageData.relations.media.name" class="size-6 object-cover rounded-sm">
+                        <p class="text-par-m truncate text-lab-sc max-w-content">
+                            {{ $t('labels.image_message') }}
+                        </p>
+                    </div>
+                </template>
+                <template v-if="messageData.type === 'video_circle'">
+                    <div class="mt-1 flex items-center gap-2">
+                        <img v-bind:src="messageData.relations.media.thumbnail_url" v-bind:alt="messageData.relations.media.name" class="size-6 object-cover rounded-sm">
+                        <p class="text-par-s truncate text-lab-sc max-w-content">
+                            {{ $t('labels.video_message') }}
+                        </p>
+                    </div>
+                </template>
+                <template v-if="messageData.type === 'audio'">
+                    <div class="mt-2 flex items-center gap-2">
+                        <div class="shrink-0">
+                            <AvatarExtraSmall v-bind:avatarSrc="messageData.relations.user.avatar_url"></AvatarExtraSmall>
+                        </div>
+                        <p class="text-par-s truncate text-lab-sc max-w-content">
+                            {{ $t('labels.audio_message') }}
+                        </p>
+                    </div>
+                </template>
+				<p v-else class="text-par-n truncate text-lab-pr3 mt-0.5" v-html="messageData.content"></p>
 			</div>
 			<div class="shrink-0">
 				<PrimaryIconButton v-on:click="cancelMessageReply"></PrimaryIconButton>
@@ -23,6 +49,7 @@
 	import { defineComponent, ref, computed } from 'vue';
 
 	import PrimaryIconButton from '@M/components/inter-ui/buttons/PrimaryIconButton.vue';
+    import AvatarExtraSmall from '@M/components/general/avatars/AvatarExtraSmall.vue';
 
 	export default defineComponent({
 		props: {
@@ -46,7 +73,8 @@
 			};
 		},
 		components: {
-			PrimaryIconButton: PrimaryIconButton
+			PrimaryIconButton: PrimaryIconButton,
+            AvatarExtraSmall: AvatarExtraSmall,
 		}
 	});
 </script>

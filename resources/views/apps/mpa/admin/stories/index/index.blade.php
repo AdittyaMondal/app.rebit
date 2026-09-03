@@ -1,12 +1,7 @@
 @extends('adminLayout::index')
 
 @section('pageContent')
-	<div class="mb-8">
-        <x-page-title titleText=" {{ __('admin/stories.index_title') }}"></x-page-title>
-        <x-page-desc>
-            {{ __('admin/stories.index_desc') }}
-        </x-page-desc>
-    </div>
+    <x-page-title titleText=" {{ __('admin/stories.index_title') }}"></x-page-title>
 
 	<x-table.table>
 		<x-table.thead>

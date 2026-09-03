@@ -1,6 +1,6 @@
 <aside
     x-bind:class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-    class="fixed top-0 bottom-0 border-r border-bord-pr left-0 h-screen w-sidebar-width bg-bg-pr/70 backdrop-blur-sm z-50 lg:z-auto transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0"
+    class="fixed top-0 bottom-0 border-r border-bord-pr left-0 h-screen w-72 bg-bg-pr/70 backdrop-blur-sm z-50 lg:z-auto transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0"
 >
     {{-- Mobile close button --}}
     <button

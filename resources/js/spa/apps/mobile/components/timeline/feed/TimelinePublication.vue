@@ -14,6 +14,11 @@
                 </div>
             </div>
             <div class="max-w-full">
+                <template v-if="postHasContent">
+                    <div class="overflow-hidden mb-4 px-4">
+                        <PublicationText v-bind:postContent="postContent"></PublicationText>
+                    </div>
+                </template>
                 <div class="mb-2" v-if="PostTypeUtils.isMedia(postData.type)">
                     <template v-if="PostTypeUtils.isImage(postData.type)">
                         <div v-on:click="lightboxImages" class="cursor-pointer">
@@ -45,11 +50,6 @@
                     <PublicationQuote v-if="quotedPost" v-bind:quotedPost="quotedPost" v-bind:key="postData.id"></PublicationQuote>
                     <PublicationQuotePlaceholder v-else></PublicationQuotePlaceholder>
                 </div>
-                <template v-if="postHasContent">
-                    <div class="overflow-hidden mb-4 px-4">
-                        <PublicationText v-bind:postContent="postContent"></PublicationText>
-                    </div>
-                </template>
                 <div class="px-4" v-if="postReactions.length">
                     <ReactionsViewer v-on:add="addReaction" v-bind:reactions="postReactions"></ReactionsViewer>
                 </div>

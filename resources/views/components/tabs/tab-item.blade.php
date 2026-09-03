@@ -4,8 +4,8 @@
 	'link' => ''
 ])
 
-<a {{ $attributes }} class="rounded-full px-5 py-4.5 leading-zero cursor-pointer {{ $active ? 'bg-lab-pr2 text-bg-pr' : 'bg-badge-pr text-lab-pr2'}}">
-	<span class="text-par-n font-medium">
+<a {{ $attributes }} class="rounded-md leading-none cursor-pointer {{ $active ? 'bg-bg-pr text-brand-900 shadow-xs' : 'text-lab-sc'}}">
+	<span class="text-par-n inline-block font-semibold px-4 py-3 whitespace-nowrap">
 		{{ $textLabel }}
 	</span>
 </a>

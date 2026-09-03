@@ -23,42 +23,14 @@
                                 <span class="text-par-n text-lab-sc truncate">
                                     {{ postUserCaption }} · {{ postData.date.time_ago }}
                                 </span>
+                                <span v-if="isPinned" class="size-icon-x-small inline-block text-brand-900 ml-1">
+                                    <SvgIcon name="pin-02"></SvgIcon>
+                                </span>
                             </RouterLink>
                         </div>
                     </div>
                 </div>
                 <div class="max-w-full">
-                    <div class="overflow-hidden mb-2" v-if="postHasMedia">
-                        <template v-if="PostTypeUtils.isImage(postData.type)">
-                            <div v-on:click="lightboxImages" class="block cursor-pointer rounded-2xl overflow-hidden border border-bord-card">
-                                <PublicationImage v-bind:key="postData.hash_id" v-bind:isSensitive="isSensitive" v-bind:postMedia="postMedia"></PublicationImage>
-                            </div>
-                        </template>
-                        <template v-if="PostTypeUtils.isGif(postData.type)">
-                            <PublicationGif v-on:click="lightboxImages" v-bind:postMedia="postMedia"></PublicationGif>
-                        </template>
-                        <template v-else-if="PostTypeUtils.isVideo(postData.type)">
-                            <PublicationVideo v-bind:postMedia="postMedia"></PublicationVideo>
-                        </template>
-                        <template v-else-if="PostTypeUtils.isDocument(postData.type)">
-                            <PublicationDocument v-bind:postMedia="postMedia"></PublicationDocument>
-                        </template>
-                        <template v-else-if="PostTypeUtils.isAudio(postData.type)">
-                            <PublicationAudio v-bind:postMedia="postMedia" v-bind:key="postData.id"></PublicationAudio>
-                        </template>
-                    </div>
-                    <div class="overflow-hidden mb-4" v-else-if="postHasPoll">
-                        <PublicationPoll v-bind:postPoll="postPoll"></PublicationPoll>
-                    </div>
-                    <div v-else-if="postData.meta.is_quoting" class="overflow-hidden mb-2">
-                        <PublicationQuote v-if="quotedPost" v-bind:quotedPost="quotedPost" v-bind:key="postData.id"></PublicationQuote>
-                        <PublicationQuotePlaceholder v-else></PublicationQuotePlaceholder>
-                    </div>
-                    <div v-else-if="postLinkSnapshot" class="overflow-hidden mb-2">
-                        <a v-bind:href="postLinkSnapshot.url" target="_blank">
-                            <LinkSnapshot v-bind:linkSnapshot="postLinkSnapshot"></LinkSnapshot>
-                        </a>
-                    </div>
                     <template v-if="postHasContent">
                         <div class="overflow-hidden mb-4">
                             <div v-if="postData.meta.is_translatable" class="leading-none mb-1">
@@ -79,6 +51,37 @@
 							</div>
                         </div>
                     </template>
+                    <div class="overflow-hidden mb-2" v-if="postHasMedia">
+                        <template v-if="PostTypeUtils.isImage(postData.type)">
+                            <div v-on:click="lightboxImages" class="block cursor-pointer rounded-2xl overflow-hidden border border-bord-card">
+                                <PublicationImage v-bind:key="postData.hash_id" v-bind:isSensitive="isSensitive" v-bind:postMedia="postMedia"></PublicationImage>
+                            </div>
+                        </template>
+                        <template v-if="PostTypeUtils.isGif(postData.type)">
+                            <PublicationGif v-on:click="lightboxImages" v-bind:postMedia="postMedia"></PublicationGif>
+                        </template>
+                        <template v-else-if="PostTypeUtils.isVideo(postData.type)">
+                            <PublicationVideo v-bind:postMedia="postMedia" v-bind:key="postData.id"></PublicationVideo>
+                        </template>
+                        <template v-else-if="PostTypeUtils.isDocument(postData.type)">
+                            <PublicationDocument v-bind:postMedia="postMedia"></PublicationDocument>
+                        </template>
+                        <template v-else-if="PostTypeUtils.isAudio(postData.type)">
+                            <PublicationAudio v-bind:postMedia="postMedia" v-bind:label="postData.relations.user.name" v-bind:key="postData.id"></PublicationAudio>
+                        </template>
+                    </div>
+                    <div class="overflow-hidden mb-4" v-else-if="postHasPoll">
+                        <PublicationPoll v-bind:postPoll="postPoll"></PublicationPoll>
+                    </div>
+                    <div v-else-if="postData.meta.is_quoting" class="overflow-hidden mb-2">
+                        <PublicationQuote v-if="quotedPost" v-bind:quotedPost="quotedPost" v-bind:key="postData.id"></PublicationQuote>
+                        <PublicationQuotePlaceholder v-else></PublicationQuotePlaceholder>
+                    </div>
+                    <div v-else-if="postLinkSnapshot" class="overflow-hidden mb-2">
+                        <a v-bind:href="postLinkSnapshot.url" target="_blank">
+                            <LinkSnapshot v-bind:linkSnapshot="postLinkSnapshot"></LinkSnapshot>
+                        </a>
+                    </div>
                     <div class="block" v-if="postReactions.length">
                         <ReactionsViewer v-on:add="addReaction" v-bind:reactions="postReactions"></ReactionsViewer>
                     </div>
@@ -94,7 +97,7 @@
                                     </div>
                                 </PrimaryTransition>
                             </div>
-                            
+
                             <div class="shrink-0 leading-zero relative">
                                 <PrimaryIconButton v-on:click.stop="sharePost" iconSize="icon-normal" iconName="share-06" iconType="line"></PrimaryIconButton>
 								<PrimaryTransition v-if="state.isSharePostOpen">
@@ -112,7 +115,7 @@
                             <template v-if="isOnPostPage">
                                 <PrimaryIconButton v-bind:disabled="true" iconSize="icon-normal" iconName="message-circle-02" iconType="line"></PrimaryIconButton>
                             </template>
-                            
+
                             <div class="flex-1 overflow-hidden">
                                 <div v-if="! isOnPostPage" class="flex items-center h-x-small-avatar">
                                     <div v-if="postData.relations.comments.length" class="flex ml-1">
@@ -120,7 +123,7 @@
                                             <AvatarExtraSmall v-bind:avatarSrc="comment.user.avatar_url"></AvatarExtraSmall>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="flex-1 overflow-hidden ml-2">
                                         <RouterLink v-bind:to="{ name: 'publication_index', params: { hash_id: postData.hash_id }}" class="text-par-s text-lab-sc truncate block hover:text-brand-900">
                                             <template v-if="postData.relations.comments.length">
@@ -147,12 +150,12 @@
                 <div class="opacity-30 hover:opacity-100">
                     <DropdownButton v-on:click.stop="toggleMenu"></DropdownButton>
                 </div>
-                
+
                 <div class="absolute top-full right-0 z-50" v-if="state.isMenuOpen">
                     <DropdownMenu v-outside-click="toggleMenu" v-on:click="toggleMenu">
                         <DropdownReactions v-on:add="addReaction"></DropdownReactions>
                         <DropdownMenuItem v-on:click="openReactionsPicker" iconName="heart-rounded" v-bind:textLabel="$t('dd.add_reaction')"></DropdownMenuItem>
-                        
+
                         <template v-if="postHasContent && isTranslatable">
                             <DropdownMenuItem
                                 v-if="state.isTranslated"
@@ -222,6 +225,10 @@
 
     export default defineComponent({
         props: {
+            isPinned: {
+                type: Boolean,
+                default: false
+            },
             postData: {
                 type: Object,
                 default: {}
@@ -236,7 +243,7 @@
                 isTranslated: false,
                 isSharePostOpen: false
             });
-            
+
             const postTranslatedContent = ref('');
             const postData = computed(() => {
                 return props.postData;
@@ -371,7 +378,7 @@
                         postTranslatedContent.value = translatedText;
                         state.isTranslated = true;
                     }
-                    
+
                     state.isTranslating = false;
                 },
                 cancelTranslation: () => {

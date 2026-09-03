@@ -52,7 +52,7 @@ class Product extends Model
 
 	public function scopeListable($query)
 	{
-		return $query->active()->approved()->where('stock_quantity', '>', 0);
+		return $query->active()->approved()->where('stock_quantity', '>', 1);
 	}
 
 	public function scopeFilter($query, array $filterOptions)

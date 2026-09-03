@@ -2,12 +2,7 @@
 
 @section('pageContent')
 <div x-data="alpineComponent">
-	<div class="mb-4">
-        <x-page-title titleText=" {{ __('admin/stories.show_title') }}"></x-page-title>
-        <x-page-desc>
-            {{ __('admin/stories.show_desc') }}
-        </x-page-desc>
-    </div>
+    <x-page-title titleText=" {{ __('admin/stories.show_title') }}"></x-page-title>
 
 	<x-sided-content>
 		<x-slot:sideContent>
@@ -15,8 +10,8 @@
 		</x-slot:sideContent>
 
 		<div class="mb-8">
-			<x-entity.header 
-				avatarUrl="{{ $storyData->story->user->avatar_url }}" 
+			<x-entity.header
+				avatarUrl="{{ $storyData->story->user->avatar_url }}"
 				name="{{ $storyData->story->user->name }}"
 			caption="{{ $storyData->story->user->caption }}">
 				<x-slot:controlOptions>
@@ -34,7 +29,7 @@
 								</x-slot:itemIcon>
 							</x-ui.dropdown.item>
 						@endif
-	
+
 						<x-ui.dropdown.item tag="a" href="{{ $storyData->story->user->profile_url }}" target="_blank" itemText="{{ __('admin/dd.user.view_profile') }}">
 							<x-slot:itemIcon>
 								<x-ui-icon type="line" name="user-02"></x-ui-icon>
@@ -111,7 +106,7 @@
 		<div class="mb-4">
 			<x-entity.title title="{{ __('labels.additional_info') }}"></x-entity.title>
 		</div>
-	
+
 		<x-striped-table.table>
 			<x-striped-table.row>
 				<x-slot:labelText>

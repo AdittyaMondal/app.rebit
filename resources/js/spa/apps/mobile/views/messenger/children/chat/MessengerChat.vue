@@ -2,6 +2,8 @@
 	<div class="fixed inset-0 bg-bg-pr flex flex-col mb-safe-bottom">
 		<div v-if="! state.isLoading" class="shrink-0">
 			<ChatHeader v-on:close="$router.push({ name: 'messenger_inbox' })" v-bind:chatData="chatData" v-bind:typingUser="state.typing"></ChatHeader>
+            <Soundbar></Soundbar>
+            <Border></Border>
 		</div>
 		<div class="flex-1 overflow-y-auto py-4" ref="messagesHistoryContainer">
 			<template v-if="chatMessages.length">
@@ -24,7 +26,8 @@
 			</div>
 		</div>
 		<div class="shrink-0" v-if="! state.isLoading" v-bind:class="{ 'pb-5': $isStandalone() }">
-			<ChatEditor v-on:typing="handleMessageTyping"></ChatEditor>
+            <ChatEditorLock v-if="chatData.chat_info.meta.relationship.block.blocking"></ChatEditorLock>
+			<ChatEditor v-else v-on:typing="handleMessageTyping"></ChatEditor>
 		</div>
 	</div>
 </template>
@@ -43,6 +46,8 @@
 	import ChatHeader from '@M/views/messenger/children/chat/parts/ChatHeader.vue';
 	import ChatEditor from '@M/views/messenger/children/chat/parts/ChatEditor.vue';
 	import ChatMessageTyping from '@M/views/messenger/children/chat/parts/ChatMessageTyping.vue';
+	import Soundbar from '@M/components/soundbar/Soundbar.vue';
+	import ChatEditorLock from '@M/views/messenger/children/chat/parts/ChatEditorLock.vue';
 
 	export default defineComponent({
 		setup: function() {
@@ -135,7 +140,7 @@
                             chatStore.appendMessage(messageData);
 
                             scrollHistoryDown();
-							
+
                             if(userData.value.id != messageData.user_id) {
                                 colibriSounds.activeChatMessageReceived();
                                 chatStore.markMessagesAsRead();
@@ -214,7 +219,9 @@
 			ChatMessage: ChatMessage,
 			ChatHeader: ChatHeader,
 			ChatMessageTyping: ChatMessageTyping,
-			ChatEditor: ChatEditor
+			ChatEditor: ChatEditor,
+            Soundbar: Soundbar,
+            ChatEditorLock: ChatEditorLock,
 		}
 	});
 </script>

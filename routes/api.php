@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Ultimate Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,7 +28,7 @@ Route::post('/sanctum/token', function (Request $request) {
 
     $user = User::where('email', $request->email)->first();
 
-    if (!$user || !Hash::check($request->password, $user->password)) {
+    if (! $user || ! Hash::check($request->password, $user->password)) {
         throw ValidationException::withMessages([
             'email' => ['The provided credentials are incorrect.'],
         ]);
@@ -43,7 +55,7 @@ Route::prefix('stories')->middleware(['auth:sanctum', 'throttle:60,1'])->group(b
 
 Route::prefix('profile')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/user/profile.php'));
 
-Route::prefix('follows')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/user/follows.php'));
+Route::prefix('relations')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/user/relations.php'));
 
 Route::prefix('marketplace')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/user/marketplace.php'));
 
@@ -63,7 +75,7 @@ Route::prefix('autocompletes')->middleware(['auth:sanctum', 'throttle:60,1'])->g
 
 Route::prefix('translator')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/user/translator.php'));
 
-Route::prefix('feedback')->middleware(['auth:sanctum', 'throttle:15,1'])->group(base_path('routes/api/user/feedback.php'));
+Route::prefix('feedback')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/user/feedback.php'));
 
 Route::prefix('bookmarks')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/user/bookmarks.php'));
 
@@ -74,3 +86,7 @@ Route::prefix('system')->middleware(['throttle:60,1'])->group(base_path('routes/
 Route::prefix('ads')->middleware(['throttle:60,1'])->group(base_path('routes/api/ads/ad.php'));
 
 Route::prefix('tips')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/user/tips.php'));
+
+Route::prefix('pins')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/user/pins.php'));
+
+Route::prefix('ai')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/ai/user.php'));

@@ -1,69 +1,63 @@
 <?php
-use Hashids\Hashids;
-use App\Support\Languages;
-use Illuminate\Support\Str;
 use App\Models\Confirmation;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
+use App\Models\User;
+use App\Services\Currency\Fiat\FiatCurrencyService;
+use App\Services\Language\LangDetectionService;
 use App\Services\World\WorldService;
+use App\Support\Languages;
+use Hashids\Hashids;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
-use App\Services\Language\LangDetectionService;
-use App\Services\Currency\Fiat\FiatCurrencyService;
+use Illuminate\Support\Str;
 
 if (!function_exists('me')) {
-    function me(string $attr = '')
-    {   
-        $user = auth()->user();
-        
-        if($attr) {
-            return $user->$attr;
-        }
-        else{
-            return $user;
-        }
+    function me(): User
+    {
+        return auth()->user();
     }
 }
 
 if (!function_exists('auth_check')) {
     function auth_check()
-    {   
+    {
         return auth()->check();
     }
 }
 
 if (!function_exists('normalize_nls')) {
     function normalize_nls(string $text)
-    {   
+    {
         return Str::replaceMatches('/(\r?\n){3,}/', "\n\n", $text);
     }
 }
 
 if (!function_exists('theme_name')) {
     function theme_name()
-    {   
-        $theme = config('user.theme');
+    {
+        $theme = config('brand.default_theme');
 
         if (auth_check()) {
             $theme = me()->theme;
-        } 
+        }
 
         elseif (Cookie::has('theme')) {
             $theme = Cookie::get('theme');
-        } 
+        }
 
         elseif (Session::has('theme')) {
             $theme = Session::get('theme');
         }
-        
+
         return $theme;
     }
 }
 
 if (!function_exists('route_is')) {
     function route_is(string $name = ''): bool|string
-    {   
+    {
         return request()->routeIs($name);
     }
 }
@@ -84,7 +78,7 @@ if (!function_exists('world_countries')) {
 
 if (!function_exists('birth_years')) {
     function birth_years()
-    {   
+    {
         $currentYear = Carbon::now()->year;
         $birthYears = [];
 
@@ -101,26 +95,26 @@ if (!function_exists('birth_years')) {
 
 if (!function_exists('month_days')) {
     function month_days($month, $year = null)
-    {   
+    {
         $year = $year ?? Carbon::now()->year;
         $daysInMonth = Carbon::createFromDate($year, $month)->daysInMonth;
-    
+
         $daysArray = [];
-        
+
         for ($day = 1; $day <= $daysInMonth; $day++) {
             $daysArray[] = [
                 'key' => (string) $day,
                 'value' => (string) $day,
             ];
         }
-    
+
         return $daysArray;
     }
 }
 
 if (!function_exists('year_months')) {
     function year_months()
-    {   
+    {
         return [
             ['key' => '01', 'value' => __('labels.months.01')],
             ['key' => '02', 'value' => __('labels.months.02')],
@@ -253,7 +247,7 @@ if (! function_exists('chat_log')) {
 
 if (! function_exists('default_currency')) {
     function default_currency() {
-        
+
         $fiatCurrencyService = app(FiatCurrencyService::class);
 
         return $fiatCurrencyService->getCurrencyData(config('app.default_currency'))->toArray();
@@ -281,10 +275,10 @@ if (! function_exists('available_locales')) {
 if (! function_exists('file_size_format')) {
     function file_size_format($size, $precision = 2) {
         if ($size === 0) return '0 B';
-        
+
         $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
         $base = log($size, 1024);
-        
+
         return round(pow(1024, $base - floor($base)), $precision) . ' ' . $units[floor($base)];
     }
 }
@@ -300,5 +294,33 @@ if (! function_exists('social_links')) {
 if (! function_exists('static_storage_disk')) {
     function static_storage_disk() {
         return config('filesystems.static_storage_disk');
+    }
+}
+
+if (! function_exists('hide_email_address')) {
+    function hide_email_address(string $email): string
+    {
+        if (config('app.hide_sensitive_data') && ! me()->isRoot()) {
+            [$name, $domain] = explode('@', $email);
+
+            $visibleName = mb_substr($name, 0, 2);
+            $maskedName = mb_substr(md5($name), 0, max(mb_strlen($name) - 2, 4));
+
+            $domainParts = explode('.', $domain);
+            $visibleDomain = mb_substr($domainParts[0], 0, 1);
+            $maskedDomain = mb_substr(md5($domain), 0, max(mb_strlen($domainParts[0]) - 1, 4));
+            $tld = end($domainParts);
+
+            return "{$visibleName}{$maskedName}@{$visibleDomain}{$maskedDomain}.{$tld}";
+        }
+
+        return $email;
+    }
+}
+
+if (! function_exists('calculate_commission')) {
+    function calculate_commission(float $amount, float $commission): float
+    {
+        return floor($amount - ($amount * $commission / 100));
     }
 }

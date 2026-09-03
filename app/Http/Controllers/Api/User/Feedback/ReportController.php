@@ -50,9 +50,9 @@ class ReportController extends Controller
         ]);
 
         try {
-            $reportableId = $request->get('reportable_id');
-            $reportableType = $request->get('type');
-            $reportReasonIndex = $request->get('reason_index');
+            $reportableId = $request->input('reportable_id');
+            $reportableType = $request->input('type');
+            $reportReasonIndex = $request->input('reason_index');
 
             $reportReasonData = $this->fetchReportReasons($request->type);
 
@@ -63,7 +63,7 @@ class ReportController extends Controller
             $reportableData = $this->fetchReportableData($reportableId, $reportableType);
 
             // Delete all prev report, in case if user repeats this actions.
-            
+
             $reportableData->reports()->where('reporter_id', me()->id)->delete();
 
             $reportableData->reports()->create([
@@ -95,6 +95,7 @@ class ReportController extends Controller
                 break;
             case 'user':
                 $reportableData = User::activeById($reportableId)->excludeSelf()->first();
+                break;
             case 'group':
                 $reportableData = Group::active()->where('id', $reportableId)->first();
                 break;

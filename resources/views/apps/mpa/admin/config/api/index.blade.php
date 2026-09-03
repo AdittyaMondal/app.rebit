@@ -1,12 +1,7 @@
 @extends('adminLayout::index')
 
 @section('pageContent')
-	<div class="mb-4">
-		<x-page-title titleText=" {{ __('admin/config.api_settings') }}"></x-page-title>
-		<x-page-desc>
-			{{ __('admin/config.api_settings_desc') }}
-		</x-page-desc>
-	</div>
+	<x-page-title titleText=" {{ __('admin/config.api_settings') }}"></x-page-title>
 
 	<x-sided-content>
 		<x-slot:sideContent>

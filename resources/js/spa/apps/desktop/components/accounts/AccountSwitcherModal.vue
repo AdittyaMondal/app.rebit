@@ -9,21 +9,22 @@
 		<div v-else class="block max-h-96 overflow-y-auto">
 			<LinkedAccountItem v-on:switch="switchAccount" v-for="accountData in linkedAccounts" v-bind:accountData="accountData" v-bind:key="accountData.id"></LinkedAccountItem>
 		</div>
-
-		<Border height="h-3"></Border>
-		<div class="block p-4">
-			<div class="mb-2">
-				<p class="text-par-s text-lab-sc">
-					{{ $t('labels.account_switcher.description', { app_name: $config('app.name') }) }}
-				</p>
-			</div>
-			<a v-bind:href="$getRoute('user_linker_index')" class="block">
-				<PrimaryPillButton
-					v-bind:buttonText="$t('labels.account_switcher.button')"
-					buttonType="button"
-				v-bind:buttonFluid="true"></PrimaryPillButton>
-			</a>
-		</div>
+        <template v-if="$config('features.link_accounts.enabled')">
+            <Border height="h-3"></Border>
+            <div class="block p-4">
+                <div class="mb-2">
+                    <p class="text-par-s text-lab-sc">
+                        {{ $t('labels.account_switcher.description', { app_name: $config('app.name') }) }}
+                    </p>
+                </div>
+                <a v-bind:href="$getRoute('user_linker_index')" class="block">
+                    <PrimaryPillButton
+                        v-bind:buttonText="$t('labels.account_switcher.button')"
+                        buttonType="button"
+                    v-bind:buttonFluid="true"></PrimaryPillButton>
+                </a>
+            </div>
+        </template>
     </ContentModal>
 </template>
 
@@ -81,20 +82,20 @@
                     name: userData.value.name
                 },
 				switchAccount: async (accountData) => {
-					if (userData.value.id !== accountData.id) {
-						accountData.isSwitching = true;
-	
-						await colibriAPI().userSettings().with({
-							account_id: accountData.id
-						}).sendTo('account/switch').then((response) => {
-							window.location.reload();
-						}).catch((error) => {
-							if(error.response) {
-								alert(error.response.data.message);
-							}
-	
-							accountData.isSwitching = false;
-						});
+					if (userData.value.id !== accountData.id && config('features.switch_account.enabled')) {
+                        accountData.isSwitching = true;
+
+                        await colibriAPI().userSettings().with({
+                            account_id: accountData.id
+                        }).sendTo('account/switch').then((response) => {
+                            window.location.reload();
+                        }).catch((error) => {
+                            if(error.response) {
+                                alert(error.response.data.message);
+                            }
+
+                            accountData.isSwitching = false;
+                        });
 					}
 				}
 			};

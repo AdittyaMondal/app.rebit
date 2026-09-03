@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('chat_id');
             $table->string('type')->default(ChatType::DIRECT);
             $table->timestamp('last_activity')->nullable();
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

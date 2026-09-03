@@ -29,7 +29,9 @@ class HandleMediaCreation
                     // Increment thumbnail size since it is also stored separately as image
                     // even if it thumbnail of video.
 
-                    $service->incrementPartitionSize($event->mediaItem->thumbnail_size, MediaType::IMAGE);
+                    if($event->mediaItem->thumbnail_size) {
+                        $service->incrementPartitionSize($event->mediaItem->thumbnail_size, MediaType::IMAGE);
+                    }
                 }
                 else{
                     $this->storageMetricsService
@@ -37,9 +39,9 @@ class HandleMediaCreation
                         ->incrementPartitionSize($event->mediaItem->size, $event->mediaItem->type);
                 }
             }
-            
+
             catch (Exception $e) {
-                // 
+                //
             }
         }
     }

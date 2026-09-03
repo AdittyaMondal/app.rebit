@@ -10,7 +10,7 @@
 					<textarea ref="contentInput"
 						v-model="postData.content"
 						v-on:input="textInputHandler"
-						class="resize-none py-4 px-6 h-full w-full leading-normal bg-transparent text-title-3 text-lab-pr2 outline-hidden placeholder:font-light placeholder:text-title-3" 
+						class="resize-none py-4 px-6 h-full w-full leading-normal bg-transparent text-title-3 text-lab-pr2 outline-hidden placeholder:font-light placeholder:text-title-3"
 					v-bind:placeholder="$t('editor.post_text_input_placeholder')"></textarea>
 				</div>
 				<div class="shrink-0">
@@ -47,28 +47,6 @@
 				<PrimaryIconButton v-on:click="createPoll" v-bind:disabled="postMediaButtonStatus(PostType.POLL)" iconName="bar-chart-12" iconType="line" buttonColor="text-lab-pr3"></PrimaryIconButton>
 				<PrimaryIconButton v-on:click="toggleGifPicker" v-bind:disabled="postMediaButtonStatus(PostType.GIF)" iconName="gif" iconType="line" buttonColor="text-lab-pr3"></PrimaryIconButton>
 
-				<button
-					v-on:click="refineWithAI"
-					v-bind:disabled="!postData.content || !postData.content.trim().length || state.isAiRefining"
-					class="inline-flex items-center gap-0.5 px-1.5 py-1 rounded-md text-par-s font-medium transition-all duration-200"
-					v-bind:class="state.isAiRefining ? 'text-amber-500 opacity-80' : 'text-lab-pr3 hover:text-amber-500'"
-				>
-					<span v-if="state.isAiRefining" class="size-4 inline-block animate-spin">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-						</svg>
-					</span>
-					<span v-else class="size-5 inline-block">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-							<path d="M9 4.804A7.968 7.968 0 0 0 5.5 4c-1.03 0-2.016.195-2.922.551A9.076 9.076 0 0 1 4.5 3.5a9.1 9.1 0 0 1 4.5-1.206V4.804zM12 2.294a9.1 9.1 0 0 1 4.5 1.206c.69.397 1.33.868 1.922 1.405A7.968 7.968 0 0 0 16 4.5a7.968 7.968 0 0 0-2-.696V2.294z" />
-							<path fill-rule="evenodd" d="M12 2a1 1 0 0 1 1 1v2.07a8.002 8.002 0 0 1 5.536 2.394 1 1 0 0 1-1.414 1.414A6 6 0 1 0 12 18a6 6 0 0 0 4.122-1.636 1 1 0 1 1 1.414 1.414A8 8 0 1 1 11 5.07V3a1 1 0 0 1 1-1z" clip-rule="evenodd" />
-							<path d="m14.828 10.172 1.415-1.414a1 1 0 1 1 1.414 1.414L16.243 11.586l1.414 1.414a1 1 0 0 1-1.414 1.414l-1.415-1.414-1.414 1.414a1 1 0 0 1-1.414-1.414L13.414 11.586 12 10.172a1 1 0 1 1 1.414-1.414l1.414 1.414z" />
-						</svg>
-					</span>
-					<span class="text-xs">AI</span>
-				</button>
-
 				<div class="ml-auto opacity-80">
 					<PrimaryIconButton v-bind:disabled="submitButtonStatus" v-on:click="submitForm" iconName="send-03" buttonColor="text-lab-pr2"></PrimaryIconButton>
 				</div>
@@ -77,7 +55,7 @@
 			<p class="text-par-s text-red-900 mb-2" v-if="validationError">
 				{{ validationError }}
 			</p>
-			
+
 			<p  v-if="userData.is_author" class="text-par-s text-lab-sc">
 				{{ $t('editor.post_privacy') }}
 			</p>
@@ -108,6 +86,7 @@
 	import { useAuthStore } from '@M/store/auth/auth.store.js';
 	import { PostTypeUtils, PostType } from '@/kernel/enums/post/post.type.js';
 	import { colibriSounds } from '@/kernel/services/sounds/index.js';
+    import { useTimelineStore } from '@M/store/timeline/timeline.store.js';
 
 	import Toolbar from '@M/components/layout/Toolbar.vue';
 	import PrimaryIconButton from '@M/components/inter-ui/buttons/PrimaryIconButton.vue';
@@ -123,6 +102,7 @@
 			const router = useRouter();
 			const validationError = ref(null);
 			const { autoResize } = useInputHandlers();
+            const timelineStore = useTimelineStore();
 
 			const postData = computed(() => {
                 return postEditorStore.draftPost;
@@ -136,7 +116,6 @@
 				postSubmitting: false,
 				uploadProgress: 0,
 				isGifPickerOpen: false,
-				isAiRefining: false,
 			});
 
 			const validatePost = (message) => {
@@ -151,7 +130,7 @@
 
 				try {
 					colibriSounds.uiFeedback();
-					
+
 					navigator.vibrate([150, 50, 150]);
 
 				} catch (error) {
@@ -177,7 +156,7 @@
 
                 colibriAPI().postEditor().with(formData).withHeaders({
                     'Content-Type': 'multipart/form-data'
-                }).uploadProgress((progressEvent) => {                    
+                }).uploadProgress((progressEvent) => {
                     state.uploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
                 }).sendTo(`media/${type}/upload`).then((response) => {
 
@@ -198,13 +177,15 @@
 
 			const submitForm = async () => {
                 state.postSubmitting = true;
-                
+
                 await colibriAPI().postEditor().with(getFormSubmitData()).sendTo('create').then((response) => {
 					postEditorStore.finishEditing();
 
                     autoResize(contentInput.value);
 
 					leaveEditor();
+
+                    timelineStore.prependPost(response.data.data);
 
 					toastSuccess(__t('toast.post_published'));
                 }).catch((error) => {
@@ -320,53 +301,6 @@
                 },
 				toggleGifPicker: () => {
 					state.isGifPickerOpen = !state.isGifPickerOpen;
-				},
-				refineWithAI: async () => {
-					const workerUrl = import.meta.env.VITE_AI_REFINE_WORKER_URL;
-					const authToken = import.meta.env.VITE_AI_REFINE_SECRET_TOKEN || import.meta.env.AI_REFINE_SECRET_TOKEN;
-
-					if (!workerUrl) {
-						validatePost('AI Refine is not configured.');
-						return;
-					}
-
-					const currentText = postData.value.content;
-					if (!currentText || !currentText.trim()) {
-						return;
-					}
-
-					state.isAiRefining = true;
-
-					try {
-						const response = await fetch(workerUrl, {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json',
-								'Authorization': `Bearer ${authToken}`
-							},
-							body: JSON.stringify({ text: currentText })
-						});
-
-						if (!response.ok) {
-							const errorData = await response.json().catch(() => ({}));
-							throw new Error(errorData.error || 'AI refinement failed');
-						}
-
-						const data = await response.json();
-
-						if (data.refined_text) {
-							postData.value.content = data.refined_text;
-							autoResize(contentInput.value);
-							toastSuccess('Post refined with AI ✨');
-						} else {
-							validatePost('AI could not refine the post. Try again.');
-						}
-					} catch (error) {
-						console.error('AI Refine Error:', error);
-						validatePost(error.message || 'Failed to refine post.');
-					} finally {
-						state.isAiRefining = false;
-					}
 				}
 			};
 		},

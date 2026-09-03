@@ -18,12 +18,12 @@ class CommentReactedNotification extends Notification implements ShouldQueue
         BaseNotification,
         HasUserActor;
 
-    private $notificationType = Notifications::COMMENT_REACTED;
+    public $notificationType = Notifications::COMMENT_REACTED;
 
     private Comment $commentData;
-    private array $actorData;
+    public array $actorData;
     private string $reactionUnifiedId;
-    
+
     public function __construct(Comment $commentData, string $reactionUnifiedId)
     {
         $this->commentData = $commentData;

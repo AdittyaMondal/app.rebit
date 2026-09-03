@@ -3,24 +3,26 @@ import { defineStore } from 'pinia';
 const useAudioStore = defineStore('audio_store', {
     state: function() {
 		return {
-			postAudio: null,
+			audio: null,
+            label: null,
             playerState: {}
 		}
 	},
     getters: {
-        postAudioData: function() {
-            return this.postAudio;
+        audioData: function() {
+            return this.audio;
         }
     },
     actions: {
-        add: function(postAudio) {
-            if(this.postAudio === null || (this.postAudio !== null && this.postAudio.id !== postAudio.id)) {
-                this.postAudio = postAudio;
+        add: function(audio, label = null) {
+            if(this.audio === null || (this.audio !== null && this.audio.id !== audio.id)) {
+                this.audio = audio;
+                this.label = label;
                 this.refreshState();
             }
         },
         remove: function() {
-            this.postAudio = null;
+            this.audio = null;
             this.playerState = this.getState();
         },
         refreshState: function() {

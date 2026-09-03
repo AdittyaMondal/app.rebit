@@ -1,11 +1,14 @@
 <template>
-	<div class="flex items-center gap-3">
+    <div class="relative overflow-hidden cursor-pointer min-h-26 bg-fill-fv mb-4">
+        <img class="w-full" v-bind:src="profileData.cover_url" alt="Cover">
+    </div>
+	<div class="flex items-center gap-3 px-4">
 		<div v-on:click="lightboxAvatar" class="cursor-pointer">
 			<AvatarLarge v-bind:avatarSrc="profileData.avatar_url"></AvatarLarge>
 		</div>
-	
+
 		<div class="block">
-			<h1 class="text-title-2 font-semibold leading-none text-lab-pr2">
+			<h1 class="text-title-2 font-semibold leading-none text-lab-pr2 mb-1">
 				{{ profileData.name }} <VerificationBadge size="sm" v-if="profileData.verified"></VerificationBadge>
 			</h1>
 			<p class="text-par-n text-lab-sc">
@@ -14,7 +17,7 @@
 				</span>
 			</p>
 		</div>
-	</div>	
+	</div>
 </template>
 
 <script>

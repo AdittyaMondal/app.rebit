@@ -15,7 +15,7 @@
 }
 
 .sidenav-inactive svg{
-    @apply text-lab-pr2;
+    @apply text-lab-sc;
 }
 
 select {

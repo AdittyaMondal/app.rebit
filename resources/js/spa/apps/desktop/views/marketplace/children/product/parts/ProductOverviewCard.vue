@@ -46,20 +46,13 @@
 		</div>
 		<div class="mb-3">
 			<span class="text-par-n text-lab-sc cursor-pointer">
-				{{ productData.category_name }},
-				<template v-if="productData.stock_quantity > 0">
-					{{ $t('market.in_stock') }}
-				</template>
-				<template v-else>
-					<span class="text-red-500 font-semibold">{{ $t('market.out_of_stock', 'Out of Stock') }}</span>
-				</template>
-				&middot; {{ productData.date.time_ago }}
+				{{ productData.category_name }}, {{ $t('market.in_stock') }} &middot; {{ productData.date.time_ago }}
 			</span>
 		</div>
 		
 		<div class="flex gap-3 leading-none">
 			<PrimaryPillButton
-				v-if="! productData.meta.is_owner && productData.stock_quantity > 0"
+				v-if="! productData.meta.is_owner"
 				v-on:click="$emit('ask')"
 				buttonSize="lm"
 			v-bind:buttonText="$t('market.ask_seller')"></PrimaryPillButton>

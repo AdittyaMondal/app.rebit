@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Resources\Base;
 
@@ -8,7 +20,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class BaseApiCollection extends ResourceCollection
 {
-    public function toArray(Request $request): array
+    public function toArray(Request $request):array
     {
         return [
             'status' => 'success',

@@ -43,5 +43,7 @@ USER root
 COPY ./services/ffmpeg/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY ./services/ffmpeg/bin/ffprobe /usr/local/bin/ffprobe
 RUN chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe
+RUN apt-get update && apt-get install -y --no-install-recommends default-mysql-client && rm -rf /var/lib/apt/lists/*
+
 
 USER sail

@@ -1,6 +1,7 @@
 <template>
 	<TimelineContainer>
 		<div class="sticky top-0 popup-background-tr z-10">
+            <Soundbar></Soundbar>
 			<ContentTabs v-bind:cols="2">
 				<TabsLink v-bind:link="{ name: 'explore_posts' }">
 					{{ $t('labels.explore') }}
@@ -19,12 +20,12 @@
 			<div v-if="posts.length">
 				<template v-for="(postData, index) in posts" v-bind:key="postData.id">
 					<TimelinePublication v-bind:postData="postData" v-on:delete="handlePostDelete(postData)"></TimelinePublication>
-	
+
 					<!-- Show follow recommendation every 35 posts -->
 					<template v-if="(index + 1) % 35 === 0">
 						<FollowRecommendation v-bind:key="index"></FollowRecommendation>
 					</template>
-	
+
 					<!-- Show ad card every 10 posts -->
 					<template v-if="(index + 1) % 10 === 0">
 						<AdCard v-bind:key="index"></AdCard>
@@ -54,7 +55,7 @@
     import { useInfiniteScroll } from '@/kernel/vue/composables/infinite-scroll/index.js';
 	import { useDeletePost } from '@/kernel/vue/composables/delete-post/index.js';
 	import { colibriEventBus } from '@/kernel/events/bus/index.js';
-    
+
     import TimelineContainer from '@M/components/timeline/feed/TimelineContainer.vue';
     import TimelinePublication from '@M/components/timeline/feed/TimelinePublication.vue';
     import TimelinePublicationSkeleton from '@M/components/timeline/feed/TimelinePublicationSkeleton.vue';
@@ -63,6 +64,7 @@
     import FeedUpdate from '@M/components/timeline/update/FeedUpdate.vue';
 	import AdCard from '@M/components/ads/AdCard.vue';
     import FollowRecommendation from '@M/components/recommend/follow/FollowRecommendation.vue';
+    import Soundbar from '@M/components/soundbar/Soundbar.vue';
 
     export default defineComponent({
         setup: function() {
@@ -127,11 +129,11 @@
                             }
                             else {
                                 state.isUpdating = true;
-        
+
                                 await explorePostsStore.updateFeed();
-        
+
                                 state.isUpdating = false;
-    
+
                                 updateAttempts++;
                             }
                         }
@@ -155,7 +157,7 @@
 				handlePostDelete: (postData) => {
 					postDeleter(postData, (postId) => {
 						colibriEventBus.emit('timeline:post-deleted', postId);
-                        
+
                         toastSuccess(__t('toast.media.post_deleted'));
 					});
 				}
@@ -169,6 +171,7 @@
             TabsLink: TabsLink,
             FeedUpdate: FeedUpdate,
 			AdCard: AdCard,
+			Soundbar: Soundbar,
 			FollowRecommendation: FollowRecommendation
         }
     });

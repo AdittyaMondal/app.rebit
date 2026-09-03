@@ -1,7 +1,7 @@
 <template>
-	<div class="block">
+	<div class="block mb-4" v-if="profileData.bio || profileData.website">
 		<div v-if="profileData.bio">
-			<p class="text-par-n text-lab-pr2" v-html="$mdInline(profileData.bio)"></p>
+			<p class="text-par-n text-lab-pr2 mb-2" v-html="$mdInline(profileData.bio)"></p>
 		</div>
 		<div v-if="profileData.website">
 			<a v-bind:href="profileData.website" target="_blank" class="text-lab-pr text-par-m underline">

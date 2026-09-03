@@ -1,12 +1,8 @@
 @extends('adminLayout::index')
 
 @section('pageContent')
-    <div class="mb-8">
-        <x-page-title titleText=" {{ __('admin/chats.index_title') }}"></x-page-title>
-        <x-page-desc>
-            {{ __('admin/chats.index_desc') }}
-        </x-page-desc>
-    </div>
+    <x-page-title titleText=" {{ __('admin/chats.index_title') }}"></x-page-title>
+
     <div class="mb-4">
 		<x-tabs.tabs>
 			<x-tabs.tab-item :active="$filters['type'] == 'all'" href="{{ route('admin.chats.index', ['type' => 'all']) }}" textLabel="{{ __('admin/filter.filters.chats.tabs.all') }}"></x-tabs.tab-item>

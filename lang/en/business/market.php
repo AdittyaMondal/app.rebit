@@ -3,9 +3,7 @@
 return [
 	'create_title' => 'Create new product',
 	'index_title' => 'My products',
-	'index_desc' => 'Here you can view and manage all your products listed on the marketplace.',
 	'show_title' => 'Product overview',
-	'show_desc' => 'You can view product details, metrics and manage it here.',
 	'edit_title' => 'Edit product',
 	'product_page' => 'Product page',
 	'product_is_inactive' => 'This product is currently inactive and not visible to the public.',
@@ -15,6 +13,8 @@ return [
 		'archived' => 'Archived products',
 	],
 	'form' => [
+		'category_placeholder' => 'Select category',
+		'condition_placeholder' => 'Select condition',
 		'base_info' => 'Base Information',
 		'price_info' => 'Product Price',
 		'media_info' => 'Product Images',

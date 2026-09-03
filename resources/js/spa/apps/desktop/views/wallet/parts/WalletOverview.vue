@@ -35,7 +35,7 @@
 						{{ $t('labels.deposit') }}
 					</h4>
 					<p class="text-par-s block leading-tight text-lab-sc" v-html="$t('wallet.add_money_to_wallet')"></p>
-	
+
 					<span class="size-10 rounded-xl bg-brand-900 inline-flex-center absolute bottom-4 right-4">
 						<SvgIcon name="plus" classes="size-icon-small text-white"></SvgIcon>
 					</span>
@@ -49,7 +49,7 @@
 						<SvgIcon name="arrow-narrow-right" classes="size-icon-small text-brand-900"></SvgIcon>
 					</span>
 				</div>
-				<div class="h-40 bg-fill-qt opacity-50 rounded-xl px-4 py-3 relative cursor-not-allowed hover:bg-fill-tr transition-all ease-linear">
+				<a v-bind:href="$getRoute('business_wallet_cashouts')" class="h-40 bg-fill-qt rounded-xl px-4 py-3 relative cursor-pointer hover:bg-fill-tr transition-all ease-linear">
 					<h4 class="text-par-n block text-lab-pr2 font-bold mb-1">
 						{{ $t('labels.withdrawal') }}
 					</h4>
@@ -57,7 +57,7 @@
 					<span class="size-10 rounded-xl bg-white inline-flex-center absolute bottom-4 right-4">
 						<SvgIcon name="credit-card-up" classes="size-icon-small text-brand-900"></SvgIcon>
 					</span>
-				</div>
+				</a>
 			</div>
 			<div class="mt-2">
 				<p class="text-cap-s text-lab-sc" v-html="$t('wallet.about_wallet_text', { wallet_name: $embedder('config.wallet.name'), about_link: $embedder('config.wallet.about_link') })"></p>

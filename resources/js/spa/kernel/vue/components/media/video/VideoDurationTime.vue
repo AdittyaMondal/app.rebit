@@ -1,5 +1,5 @@
 <template>
-    <div class="select-none text-white z-50 leading-none rounded-xs">
+    <div class="select-none z-50 leading-none rounded-xs" v-bind:class="textColor">
         <span class="text-par-s font-normal">{{ $filters.mediaDuration(duration) }}</span>
     </div>
 </template>
@@ -9,6 +9,10 @@
 
     export default defineComponent({
         props: {
+            textColor: {
+                type: String,
+                default: 'text-white'
+            },
             videoDuration: {
                 type: Object,
                 default: {

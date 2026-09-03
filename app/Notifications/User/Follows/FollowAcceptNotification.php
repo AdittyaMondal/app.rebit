@@ -17,15 +17,15 @@ class FollowAcceptNotification extends Notification implements ShouldQueue
         BaseNotification,
         HasUserActor;
 
-    private array $actorData;
+    public array $actorData;
 
-    private $notificationType = Notifications::FOLLOW_ACCEPTED;
-    
+    public $notificationType = Notifications::FOLLOW_ACCEPTED;
+
     public function __construct()
     {
         $this->actorData = $this->getUserActor();
     }
-    
+
     public function via(object $notifiable): array
     {
         $channels = [];
@@ -67,7 +67,7 @@ class FollowAcceptNotification extends Notification implements ShouldQueue
         return [
         ];
     }
-    
+
     public function toDatabase(): array
     {
         return $this->getData();

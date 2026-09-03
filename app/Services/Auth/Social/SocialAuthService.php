@@ -11,7 +11,7 @@ use App\Actions\User\CreateUserAction;
 use App\Services\Blacklist\BlacklistService;
 use Laravel\Socialite\Two\User as SocialiteUser;
 
-class SocialAuthService 
+class SocialAuthService
 {
     private string $driver;
     private string $socialUserId;
@@ -33,7 +33,7 @@ class SocialAuthService
             $this->restrictBlacklistedEmailOrSocialId();
 
             $socialAccount = SocialAccount::where('provider_id', $this->socialUserId)->first();
-            
+
             if($socialAccount) {
                 Auth::login($socialAccount->user);
 
@@ -83,7 +83,7 @@ class SocialAuthService
 
         $driverData = $socialLoginDrivers->getDriver($this->driver);
 
-        if(empty($driverData['status'])) {
+        if(empty($driverData['enabled'])) {
             abort(404);
         }
 
@@ -100,11 +100,11 @@ class SocialAuthService
     private function restrictBlacklistedEmailOrSocialId()
     {
         // TOD0
-        // Add social account check also to prevent access from 
+        // Add social account check also to prevent access from
         // Social platforms that does not provide emails.
         // If user is not blocked by IP, check if user is blocked by
         // Social user ID. Since it's unique on selected platform for each user.
-        
+
         $isEmailBlacklisted = $this->blacklistService->isEmailBlacklisted($this->socialUserEmail);
 
         if($isEmailBlacklisted) {

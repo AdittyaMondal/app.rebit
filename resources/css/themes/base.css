@@ -50,9 +50,9 @@ input[type="number"] {
 }
 
 .callout-success{
-    @apply bg-bg-pr text-[#00a63e];
+    @apply text-[#00a63e] border-green-900 bg-green-900/5;
 }
 
 .callout-error{
-    @apply bg-bg-pr text-[#FF6367];
+    @apply text-[#FF6367] border-red-900 bg-red-900/5;
 }

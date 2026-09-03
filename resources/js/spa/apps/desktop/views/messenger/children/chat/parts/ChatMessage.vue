@@ -1,17 +1,19 @@
 <template>
-	<div v-on:dblclick.stop="replyToMessage" v-bind:title="$t('chat.double_click_to_reply')" class="flex group py-2 px-6 items-start" v-bind:class="[displayMessageControls ? 'bg-brand-900/5' : 'hover:bg-fill-fv']" v-on:contextmenu.prevent="toggleMainDropdown">
+	<div v-on:dblclick.stop="replyToMessage" v-bind:title="$t('chat.double_click_to_reply')" class="flex group px-6 items-start" v-bind:class="[displayMessageControls ? 'bg-brand-900/5' : 'hover:bg-fill-fv', isCompacted ? 'py-1' : 'py-2']" v-on:contextmenu.prevent="toggleMainDropdown">
 		<div class="flex-1 group">
 			<div class="flex overflow-hidden">
-				<div class="shrink-0">
+				<div  v-if="isCompacted" class="w-small-avatar shrink-0">
+
+				</div>
+				<div v-else class="shrink-0">
 					<AvatarSmall v-bind:avatarSrc="messageUser.avatar_url"></AvatarSmall>
 				</div>
 				<div class="flex-1 ml-3">
 					<div class="w-96">
-						<div class="leading-none">
+						<div v-if="! isCompacted" class="leading-none">
 							<strong class="text-par-n font-semibold" v-bind:style="{ color: messageColor }">
 								{{ messageUser.name }} <VerificationBadge v-if="messageUser.verified" size="xs"></VerificationBadge>
 							</strong>
-							<time class="text-cap-l text-lab-sc ml-1">{{ messageData.date.time_ago }}</time>
 						</div>
 						<div class="block">
 							<template v-if="messageData.has_parent">
@@ -34,11 +36,34 @@
 									<TranslationService></TranslationService>
 								</div>
 							</div>
-							<template v-if="hasLinkSnapshot">
+							<template v-if="hasLinkSnapshot && isNotDeleted">
 								<div class="w-96 mt-3">
 									<LinkSnapshot v-bind:linkSnapshot="messageData.relations.link_snapshot"></LinkSnapshot>
 								</div>
 							</template>
+
+                            <template v-if="hasMedia && isNotDeleted">
+                                <template v-if="messageData.type === 'video_circle'">
+                                    <div class="mt-3">
+                                        <CircleVideoPlayer
+                                            v-bind:thumbnailUrl="messageData.relations.media.thumbnail_url"
+                                            v-bind:duration="messageData.relations.media.metadata.duration"
+                                        v-bind:videoUrl="messageData.relations.media.source_url"></CircleVideoPlayer>
+                                    </div>
+                                </template>
+                                <template v-else-if="messageData.type === 'audio'">
+                                    <div class="mt-1">
+                                        <AudioPlayer
+                                            v-bind:mediaItem="messageData.relations.media"
+                                        v-bind:label="messageUser.name"></AudioPlayer>
+                                    </div>
+                                </template>
+                                <template v-else-if="messageData.type === 'image'">
+                                    <div class="mt-1">
+                                        <MessageImage v-bind:mediaData="{ mediaItem: messageData.relations.media, userName: messageUser.name, date: messageData.date.iso }"></MessageImage>
+                                    </div>
+                                </template>
+                            </template>
 						</div>
 						<div class="block mt-1" v-if="isNotDeleted && hasReactions">
 							<ReactionsViewer v-on:add="addReaction" v-bind:reactions="messageData.relations.reactions"></ReactionsViewer>
@@ -55,8 +80,8 @@
 				<PrimaryIconButton v-on:click.stop="openReactionsPicker" iconName="heart-rounded" iconSize="icon-small" iconType="line"></PrimaryIconButton>
 				<PrimaryTransition>
 					<div class="absolute right-0 top-8 origin-top-left z-20">
-						<ReactionsPicker 
-							v-if="state.isReactionPickerOpen" 
+						<ReactionsPicker
+							v-if="state.isReactionPickerOpen"
 							v-on:add="addReaction"
 						v-outside-click="closeReactionsPicker"></ReactionsPicker>
 					</div>
@@ -70,12 +95,12 @@
 					<DropdownMenu v-outside-click="toggleMainDropdown" v-on:click="toggleMainDropdown">
 						<DropdownReactions v-on:add="addReaction"></DropdownReactions>
 						<DropdownMenuItem v-on:click="openReactionsPicker" iconName="heart-rounded" v-bind:textLabel="$t('dd.add_reaction')"></DropdownMenuItem>
-						
+
 						<template v-if="isTranslatable">
 							<DropdownMenuItem v-if="state.isTranslated" v-on:click="cancelTranslation" iconName="translate-01" v-bind:textLabel="$t('dd.show_untranslated')"></DropdownMenuItem>
 							<DropdownMenuItem v-else v-on:click="translate" iconName="translate-01" v-bind:textLabel="$t('dd.translate')"></DropdownMenuItem>
 						</template>
-						
+
 						<DropdownMenuItem v-on:click="replyToMessage" iconName="pencil-line" v-bind:textLabel="$t('dd.message.reply', { name: messageUser.name })"></DropdownMenuItem>
 						<DropdownMenuItem v-on:click="copyMessageText" iconName="type-01" v-bind:textLabel="$t('dd.copy_text')"></DropdownMenuItem>
 						<Border/>
@@ -87,10 +112,13 @@
 		<div v-if="isSender" class="shrink-0 size-8 inline-flex-center ml-2">
 			<span v-if="isMessageSeen" class="size-icon-small" v-bind:style="{ color: messageColor }">
 				<SvgIcon type="line" name="message-double-check"></SvgIcon>
-			</span>	
+			</span>
 			<span v-else class="size-icon-small text-lab-sc">
 				<SvgIcon type="line" name="message-check"></SvgIcon>
-			</span>	
+			</span>
+		</div>
+		<div class="shrink-0">
+			<time class="text-cap-l text-lab-sc">{{ messageData.date.time_ago }}</time>
 		</div>
 	</div>
 </template>
@@ -110,11 +138,17 @@
 	import ChatMessageReply from '@D/views/messenger/children/chat/parts/ChatMessageReply.vue';
 	import TranslationService from '@D/components/general/TranslationService.vue';
 	import TextTranslateButton from '@D/components/inter-ui/buttons/TextTranslateButton.vue';
+    import CircleVideoPlayer from '@/kernel/vue/components/players/CircleVideoPlayer.vue';
+    import AudioPlayer from '@D/components/players/audio/AudioPlayer.vue';
 
 	export default defineComponent({
 		props: {
 			messageData: {
 				type: Object,
+				required: true
+			},
+			isCompacted: {
+				type: Boolean,
 				required: true
 			}
 		},
@@ -135,7 +169,7 @@
 
 			const openReactionsPicker = function() {
 				state.isDropdownOpen = false;
-				
+
 				if (isNotDeleted.value) {
 					debounce(() => {
 						state.isReactionPickerOpen = true;
@@ -153,7 +187,7 @@
 
 			const toggleMainDropdown = () => {
 				closeReactionsPicker();
-				
+
 				if (isNotDeleted.value) {
 					state.isDropdownOpen = !state.isDropdownOpen;
 				}
@@ -198,6 +232,9 @@
 				hasLinkSnapshot: computed(() => {
 					return messageData.value.relations?.link_snapshot;
 				}),
+                hasMedia: computed(() => {
+                    return messageData.value.relations?.media;
+                }),
 				isNotDeleted: isNotDeleted,
 				isTranslatable: computed(() => {
 					return messageData.value.meta.is_translatable;
@@ -254,6 +291,8 @@
 			TranslationService: TranslationService,
 			TextTranslateButton: TextTranslateButton,
 			DropdownReactions: DropdownReactions,
+            CircleVideoPlayer: CircleVideoPlayer,
+            AudioPlayer: AudioPlayer,
 			ReactionsPicker: defineAsyncComponent(() => {
                 return import('@D/components/reactions/ReactionsPicker.vue');
             }),
@@ -262,6 +301,9 @@
             }),
 			LinkSnapshot: defineAsyncComponent(() => {
                 return import('@D/components/media/links/LinkSnapshot.vue');
+            }),
+            MessageImage: defineAsyncComponent(() => {
+                return import('@D/views/messenger/children/chat/parts/media/MessageImage.vue');
             })
 		}
 	});

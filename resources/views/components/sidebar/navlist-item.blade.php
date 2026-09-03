@@ -12,7 +12,7 @@
 ])
 
 <{{ $tag }} href="{{ $href }}" class="flex overflow-hidden cursor-pointer items-center {{ $muted ? 'opacity-50' : '' }} {{ $current ? 'sidenav-active' : 'sidenav-inactive' }}" {{ $attributes }}>
-	<span class="size-icon-normal shrink-0">
+	<span class="size-6">
 		<x-ui-icon type="{{ $iconType }}" name="{{ $iconName }}"></x-ui-icon>
 	</span>
 	<span class="text-par-m ml-3 font-medium flex-1">

@@ -15,22 +15,33 @@
 					</template>
 					<template v-if="permissions.can_mention">
 						<DropdownMenuItem v-on:click="mentionUser" iconName="at-sign" v-bind:textLabel="$t('dd.user.mention', { username: profileData.username})"></DropdownMenuItem>
+                        <Border/>
 					</template>
-					<Border/>
 					<DropdownMenuItem v-on:click="copyProfileLink" iconName="link-01" iconType="solid" v-bind:textLabel="$t('dd.user.copy_link')"></DropdownMenuItem>
 					<RouterLink v-bind:to="{ name: 'profile_info', params: { id: profileData.username } }">
 						<DropdownMenuItem iconName="info-circle" v-bind:textLabel="$t('dd.user.about')"></DropdownMenuItem>
 					</RouterLink>
-					
+
 					<template v-if="permissions.can_block">
 						<Border/>
-						<DropdownMenuItem v-bind:disabled="true" v-on:click="$comingSoon" itemColor="text-red-900" iconName="slash-circle-01" v-bind:textLabel="$t('dd.user.block', { username: profileData.username })"></DropdownMenuItem>
+						<DropdownMenuItem
+                            v-on:click="blockUser"
+                            v-bind:itemColor="blockRelationship.blocking ? '' : 'text-red-900'"
+                            v-bind:iconName="blockRelationship.blocking ? 'user-check-01' : 'slash-circle-01'"
+                            v-bind:textLabel="$t(blockRelationship.blocking ? 'dd.user.unblock' : 'dd.user.block', { username: profileData.username })"
+                        v-bind:loading="state.blockingUser"></DropdownMenuItem>
 					</template>
 					<template v-if="permissions.can_report">
 						<DropdownMenuItem v-on:click="reportProfile" itemColor="text-red-900" iconName="annotation-alert" v-bind:textLabel="$t('dd.user.report', { username: profileData.username })"></DropdownMenuItem>
 					</template>
 					<template v-if="permissions.can_mute">
-						<DropdownMenuItem v-on:click="$comingSoon" itemColor="text-red-900" iconName="volume-x" v-bind:textLabel="$t('dd.user.mute', { username: profileData.username })"></DropdownMenuItem>
+                        <Border/>
+                        <DropdownMenuItem
+                            v-on:click="muteUser"
+                            v-bind:itemColor="muteRelationship.muting ? '' : 'text-red-900'"
+                            v-bind:iconName="muteRelationship.muting ? 'volume-max' : 'volume-x'"
+                            v-bind:textLabel="$t(muteRelationship.muting ? 'dd.user.unmute' : 'dd.user.mute', { username: profileData.username })"
+                        v-bind:loading="state.mutingUser"></DropdownMenuItem>
 					</template>
 				</DropdownMenu>
 			</div>
@@ -38,7 +49,7 @@
 		<template v-if="permissions.can_follow">
 			<FollowPillButton v-bind:relationship="profileData.meta.relationship.follow" v-bind:followableId="profileData.id"></FollowPillButton>
 		</template>
-		<template v-else>
+		<template v-if="profileData.meta.is_owner">
 			<PrimaryPillButton v-on:click="state.isModalOpen = true" v-bind:buttonText="$t('labels.edit_profile')" buttonSize="md"></PrimaryPillButton>
 		</template>
 	</div>
@@ -48,10 +59,11 @@
 </template>
 
 <script>
-	import { defineComponent, reactive, inject } from 'vue';
+	import { defineComponent, reactive, inject, ref, onMounted } from 'vue';
 	import { useRouter } from 'vue-router';
 	import { colibriEventBus } from '@/kernel/events/bus/index.js';
 	import { colibriAPI } from '@/kernel/services/api-client/native/index.js';
+	import { useRelationsStore } from '@D/store/relations/relations.store.js';
 
 	import FollowPillButton from '@D/components/inter-ui/buttons/follows/FollowPillButton.vue';
 	import PrimaryPillButton from '@D/components/inter-ui/buttons/PrimaryPillButton.vue';
@@ -65,15 +77,28 @@
 		setup: function() {
 			const router = useRouter();
 			const profileData = inject('profileData');
+			const relationsStore = useRelationsStore();
 			const state = reactive({
                 isDropdownOpen: false,
 				sendingMessage: false,
+                mutingUser: false,
+                blockingUser: false,
 				isModalOpen: false
+            });
+
+			const muteRelationship = ref({});
+            const blockRelationship = ref({});
+
+            onMounted(() => {
+                muteRelationship.value = profileData.value.meta.relationship.muting;
+                blockRelationship.value = profileData.value.meta.relationship.block;
             });
 
 			return {
 				state: state,
 				profileData: profileData,
+                muteRelationship: muteRelationship,
+                blockRelationship: blockRelationship,
 				toggleMainDropdown: () => {
                     state.isDropdownOpen = !state.isDropdownOpen;
                 },
@@ -101,7 +126,7 @@
 				applySanctions: async () => {
 					// TODO
 					// Remove this API call and Remove Controller.
-					
+
 					// Redirect admin to admin panel, to the page,
 					// where they can apply needed sanctions on user
 					// on centralized and functional scalable page.
@@ -138,6 +163,43 @@
                         reportableId: profileData.value.id
                     });
                 },
+                muteUser: async () => {
+                    if(state.mutingUser)  {
+                        return false;
+                    }
+
+                    state.mutingUser = true;
+
+                    const muteResponse = await relationsStore.muteUser(profileData.value.id);
+
+                    if(muteResponse) {
+                        muteRelationship.value = muteResponse.relationship.muting;
+
+                        if(muteResponse.relationship.muting.muting) {
+                            toastSuccess(__t('toast.user_muted'), 3000);
+                        }
+                        else {
+                            toastSuccess(__t('toast.user_unmuted'), 3000);
+                        }
+                    }
+
+                    state.mutingUser = false;
+                },
+                blockUser: async () => {
+                    if(state.blockingUser) {
+                        return false;
+                    }
+
+                    state.blockingUser = true;
+
+                    const blockResponse = await relationsStore.blockUser(profileData.value.id);
+
+                    if(blockResponse) {
+                        blockRelationship.value = blockResponse.relationship.block;
+                    }
+
+                    window.location.reload();
+                }
 			}
 		},
 		components: {

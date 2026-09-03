@@ -1,16 +1,29 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\User\Auth;
 
-use App\Models\User;
-use Illuminate\Support\Str;
-use App\Models\EmailConfirmation;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Actions\User\CreateUserAction;
-use Illuminate\Support\Facades\Validator;
 use App\Events\User\Auth\UserLoggedInEvent;
+use App\Http\Controllers\Controller;
+use App\Models\EmailConfirmation;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -64,14 +77,14 @@ class AuthController extends Controller
 
         $tempUsernameTaken = User::where('username', $tempUsername)->exists();
 
-        if ($tempUsernameTaken) {
+        if($tempUsernameTaken) {
             $emailDomain = Str::before(Str::after($confirmationData->email, '@'), '.');
 
             $tempUsername = "{$tempUsername}_{$emailDomain}";
 
             $tempUsernameTaken = User::where('username', $tempUsername)->exists();
 
-            if ($tempUsernameTaken) {
+            if($tempUsernameTaken) {
 
                 $lastUserId = User::max('id');
 
@@ -96,7 +109,7 @@ class AuthController extends Controller
 
         $confirmationData->delete();
 
-        return redirect()->route('user.onboarding.index', 'one');
+        return redirect()->route('user.onboarding.index', 'profile');
     }
 
     private function getTokenDataByHashId(string $hash_id)
@@ -112,10 +125,21 @@ class AuthController extends Controller
             'token' => ['required', 'string', 'uuid']
         ]);
 
-        if ($validator->fails()) {
+        if($validator->fails()) {
             abort(404);
         }
 
         return EmailConfirmation::where('token', $token)->firstOrFail();
+    }
+
+    public function logout(Request $request)
+    {
+        auth()->guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+
+        return redirect()->route('user.auth.index');
     }
 }

@@ -1,32 +1,46 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Actions\User;
 
-use Throwable;
-use App\Models\Chat;
-use App\Models\Post;
-use App\Models\User;
-use App\Models\Report;
-use App\Models\Comment;
-use App\Models\Bookmark;
-use App\Models\StoryView;
-use App\Models\ChatInvite;
-use App\Models\HiddenChat;
-use App\Enums\Chat\ChatType;
-use App\Models\HiddenMessage;
-use App\Enums\User\FollowStatus;
-use App\Models\AuthorshipRequest;
 use App\Actions\Ad\DeleteAdAction;
 use App\Actions\Chat\DeleteChatAction;
-use App\Actions\Post\DeletePostAction;
 use App\Actions\Chat\DeleteGroupAction;
-use Illuminate\Support\Facades\Storage;
 use App\Actions\Chat\DeleteMessageAction;
-use App\Actions\JobListing\DeleteJobAction;
 use App\Actions\Comment\DeleteCommentAction;
+use App\Actions\JobListing\DeleteJobAction;
+use App\Actions\Post\DeletePostAction;
 use App\Actions\Product\DeleteProductAction;
 use App\Actions\Story\DeleteStoryFrameAction;
+use App\Enums\Chat\ChatType;
+use App\Enums\User\FollowStatus;
+use App\Models\AuthorshipRequest;
+use App\Models\Block;
+use App\Models\Bookmark;
+use App\Models\Chat;
+use App\Models\ChatInvite;
+use App\Models\Comment;
+use App\Models\HiddenChat;
+use App\Models\HiddenMessage;
+use App\Models\Mute;
+use App\Models\Post;
+use App\Models\Report;
+use App\Models\StoryView;
+use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class DeleteUserAction
 {
@@ -43,6 +57,10 @@ class DeleteUserAction
     {
         try {
             $this->unfollowAllUsers();
+
+            $this->deleteAllBlocks();
+
+            $this->deleteAllMutes();
 
             $this->deleteUserPublications();
 
@@ -94,49 +112,45 @@ class DeleteUserAction
 
             $this->deleteUserAuthorshipRequests();
 
-            if (!$this->userData->hasDefaultAvatar() && !empty($this->userData->avatar)) {
+            if (! $this->userData->hasDefaultAvatar() && ! empty($this->userData->avatar)) {
                 Storage::disk(static_storage_disk())->delete($this->userData->avatar);
                 Storage::disk(static_storage_disk())->delete($this->userData->cover);
             }
 
-            if (!$this->userData->hasDefaultCover() && !empty($this->userData->cover)) {
+            if (! $this->userData->hasDefaultCover() && ! empty($this->userData->cover)) {
                 Storage::disk(static_storage_disk())->delete($this->userData->cover);
             }
 
             return $this->userData->delete();
-        }
-        catch (Throwable $th) {
+        } catch (Throwable $th) {
             timeline_log($th->getMessage());
         }
     }
 
-    private function unfollowAllUsers()
-    {
+    private function unfollowAllUsers() {
 
-        // Accurate following and followers count of people who are following and being followed by the user.
-
-        $this->userData->followers()->chunk(500, function ($relationships) {
-            foreach ($relationships as $relationship) {
-                $followingCount = $relationship->follower->followings()->where('status', FollowStatus::FOLLOWING)->count();
-                $relationship->follower->following_count = $followingCount;
-                $relationship->follower->save();
-            }
-        });
-
-        $this->userData->followings()->chunk(500, function ($relationships) {
-            foreach ($relationships as $relationship) {
-                $followersCount = $relationship->following->followers()->where('status', FollowStatus::FOLLOWING)->count();
-                $relationship->following->followers_count = $followersCount;
-                $relationship->following->save();
-            }
-        });
+        $followerIds  = $this->userData->followers()->pluck('follower_id');
+        $followingIds = $this->userData->followings()->pluck('following_id');
 
         $this->userData->followers()->delete();
         $this->userData->followings()->delete();
+
+        User::whereIn('id', $followerIds)->chunk(500, function ($users) {
+            foreach ($users as $user) {
+                $user->following_count = $user->followings()->where('status', FollowStatus::FOLLOWING)->count();
+                $user->save();
+            }
+        });
+
+        User::whereIn('id', $followingIds)->chunk(500, function ($users) {
+            foreach ($users as $user) {
+                $user->followers_count = $user->followers()->where('status', FollowStatus::FOLLOWING)->count();
+                $user->save();
+            }
+        });
     }
 
-    private function deleteUserPublications()
-    {
+    private function deleteUserPublications() {
         Post::with(['media'])->where('user_id', $this->userData->id)->chunk(500, function ($posts) {
             foreach ($posts as $post) {
                 (new DeletePostAction($post))->execute();
@@ -144,17 +158,15 @@ class DeleteUserAction
         });
     }
 
-    private function deleteUserWallet()
-    {
-        if ($this->userData->wallet) {
+    private function deleteUserWallet() {
+        if($this->userData->wallet) {
             $this->userData->wallet->transactions()->delete();
         }
 
         $this->userData->wallet()->delete();
     }
 
-    private function deleteUserParticipatedChats()
-    {
+    private function deleteUserParticipatedChats() {
         $chats = Chat::where('type', ChatType::DIRECT)->whereHas('participants', function ($query) {
             $query->where('user_id', $this->userData->id);
         })->get();
@@ -164,14 +176,13 @@ class DeleteUserAction
         }
     }
 
-    private function deleteUserParticipatedGroups()
-    {
+    private function deleteUserParticipatedGroups() {
         $chats = Chat::where('type', ChatType::GROUP)->whereHas('participants', function ($query) {
             $query->where('user_id', $this->userData->id);
         })->with(['group'])->get();
 
         foreach ($chats as $chatData) {
-            if ($chatData->group->user_id == $this->userData->id) {
+            if($chatData->group->user_id == $this->userData->id) {
                 (new DeleteChatAction($chatData))->execute();
             }
             else {
@@ -186,8 +197,7 @@ class DeleteUserAction
         }
     }
 
-    private function deleteUserGroups()
-    {
+    private function deleteUserGroups() {
         $groups = $this->userData->groups;
 
         foreach ($groups as $groupData) {
@@ -195,14 +205,13 @@ class DeleteUserAction
 
             // Delete related chat of the group if it exists.
 
-            if ($groupData->chat) {
+            if($groupData->chat) {
                 (new DeleteChatAction($groupData->chat))->execute();
             }
         }
     }
 
-    private function deleteUserStories()
-    {
+    private function deleteUserStories() {
         $storyData = $this->userData->story;
 
         if ($storyData) {
@@ -216,8 +225,7 @@ class DeleteUserAction
         }
     }
 
-    private function deleteUserProducts()
-    {
+    private function deleteUserProducts() {
         $this->userData->products()->chunk(500, function ($products) {
             foreach ($products as $productData) {
                 (new DeleteProductAction($productData))->execute();
@@ -225,8 +233,7 @@ class DeleteUserAction
         });
     }
 
-    private function deleteUserAds()
-    {
+    private function deleteUserAds() {
         $this->userData->advertising()->chunk(500, function ($ads) {
             foreach ($ads as $adData) {
                 (new DeleteAdAction($adData))->execute();
@@ -234,8 +241,7 @@ class DeleteUserAction
         });
     }
 
-    private function deleteUserJobs()
-    {
+    private function deleteUserJobs() {
         $this->userData->jobListings()->chunk(500, function ($jobs) {
             foreach ($jobs as $jobData) {
                 (new DeleteJobAction($jobData))->execute();
@@ -243,44 +249,38 @@ class DeleteUserAction
         });
     }
 
-    private function deleteUserNotifications()
-    {
+    private function deleteUserNotifications() {
         $this->userData->notifications()->delete();
     }
 
-    private function deleteUserDevices()
-    {
+    private function deleteUserDevices() {
         $this->userData->devices()->delete();
     }
 
-    private function resetUserChildAccounts()
-    {
+    private function resetUserChildAccounts() {
         $this->userData->linkedAccounts()->update([
             'owner_account_id' => null
         ]);
     }
 
-    private function deleteUserSettings()
-    {
+    private function deleteUserSettings() {
         $this->userData->securitySettings()->delete();
         $this->userData->privacySettings()->delete();
         $this->userData->permitSettings()->delete();
         $this->userData->emailNotificationSettings()->delete();
         $this->userData->pushNotificationSettings()->delete();
+        $this->userData->pins()->delete();
     }
 
-    private function deleteUserPayments()
-    {
+    private function deleteUserPayments() {
         $this->userData->payments()->delete();
     }
 
-    private function deleteUserStoryViews()
-    {
+    private function deleteUserStoryViews() {
         StoryView::where('user_id', $this->userData->id)->delete();
     }
 
-    private function deleteUserComments()
-    {
+    private function deleteUserComments() {
         $this->commentPosts = [];
 
         Comment::where('user_id', $this->userData->id)->chunk(500, function ($comments) {
@@ -301,50 +301,55 @@ class DeleteUserAction
         });
     }
 
-    private function deleteUserSocialAccounts()
-    {
+    private function deleteUserSocialAccounts() {
         $this->userData->socialAccounts()->delete();
     }
 
-    private function deleteSocialLinks()
-    {
+    private function deleteSocialLinks() {
         $this->userData->socialLinks()->delete();
     }
 
-    private function deleteUserReports()
-    {
+    private function deleteUserReports() {
         $this->userData->reports()->delete();
 
         Report::where('reporter_id', $this->userData->id)->delete();
     }
 
-    private function deleteUserBookmarks()
-    {
+    private function deleteUserBookmarks() {
         Bookmark::where('user_id', $this->userData->id)->delete();
     }
 
-    private function deleteUserBusinessAccount()
-    {
+    private function deleteUserBusinessAccount() {
         $this->userData->businessAccount()->delete();
     }
 
-    private function deleteUserHiddenMessages()
-    {
+    private function deleteUserHiddenMessages() {
         HiddenMessage::where('user_id', $this->userData->id)->delete();
     }
 
-    private function deleteUserHiddenChats()
-    {
+    private function deleteUserHiddenChats() {
         HiddenChat::where('user_id', $this->userData->id)->delete();
     }
 
-    private function deleteUserChatInvites()
-    {
-        ChatInvite::where('sender_id', $this->userData->id)->orWhere('receiver_id', $this->userData->id);
+    private function deleteUserChatInvites() {
+        ChatInvite::where('sender_id', $this->userData->id)
+            ->orWhere('receiver_id', $this->userData->id)
+            ->delete();
     }
 
-    private function deleteUserAuthorshipRequests()
-    {
+    private function deleteUserAuthorshipRequests() {
         AuthorshipRequest::where('user_id', $this->userData->id)->delete();
+    }
+
+    private function deleteAllBlocks() {
+        Block::where('blocker_id', $this->userData->id)
+            ->orWhere('blocked_id', $this->userData->id)
+            ->delete();
+    }
+
+    private function deleteAllMutes() {
+        Mute::where('muter_id', $this->userData->id)
+            ->orWhere('muted_id', $this->userData->id)
+            ->delete();
     }
 }

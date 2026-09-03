@@ -34,7 +34,7 @@
                                             </span>
                                         </div>
         
-                                        <div v-outside-click="state.filterMenu.close" v-if="state.filterMenu.status" class="absolute top-8 -right-4 bottom-0 w-[min(100vw-2rem,var(--spacing-content,600px))]">
+                                        <div v-outside-click="state.filterMenu.close" v-if="state.filterMenu.status" class="absolute top-8 -right-4 bottom-0 w-content">
                                             <PopupPanel>
                                                 <div class="popup-card bg-bg-pr">
                                                     <div class="p-4 border-b border-b-bord-pr">
@@ -76,7 +76,7 @@
                         </template>
                         <template v-else>
                             <template v-if="products.length">
-                                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 px-4 gap-4">
+                                <div class="grid grid-cols-3 px-4 gap-4">
                                     <RouterLink class="block" v-for="productData in products" v-bind:to="{ name: 'marketplace_show', params: { product_id: productData.hash_id } }">
                                         <ProductCard v-bind:productData="productData"></ProductCard>
                                     </RouterLink>

@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Resources\User\Market;
 
@@ -14,7 +26,7 @@ class ProductResource extends JsonResource
     public function toArray(Request $request): array
     {
         $isOwner = (me()->id === $this->user_id);
-
+        
         $item = [
             'id' => $this->id,
             'hash_id' => $this->hash_id,
@@ -25,9 +37,9 @@ class ProductResource extends JsonResource
             'preview_image_url' => $this->preview_image_url,
             'relations' => [
                 'merchant' => [],
-                'media' => $this->media->map(function ($mediaItem) {
-            return MediaResource::make($mediaItem);
-        })
+                'media' => $this->media->map(function($mediaItem) {
+                    return MediaResource::make($mediaItem);
+                })
             ],
             'sale_price' => null,
             'price' => [
@@ -74,7 +86,7 @@ class ProductResource extends JsonResource
             'is_store' => false
         ]);
 
-        if ($this->hasDiscount()) {
+        if($this->hasDiscount()) {
             $item['sale_price'] = [
                 'raw' => $this->sale_price,
                 'formatted' => $this->formatted_sale_price

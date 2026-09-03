@@ -2,9 +2,9 @@
 
 return [
 	'you_are_admin' => 'You are logged in as an administrator. 🛡️',
-	'env_edit_notice' => [
+    'env_edit_notice' => [
 		'title' => 'How to edit?',
-		'line_one' => 'These settings are managed from the <code>.env</code> file (located in the root of your Rebit installation) and cannot be changed from the admin panel.',
+		'line_one' => 'These settings are managed from the <code>.env</code> file (located in the root of your ColibriPlus installation) and cannot be changed from the admin panel.',
 		'line_two' => 'To update them, please edit the <code>.env</code> file directly and then just click to Reset Cache button.',
 		'env_privacy' => '⚠️ Please do not share your .env file with anyone. It contains all application\'s confidential information.'
 	],
@@ -39,13 +39,13 @@ return [
 	],
 	'round_robin_notice' => [
 		'title' => 'Round Robin Storage 🔄',
-		'line_one' => 'Rebit features a round-robin storage system that supports both S3 and FTP as backend options.',
+		'line_one' => 'ColibriPlus features a round-robin storage system that supports both S3 and FTP as backend options.',
 		'line_two' => 'You can add as many S3 or FTP storage accounts as you need — whether from AWS, DigitalOcean, Vultr, or any other provider that supports these protocols.',
-		'line_three' => 'Once configured, Rebit will automatically distribute files across the available storage accounts in a round-robin fashion, helping you balance storage usage seamlessly.'
+		'line_three' => 'Once configured, ColibriPlus will automatically distribute files across the available storage accounts in a round-robin fashion, helping you balance storage usage seamlessly.'
 	],
 	'laravel_notice' => [
 		'title' => 'Laravel Ecosystem 🚀',
-		'line_one' => 'Rebit is built on top of Laravel :laravel_version. <a href="https://www.laravel.com" target="_blank" class="text-brand-900">Learn more</a>',
+		'line_one' => 'ColibriPlus is built on top of Laravel :laravel_version. <a href="https://www.laravel.com" target="_blank" class="text-brand-900">Learn more</a>',
 		'line_two' => 'It means that you are free to use any Laravel ecosystem tools, packages and services you want.'
 	],
 	'category_notice' => [
@@ -61,5 +61,33 @@ return [
 		'title' => 'Direct Chat',
 		'line_one' => 'A chat is a private conversation between two or more users. In this version, message contents viewing is not supported from the admin panel.',
 		'line_two' => 'You may delete an entire chat if necessary.',
-	]
+	],
+	'smtp_solutions' => [
+		'title' => 'Do not have an SMTP server?',
+		'line_one' => 'Easiast way is to use a third-party free SMTP service like Google SMTP, SendGrid, or Amazon SES.',
+		'line_two' => 'You can also use a local SMTP server like Postfix or Exim.',
+        'line_three' => 'Check out the documentation for more information.',
+	],
+	'ffmpeg_notice' => [
+		'title' => 'Where is FFMPEG used in :app_name?',
+		'line_one' => 'FFMPEG is used in :app_name to compress user\'s videos before uploading to the platform to optimize the platform performance and reduce the storage usage.',
+        'line_two' => 'It converts all uploaded videos to the platform default format (MP4).',
+	],
+    'acquiring_notice' => [
+        'title' => 'What is Acquiring?',
+        'line_one' => 'Acquiring enables users to top up their in-app wallet, which can be spent on in-app purchases and services.',
+        'line_two' => 'To activate acquiring, choose a payment provider and configure its API credentials below.',
+        'line_three' => 'API keys are issued directly by your payment provider.',
+    ],
+    'social_login_notice' => [
+        'title' => 'What is Social Login?',
+        'line_one' => 'Social login allows users to log in to your application using their social media accounts.',
+        'line_two' => 'To activate social login, choose a social media provider and configure its API credentials below.',
+        'line_three' => 'Credentials are issued directly by your social media provider.',
+    ],
+    'wallet_notice' => [
+        'title' => 'What is Wallet?',
+        'line_one' => 'Wallet empowers your users to have a in-app balance to pay for platform services and in-app purchases.',
+        'line_two' => 'You can enable any payment provider you want to allow users to deposit funds to their wallet.',
+    ],
 ];

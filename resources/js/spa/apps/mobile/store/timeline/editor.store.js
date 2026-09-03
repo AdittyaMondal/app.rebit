@@ -20,33 +20,17 @@ const usePostEditorStore = defineStore('mobile_post_editor_store', {
         fetchDraftPost: async function() {
             let state = this;
 
-            // Preserve the locally-typed content before fetching from server
-            const localContent = state.draftPost?.content || '';
-
             await colibriAPI().postEditor().params({
                 quoted_post_id: this.quotePostId
             }).getFrom('draft').then((response) => {
                 if (response.data.data.draft) {
                     state.draftPost = response.data.data.draft;
-
-                    // Restore local content if the server draft has no content
-                    if (!state.draftPost.content && localContent) {
-                        state.draftPost.content = localContent;
-                    }
                 }
                 else {
                     state.draftPost = this.getDraftPostDefaultValue();
-
-                    if (localContent) {
-                        state.draftPost.content = localContent;
-                    }
                 }
             }).catch((response) => {
                 state.draftPost = this.getDraftPostDefaultValue();
-
-                if (localContent) {
-                    state.draftPost.content = localContent;
-                }
             }); 
         },
         pollHasChoices: function() {

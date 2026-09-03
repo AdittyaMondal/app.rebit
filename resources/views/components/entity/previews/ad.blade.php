@@ -11,11 +11,11 @@
 			<h4 class="text-lab-pr2 text-par-l font-semibold">
 				{{ $adData->title }}
 			</h4>
-			<p class="text-lab-sc text-par-s mb-2">
+			<p class="text-lab-sc text-par-m mb-2">
 				{{ $adData->content }}
 			</p>
 
-			<p class="text-lab-sc text-par-s">
+			<p class="text-lab-sc text-par-m">
 				{{ $adData->target_url }}
 			</p>
 		</div>

@@ -6,6 +6,9 @@ const usePostEditorStore = defineStore('post_editor_store', {
     state: function() {
 		return {
             draftPost: {},
+            preservedPostData: {
+
+            },
             quotedPost: null,
             initialType: PostType.TEXT,
             marks: {
@@ -31,28 +34,17 @@ const usePostEditorStore = defineStore('post_editor_store', {
         fetchDraftPost: async function() {
             let state = this;
 
-            // Preserve the locally-typed content before fetching from server
-            const localContent = state.draftPost?.content || '';
-
             await colibriAPI().postEditor().params({
                 quoted_post_id: this.quotePostId
             }).getFrom('draft').then((response) => {
                 if (response.data.data.draft) {
-                    state.draftPost = response.data.data.draft;
-
-                    // Restore local content if the server draft has no content
-                    // (content is only saved to server on publish, not during editing)
-                    if (!state.draftPost.content && localContent) {
-                        state.draftPost.content = localContent;
-                    }
+                    state.draftPost = {
+                        ...response.data.data.draft,
+                        ...state.preservedPostData
+                    };
                 }
                 else {
                     state.draftPost = this.getDraftPostDefaultValue();
-
-                    // Restore local content for new drafts too
-                    if (localContent) {
-                        state.draftPost.content = localContent;
-                    }
                 }
 
                 if(response.data.data.quoted_post) {
@@ -60,12 +52,7 @@ const usePostEditorStore = defineStore('post_editor_store', {
                 }
             }).catch((response) => {
                 state.draftPost = this.getDraftPostDefaultValue();
-
-                // Restore local content even on error
-                if (localContent) {
-                    state.draftPost.content = localContent;
-                }
-            }); 
+            });
         },
         pollHasChoices: function() {
             return this.draftPost?.relations?.poll?.choices?.length > 0;
@@ -98,7 +85,7 @@ const usePostEditorStore = defineStore('post_editor_store', {
         finishEditing: function() {
             // Reset mention name after editor is closed
             // and all other data like share link, etc.
-            
+
             this.mentionName = null;
             this.quotePostId = null;
             this.quotedPost = null;
@@ -108,7 +95,6 @@ const usePostEditorStore = defineStore('post_editor_store', {
             this.resetDraftPost();
         },
         getDraftPostDefaultValue: function() {
-
             let content = '';
 
             if(this.mentionName) {
@@ -119,7 +105,8 @@ const usePostEditorStore = defineStore('post_editor_store', {
                 content: content,
                 type: PostType.TEXT,
                 relations: {
-                }
+                },
+                ...this.preservedPostData
             };
         },
         markPostAsSensitive: function() {

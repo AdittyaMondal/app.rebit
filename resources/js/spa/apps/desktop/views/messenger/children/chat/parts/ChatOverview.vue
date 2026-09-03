@@ -14,7 +14,12 @@
 							{{ $t('labels.group') }} — {{ $t('chat.participants_count', { count: chatData.chat_info.participants_count.formatted }) }}
 						</template>
 						<template v-else>
-							{{ $t('labels.was_online_at', { time: chatData.chat_info.last_active.formatted }) }}
+                            <template v-if="chatData.chat_info.last_active">
+                                {{ $t('labels.was_online_at', { time: chatData.chat_info.last_active.formatted }) }}
+                            </template>
+                            <template v-else>
+                                {{ $t('labels.was_online_at', { time: 'N/A' }) }}
+                            </template>
 						</template>
 					</span>
 					<template v-if="! chatData.is_group">
@@ -24,13 +29,13 @@
 					</template>
 					<span v-if="hasDescription" class="block text-par-l text-lab-pr2 markdown-text" v-html="$mdInline(chatData.chat_info.description, { breaks: false })"></span>
 					<template v-if="! chatData.is_group">
-						<span class="block text-par-s text-lab-sc">
+						<span v-if="chatData.chat_info.followers_count" class="block text-par-s text-lab-sc">
 							{{ chatData.chat_info.followers_count.formatted }} {{ $t('labels.followers_count', chatData.chat_info.followers_count.raw) }}
 						</span>
 					</template>
 				</div>
 				<div v-if="isDirect" class="flex justify-center mt-4">
-					<RouterLink v-bind:to="{ name: 'profile_index', params: { id: chatData.chat_info.username }}">
+					<RouterLink v-if="! chatData.chat_info.meta.relationship.block.blocking" v-bind:to="{ name: 'profile_index', params: { id: chatData.chat_info.username }}">
 						<PrimaryPillButton buttonType="submit" buttonSize="md" v-bind:buttonText="$t('labels.view_profile')"></PrimaryPillButton>
 					</RouterLink>
 				</div>
@@ -42,10 +47,10 @@
 <script>
 	import { defineComponent, ref, computed } from 'vue';
 	import { useChatStore } from '@D/store/chats/chat.store.js';
-	
+
 	import AvatarMedium from '@D/components/general/avatars/AvatarMedium.vue';
     import PrimaryPillButton from '@D/components/inter-ui/buttons/PrimaryPillButton.vue';
-	
+
 	export default defineComponent({
 		setup: function () {
 			const chatStore = useChatStore();

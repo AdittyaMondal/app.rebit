@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Constants;
 
@@ -23,7 +35,7 @@ class Notifications
 	public const ACCOUNT_LINKED = 'important.account-linked';
 	public const WALLET_DEPOSIT = 'important.wallet-deposit';
 	public const PAYMENT_RECEIVED = 'important.payment-received';
-
+	
 	public static function importantTypes(): array
 	{
 		return [

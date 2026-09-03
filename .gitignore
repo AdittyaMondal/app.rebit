@@ -10,6 +10,7 @@
 /vendor
 .vscode_settings
 .cursor
+.claude
 .env
 .env.backup
 .env.production
@@ -20,8 +21,8 @@ Homestead.yaml
 auth.json
 npm-debug.log
 yarn-error.log
-docker-compose.yml
 /storage/frontend/build.num
+/config.local
 /.fleet
 /.idea
 /.vscode
@@ -29,15 +30,15 @@ docker-compose.yml
 /public/vendor/
 /docker/database
 /services/ffmpeg/bin
-/content_migrator
 /refactor
-/plugins/icons/
+/plugins/
 pack.sh
 /lang/ru/
 /var/world/countries/ru.php
 /var/world/reports/post/ru.php
 /var/world/reports/user/ru.php
-/var/world/user_categories/ru.php
+/var/world/reports/group/ru.php
+/var/world/user_fields/ru.php
 resources/views/apps/mpa/document/about/i18n
 resources/views/apps/mpa/document/author/i18n
 resources/views/apps/mpa/document/cookies/i18n
@@ -46,28 +47,36 @@ resources/views/apps/mpa/document/help/i18n
 resources/views/apps/mpa/document/privacy/i18n
 resources/views/apps/mpa/document/terms/i18n
 resources/views/apps/mpa/document/verification/i18n
+RELEASE_CHECKLIST.md
+/updates
+CANONICAL.md
+extractor.sh
+
+# ---- project-specific (not upstream) ----
 
 # OS / editor cruft
 .DS_Store
 Thumbs.db
 *.swp
+*.bak
+*.old
+*.orig
+*.save
 
 # Laravel runtime
 /storage/pail
 /storage/logs/*.log
 .env.*.local
 
-# Quarantined malware (incident response) — never commit
-/.quarantine
-
-# Working copy of the dev host + DB dumps (PII, password hashes, live tokens,
-# and deserialization payloads in failed_jobs). Never commit.
+# Working copies + DB dumps (PII, password hashes, live tokens,
+# and queue deserialization payloads in failed_jobs). Never commit.
 /dev
+/real
 *.sql
 *.sql.gz
 *.dump
 t->media()->delete();
-*.bak
-*.old
-*.orig
-*.save
+
+# Tooling
+/.graphifyignore
+/graphify-out

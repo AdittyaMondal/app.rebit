@@ -17,14 +17,14 @@ class FollowRequestNotification extends Notification implements ShouldQueue
         BaseNotification,
         HasUserActor;
 
-    private array $actorData;
-    
+    public array $actorData;
+
+    public $notificationType = Notifications::FOLLOWED_REQUESTED;
+
     public function __construct()
     {
         $this->actorData = $this->getUserActor();
     }
-
-    private $notificationType = Notifications::FOLLOWED_REQUESTED;
 
     public function via(object $notifiable): array
     {

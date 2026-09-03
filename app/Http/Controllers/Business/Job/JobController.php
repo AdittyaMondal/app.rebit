@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Business\Job;
 
@@ -14,12 +26,12 @@ class JobController extends Controller
     {
         $type = $request->string('type', 'all');
         $type = in_array($type, ['all', 'active', 'archived']) ? $type : 'all';
-
-        $jobsList = me()->jobListings()->with(['category', 'user'])->excludeDraft()->when($type, function ($query) use ($type) {
-            if ($type == 'active') {
+        
+        $jobsList = me()->jobListings()->with(['category', 'user'])->excludeDraft()->when($type, function($query) use ($type) {
+            if($type == 'active') {
                 $query->where('status', JobStatus::ACTIVE);
             }
-            else if ($type == 'archived') {
+            else if($type == 'archived') {
                 $query->where('status', JobStatus::INACTIVE);
             }
         })->latest('id')->paginate(10);
@@ -58,8 +70,8 @@ class JobController extends Controller
     private function fetchOrInitializeDraftJob()
     {
         $jobData = me()->jobListings()->where('status', JobStatus::DRAFT)->first();
-
-        if (empty($jobData)) {
+    
+        if(empty($jobData)) {
             me()->jobListings()->create([
                 'status' => JobStatus::DRAFT
             ]);

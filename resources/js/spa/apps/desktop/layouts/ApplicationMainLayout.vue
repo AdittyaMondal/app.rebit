@@ -2,7 +2,7 @@
     <ApplicationSidebar></ApplicationSidebar>
 
     <div class="flex ml-page-offset">
-        <div class="flex-1 max-w-full" v-bind:class="[(rightOffset) ? 'mr-4 2xl:mr-60' : '']">
+        <div class="flex-1 max-w-full">
             <RouterView></RouterView>
         </div>
     </div>
@@ -11,13 +11,13 @@
 
     <PublicationEditorModal></PublicationEditorModal>
     <AccountSwitcherModal></AccountSwitcherModal>
-    
+
     <StoriesEditorModal v-if="openStoriesEditorModal"></StoriesEditorModal>
-    
+
     <CheatSheetsPanel></CheatSheetsPanel>
-    
-    <Soundbar></Soundbar>
-    
+
+    <SoundbarMainContext></SoundbarMainContext>
+
     <ConfirmationModal></ConfirmationModal>
 
     <LightboxPlayer></LightboxPlayer>
@@ -30,8 +30,8 @@
 </template>
 
 <script>
-    import { defineComponent, watch, ref, computed, onMounted, defineAsyncComponent } from 'vue';
-    import { useRoute } from 'vue-router';
+    import { defineComponent, computed, defineAsyncComponent } from 'vue';
+
     import { useStoriesEditorStore } from '@D/store/stories/editor.store.js';
     import { useNotificationsStore } from '@D/store/notifications/notifications.store.js';
 
@@ -50,19 +50,8 @@
         setup: function() {
             const storiesEditorStore = useStoriesEditorStore();
             const notificationsStore = useNotificationsStore();
-            const route = useRoute();
-            const rightOffset = ref(false);
-            
-            watch(route, function() {
-                rightOffset.value = route.meta.rightOffset;
-            });
-
-            onMounted(async () => {
-                rightOffset.value = route.meta.rightOffset;
-            });
 
             return {
-                rightOffset: rightOffset,
                 openStoriesEditorModal: computed(() => {
                     return storiesEditorStore.isOpen;
                 }),
@@ -79,8 +68,8 @@
             NotificationsModal: NotificationsModal,
             LightboxPlayer: LightboxPlayer,
             PublicationEditorModal: PublicationEditorModal,
-            Soundbar: defineAsyncComponent(() => {
-                return import('@D/components/soundbar/Soundbar.vue')
+            SoundbarMainContext: defineAsyncComponent(() => {
+                return import('@D/components/soundbar/SoundbarMainContext.vue')
             }),
             StoriesEditorModal: defineAsyncComponent(() => {
                 return import('@D/components/stories/modals/StoriesEditorModal.vue');

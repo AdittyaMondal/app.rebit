@@ -96,13 +96,13 @@ class Upsert extends Component
         $rules = [
             'formData.title' => [
                 'required',
-                'string', 
+                'string',
                 XRule::join('min', config('marketplace.product.validation.title.min')),
                 XRule::join('max', config('marketplace.product.validation.title.max')),
             ],
             'formData.description' => [
                 'required',
-                'string', 
+                'string',
                 XRule::join('min', config('marketplace.product.validation.desc.min')),
                 XRule::join('max', config('marketplace.product.validation.desc.max')),
             ],
@@ -148,9 +148,9 @@ class Upsert extends Component
             'currency' => $this->formData['currency'],
             'address' => e($this->formData['address']),
             'discount' => $this->formData['discount'],
-            
+
         ];
-        
+
         if($this->upsertType == 'create') {
             // Never change status on update. Add once on create.
             // User can change it from overview page.
@@ -166,7 +166,7 @@ class Upsert extends Component
                 $upsertData['approval'] = ProductApproval::PENDING;
             }
         }
-            
+
         $this->productData->update($upsertData);
 
         return redirect()->route('business.market.index');
@@ -192,7 +192,7 @@ class Upsert extends Component
 
                 $this->productMedia = $this->productData->media;
             }
-            
+
             catch (Throwable $th) {
                 $this->addError('image', $th->getMessage());
             }
@@ -214,18 +214,19 @@ class Upsert extends Component
                 ], attributes: [
                     'image' => __('business/market.form.product_image')
                 ]);
-    
+
                 $imageUploadService = app(ImageUploadService::class);
                 $roundRobinService = app(RoundRobinService::class);
-                
+
                 $imageData = $imageUploadService
                     ->load($this->image->getRealPath())
+                    ->setNamespace(Filesystem::mediaNamespace('products/images'))
                     ->setStorageDisk($roundRobinService->getNextDisk())
-                    ->setNamespace(Filesystem::getProductImageNamespace())
+                    ->watermark()
                     ->crop(config('marketplace.product.image_width'), config('marketplace.product.image_height'))
                     ->compress()
                     ->upload();
-    
+
                 if($imageData) {
                     $this->productData->media()->create([
                         'source_path' => $imageData['image_path'],
@@ -241,7 +242,7 @@ class Upsert extends Component
                     $this->productMedia = $this->productData->media;
                 }
             }
-            
+
             catch (ValidationException $e) {
                 $this->addError('image', $e->getMessage());
             }
