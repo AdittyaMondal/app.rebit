@@ -2,12 +2,7 @@
 
 @section('pageContent')
 <div x-data="alpineComponent">
-	<div class="mb-4">
-        <x-page-title titleText=" {{ __('admin/posts.show_title') }}"></x-page-title>
-        <x-page-desc>
-            {{ __('admin/posts.show_desc') }}
-        </x-page-desc>
-    </div>
+    <x-page-title titleText=" {{ __('admin/posts.show_title') }}"></x-page-title>
 
 	<x-sided-content>
 		<x-slot:sideContent>
@@ -15,8 +10,8 @@
 		</x-slot:sideContent>
 
 		<div class="mb-8">
-			<x-entity.header 
-				avatarUrl="{{ $postData->user->avatar_url }}" 
+			<x-entity.header
+				avatarUrl="{{ $postData->user->avatar_url }}"
 				name="{{ $postData->user->name }}"
 			caption="{{ $postData->user->caption }}">
 
@@ -28,6 +23,22 @@
 							</span>
 						</x-slot:dropdownButton>
 
+						@unless($isPinnedGlobal)
+							<x-ui.dropdown.item tag="a" href="#" x-on:click="pinPost" itemText="{{ __('admin/dd.post.pin') }}">
+								<x-slot:itemIcon>
+									<x-ui-icon type="line" name="pin-02"></x-ui-icon>
+								</x-slot:itemIcon>
+							</x-ui.dropdown.item>
+						@else
+							<x-ui.dropdown.item tag="a" href="#" x-on:click="unpinPost" itemText="{{ __('admin/dd.post.unpin') }}">
+								<x-slot:itemIcon>
+									<x-ui-icon type="line" name="pin-01"></x-ui-icon>
+								</x-slot:itemIcon>
+							</x-ui.dropdown.item>
+						@endif
+						<x-div></x-div>
+
+
 						<x-ui.dropdown.item tag="a" href="{{ $postData->user->profile_url }}" target="_blank" itemText="{{ __('admin/dd.user.view_profile') }}">
 							<x-slot:itemIcon>
 								<x-ui-icon type="line" name="user-02"></x-ui-icon>
@@ -38,6 +49,7 @@
 								<x-ui-icon type="line" name="arrow-up-right"></x-ui-icon>
 							</x-slot:itemIcon>
 						</x-ui.dropdown.item>
+						<x-div></x-div>
 						<x-ui.dropdown.item tag="a" :danger="true" x-on:click="deletePost" itemText="{{ __('admin/dd.post.delete') }}">
 							<x-slot:itemIcon>
 								<x-ui-icon type="line" name="trash-04"></x-ui-icon>
@@ -71,6 +83,16 @@
 						</a>
 					</x-slot:labelValue>
 				</x-line-table.row>
+				@if($isPinnedGlobal)
+					<x-line-table.row>
+						<x-slot:labelText>
+							{{ __('table.labels.pinned_global') }}
+						</x-slot:labelText>
+						<x-slot:labelValue>
+							{{ __('labels.yes') }} 📌
+						</x-slot:labelValue>
+					</x-line-table.row>
+				@endif
 				<x-line-table.row>
 					<x-slot:labelText>
 						{{ __('table.labels.type') }}
@@ -179,6 +201,22 @@
 						title: "{{ __('admin/prompt.delete_post.title') }}",
 						desc: "{{ __('admin/prompt.delete_post.description') }}",
 						formAction: "{{ route('admin.posts.destroy', $postData->id) }}"
+					});
+				},
+				pinPost: () => {
+					Alpine.store('confirmModal').open({
+						title: "{{ __('admin/prompt.pin_post.title') }}",
+						desc: "{{ __('admin/prompt.pin_post.description') }}",
+						formAction: "{{ route('admin.posts.pin', $postData->id) }}",
+						confirmButtonText: "{{ __('admin/prompt.pin_post.confirm_btn_text') }}"
+					});
+				},
+				unpinPost: () => {
+					Alpine.store('confirmModal').open({
+						title: "{{ __('admin/prompt.unpin_post.title') }}",
+						desc: "{{ __('admin/prompt.unpin_post.description') }}",
+						formAction: "{{ route('admin.posts.unpin', $postData->id) }}",
+						confirmButtonText: "{{ __('admin/prompt.unpin_post.confirm_btn_text') }}"
 					});
 				}
 			}

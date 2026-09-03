@@ -1,0 +1,49 @@
+# Build context hygiene. Everything here is either rebuilt inside the image,
+# secret, or irrelevant to the build.
+
+.git
+.github
+.claude
+.graphifyignore
+graphify-out
+
+# Rebuilt inside the image
+vendor
+node_modules
+public/build
+public/hot
+public/storage
+storage/frontend/build.num
+
+# Secrets / data — never bake into an image
+.env
+.env.*
+!.env.example
+*.sql
+*.sql.gz
+*.dump
+
+# Working copies and vendor drops
+dev
+real
+
+# Runtime state
+storage/app
+storage/logs/*.log
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/debugbar
+bootstrap/cache/*.php
+
+# Large binaries fetched at build time instead
+services/ffmpeg/bin
+
+# Local tooling / OS
+.DS_Store
+Thumbs.db
+*.swp
+.idea
+.vscode
+.fleet
+docker/database

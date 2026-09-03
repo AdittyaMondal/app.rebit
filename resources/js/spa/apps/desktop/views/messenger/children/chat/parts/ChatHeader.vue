@@ -15,35 +15,44 @@
 							{{ $t('chat.typing') }}
 						</template>
 						<template v-else>
-							{{ $t('labels.was_online_at', { time: chatData.chat_info.last_active.formatted }) }}
+                            <template v-if="chatData.chat_info.last_active">
+                                {{ $t('labels.was_online_at', { time: chatData.chat_info.last_active.formatted }) }}
+                            </template>
+                            <template v-else>
+                                {{ $t('labels.was_online_at', { time: 'N/A' }) }}
+                            </template>
 						</template>
 					</template>
 				</span>
-			</div> 
+			</div>
 		</div>
 		<div class="inline-flex gap-2.5">
-			<PrimaryIconButton v-on:click="$comingSoon" iconName="search-lg"></PrimaryIconButton>
 			<template v-if="chatData.is_group">
 				<RouterLink v-bind:to="{ name: 'messenger_group_show', params: { chat_id: chatData.id } }">
 					<PrimaryIconButton iconName="info-circle" iconType="line"></PrimaryIconButton>
 				</RouterLink>
 			</template>
 			<template v-else>
-				<PrimaryIconButton v-on:click="$comingSoon" v-bind:disabled="true" iconName="phone" iconType="line"></PrimaryIconButton>
 				<PrimaryIconButton v-on:click="openInfo" iconName="layout-right" iconType="line"></PrimaryIconButton>
 			</template>
 		</div>
 	</div>
+    <div v-if="showSoundbar" class="border-t border-bord-card">
+        <SoundbarPlayer context="chat"></SoundbarPlayer>
+    </div>
 </template>
 
 <script>
-	import { defineComponent, ref, computed } from 'vue';
+	import { defineComponent, ref, computed, onMounted, onBeforeUnmount } from 'vue';
 	import { useChatStore } from '@D/store/chats/chat.store.js';
 	import { useRouter } from 'vue-router';
-	
+    import { useAudioStore } from '@D/store/audio/audio.store.js';
+    import { colibriEventBus } from '@/kernel/events/bus/index.js';
+
 	import AvatarSmall from '@D/components/general/avatars/AvatarSmall.vue';
 	import PrimaryIconButton from '@D/components/inter-ui/buttons/PrimaryIconButton.vue';
-	
+    import SoundbarPlayer from '@D/components/soundbar/SoundbarPlayer.vue';
+
 	export default defineComponent({
 		emits: ['info'],
 		props: {
@@ -59,6 +68,15 @@
 			const chatStore = useChatStore();
 			const chatData = ref(chatStore.chatData);
 			const router = useRouter();
+            const audioStore = useAudioStore();
+
+            onMounted(() => {
+                colibriEventBus.emit('soundbar:reset');
+            });
+
+            onBeforeUnmount(() => {
+                colibriEventBus.emit('soundbar:reset');
+            });
 
 			return {
 				chatData: chatData,
@@ -67,7 +85,7 @@
 				}),
 				openInfo: () => {
 					if(chatData.value.type == 'group') {
-						router.push({ name: 'messenger_group_show', params: { 
+						router.push({ name: 'messenger_group_show', params: {
 								chat_id: chatData.value.chat_id,
 								group_id: chatData.value.chat_info.id
 							}
@@ -75,12 +93,16 @@
 					} else {
 						context.emit('info');
 					}
-				}
+				},
+                showSoundbar: computed(() => {
+                    return audioStore.audioData !== null;
+                })
 			};
 		},
 		components: {
 			AvatarSmall: AvatarSmall,
-			PrimaryIconButton: PrimaryIconButton
+			PrimaryIconButton: PrimaryIconButton,
+			SoundbarPlayer: SoundbarPlayer
 		}
 	});
 </script>

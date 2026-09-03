@@ -1,10 +1,25 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Database\Configs;
 
 class Table
 {
+    public const CASHOUTS = 'cashouts';
+    public const BLOCKS = 'blocks';
+    public const MUTES = 'mutes';
     public const POST_POLLS = 'post_polls';
     public const USERS = 'users';
     public const POSTS = 'posts';
@@ -54,4 +69,5 @@ class Table
     public const CHAT_INVITES = 'chat_invites';
     public const ARCHIVED_CHATS = 'archived_chats';
     public const AUTHORSHIP_REQUESTS = 'authorship_requests';
+    public const PINS = 'pins';
 }

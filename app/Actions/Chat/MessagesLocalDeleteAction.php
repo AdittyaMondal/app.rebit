@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Actions\Chat;
 
@@ -10,18 +22,17 @@ class MessagesLocalDeleteAction
 {
 	private Collection $messagesList;
 
-	public function __construct(Collection $messagesList)
-	{
+	public function __construct(Collection $messagesList) {
 		$this->messagesList = $messagesList;
 	}
 
 	public function execute()
 	{
-		HiddenMessage::insert($this->messagesList->map(function ($item) {
+		HiddenMessage::insert($this->messagesList->map(function($item) {
 			return [
-			'message_id' => $item->id,
-			'chat_id' => $item->chat_id,
-			'user_id' => me()->id
+				'message_id' => $item->id,
+				'chat_id' => $item->chat_id,
+				'user_id' => me()->id
 			];
 		})->toArray());
 	}

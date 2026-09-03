@@ -6,7 +6,7 @@
 	</div>
 
 	<LightboxPlayer></LightboxPlayer>
-	
+
 	<ConfirmationModal></ConfirmationModal>
 
 	<ApplicationNavbar v-if="! hideNavbar"></ApplicationNavbar>
@@ -14,8 +14,6 @@
 	<ReportModal></ReportModal>
 
 	<NotificationsModal v-if="isNotificationsOpen"></NotificationsModal>
-
-	
 </template>
 
 <script>
@@ -34,8 +32,8 @@
 	import ConfirmationModal from '@M/components/general/modals/prompt/ConfirmationModal.vue';
 	import ReportModal from '@M/components/reports/ReportModal.vue';
 	import NotificationsModal from '@M/components/notifications/native/NotificationsModal.vue';
-	
-	
+
+
 	export default defineComponent({
 		setup: function() {
 			const notificationsStore = useNotificationsStore();

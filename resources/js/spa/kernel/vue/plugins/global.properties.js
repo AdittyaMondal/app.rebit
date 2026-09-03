@@ -11,7 +11,7 @@ export default {
 
         app.config.globalProperties.$money = function (amount) {
             let currency = embedder('config.app.currency');
-
+            
             return `${amount} ${currency.symbol}`;
         };
 
@@ -27,58 +27,58 @@ export default {
             return embedder('links.base_url') + path;
         };
 
-        app.config.globalProperties.$embedder = function (path, defaultValue = undefined) {
+        app.config.globalProperties.$embedder = function(path, defaultValue = undefined) {
             return embedder(path, defaultValue);
         }
 
-        app.config.globalProperties.$config = function (path, defaultValue = undefined) {
+        app.config.globalProperties.$config = function(path, defaultValue = undefined) {
             return config(path, defaultValue);
         }
 
-        app.config.globalProperties.$comingSoon = function () {
-            alert('This feature is still under development.\nPlease check the new Rebit Telegram channel to stay updated.');
+        app.config.globalProperties.$comingSoon = function() {
+            alert('This feature is still under development.\nPlease check the new ColibriPlus Telegram channel to stay updated.');
         }
 
-        app.config.globalProperties.$isStandalone = function () {
+        app.config.globalProperties.$isStandalone = function() {
             return isStandalone();
         }
 
         app.config.globalProperties.$filters = {
-            formatNumber: function (value) {
+            formatNumber: function(value) {
                 return Num.make(value).format().value();
             },
-            linkifyText: function (value) {
+            linkifyText: function(value) {
                 return Str.make(value).linkifyText().value();
             },
-            fileSize: function (value) {
+            fileSize: function(value) {
                 return Str.make(value).fileSize().value();
             },
-            mediaDuration: function (durationTime) {
+            mediaDuration: function(durationTime) {
                 let duration = `${durationTime.minutes}:${durationTime.seconds}`;
 
-                if (durationTime.hours != '00') {
+                if(durationTime.hours != '00') {
                     duration = `${durationTime.hours}:${duration}`;
                 }
 
                 return duration;
             },
-            formatTime: function (seconds) {
+            formatTime: function(seconds) {
                 return Str.make(seconds).timeFormat().value();
             },
-            secondsToDuration: function (seconds) {
+            secondsToDuration: function(seconds) {
                 const hours = Math.floor(seconds / 3600);
                 const minutes = Math.floor((seconds % 3600) / 60);
                 const remainingSeconds = Math.floor(seconds % 60);
 
                 return {
                     hours: hours.toString().padStart(2, '0'),
-                    minutes: minutes.toString().padStart(2, '0'),
+                    minutes: minutes.toString().padStart(2, '0'), 
                     seconds: remainingSeconds.toString().padStart(2, '0')
                 };
             }
         };
 
-        app.config.globalProperties.$mdInline = function (text, options = {}) {
+        app.config.globalProperties.$mdInline = function(text, options = {}) {
             return mdInlineRenderer(text, options);
         };
     }

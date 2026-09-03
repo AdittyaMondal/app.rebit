@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Timeline;
 
@@ -18,12 +30,12 @@ use App\Traits\Http\Controllers\Api\User\Timeline\InteractsWithDraftPost;
 class PostAudioController extends Controller
 {
     use InteractsWithDraftPost,
-    SupportsApiResponses,
-    ValidatesPostAudio;
-
+        SupportsApiResponses, 
+        ValidatesPostAudio;
+    
     private $audioUploadService;
     private $roundRobinService;
-
+    
     public function __construct(AudioUploadService $audioUploadService, RoundRobinService $roundRobinService)
     {
         $this->audioUploadService = $audioUploadService;
@@ -40,9 +52,9 @@ class PostAudioController extends Controller
 
         $this->fetchOrInitializeDraftPost();
 
-        if ($this->draftPost->type->isTextified()) {
+        if($this->draftPost->type->isTextified()) {
 
-            if (!$this->draftPost->exists) {
+            if(! $this->draftPost->exists) {
                 $this->draftPost->type = PostType::AUDIO;
                 $this->draftPost->save();
             }
@@ -74,8 +86,7 @@ class PostAudioController extends Controller
                     ]
                 ]);
 
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 return $this->responseValidationError([
                     'message' => $e->getMessage(),
                     'errors' => [
@@ -87,9 +98,9 @@ class PostAudioController extends Controller
             }
         }
 
-        else {
+        else{
             $errorMessage = __('post.validation.wrong_type_attachment', ['file_type' => __('labels.audio')]);
-
+            
             return $this->responseValidationError([
                 'message' => $errorMessage,
                 'errors' => [

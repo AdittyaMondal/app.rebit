@@ -17,21 +17,21 @@ class NewFollowerNotification extends Notification implements ShouldQueue
         BaseNotification,
         HasUserActor;
 
-    private array $actorData;
-    
+    public array $actorData;
+
+    public $notificationType = Notifications::FOLLOWED;
+
     public function __construct()
     {
         $this->actorData = $this->getUserActor();
     }
-
-    private $notificationType = Notifications::FOLLOWED;
 
     public function via(object $notifiable): array
     {
         $channels = [];
 
 		if($notifiable->pushNotificationSettings->followers) {
-			if($this->isPushEnabled()) {    
+			if($this->isPushEnabled()) {
 				array_push($channels, WebPushChannel::class);
 			}
 

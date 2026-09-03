@@ -29,12 +29,12 @@
                         </div>
                     </div>
                     <div class="block" v-if="postComments.length">
-                        
+
                         <div v-for="(commentItem, idx) in postComments">
                             <PublicationComment
                                 v-on:delete="handleCommentDelete"
-                                v-on:reply="handleCommentReply" 
-                                v-bind:key="commentItem.id" 
+                                v-on:reply="handleCommentReply"
+                                v-bind:key="commentItem.id"
                             v-bind:commentData="commentItem"></PublicationComment>
                             <Border v-if="idx != (postComments.length - 1)"></Border>
                         </div>
@@ -53,7 +53,7 @@
 
         <template v-slot:sidebar>
             <FollowRecommendationList></FollowRecommendationList>
-    
+
             <AdGridItem></AdGridItem>
         </template>
     </SidedContentLayout>
@@ -72,7 +72,7 @@
     import TimelinePublication from '@D/components/timeline/feed/TimelinePublication.vue';
     import PublicationComment from '@D/components/timeline/feed/parts/comment/PublicationComment.vue';
     import PageHeader from '@D/components/layout/PageHeader.vue';
-    
+
     import SidedContentLayout from '@D/components/layout/SidedContentLayout.vue';
     import TimelinePublicationSkeleton from '@D/components/timeline/feed/TimelinePublicationSkeleton.vue';
     import TimelineContainer from '@D/components/layout/TimelineContainer.vue';
@@ -93,7 +93,7 @@
                 isLoadingComments: false,
                 noMoreComments: false
             });
-            
+
             const { postDeleter } = useDeletePost();
             const postData = ref({});
             const postAuthor = ref({});
@@ -102,11 +102,11 @@
             const fetchComments = async () => {
                 if (postComments.value.length && ! state.noMoreComments && ! state.isLoadingComments) {
                     const cursorId = postComments.value.at(-1).id;
-                    
+
                     if (cursorId) {
                         state.isLoadingComments = true;
 
-                        await colibriAPI().userTimeline().params({ 
+                        await colibriAPI().userTimeline().params({
                             cursor: cursorId
                         }).getFrom(`post/${route.params.hash_id}/comments`).then(function(response) {
                             let comments = response.data.data;

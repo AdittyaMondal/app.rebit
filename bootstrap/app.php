@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Ultimate Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -13,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))->withRouting(
         channels: __DIR__.'/../routes/channels.php',
         health: '/up',
         using: function() {
-            Route::prefix(config('app.admin_prefix'))->middleware(['web', 'auth', 'admin'])->group(base_path('routes/admin/web.php'));
+            Route::prefix(config('app.admin_prefix'))->middleware('admin-area')->group(base_path('routes/admin/web.php'));
             Route::middleware(['web', 'restrict.ip', 'device.identifier', 'terminator'])->group(base_path('routes/downloads.php'));
             Route::middleware(['web', 'restrict.ip', 'device.identifier', 'terminator'])->group(base_path('routes/social.php'));
             Route::middleware(['web', 'restrict.ip', 'device.identifier', 'terminator'])->group(base_path('routes/document.php'));
@@ -28,30 +40,35 @@ return Application::configure(basePath: dirname(__DIR__))->withRouting(
 
             $middleware->redirectGuestsTo('auth/login');
 
+
             $middleware->alias([
                 'user.status' => App\Http\Middleware\UserStatusMiddleware::class,
                 'device.identifier' => App\Http\Middleware\DeviceIdentifierMiddleware::class,
                 'terminator' => App\Http\Middleware\TerminatingMiddleware::class,
                 'restrict.ip' => App\Http\Middleware\RestrictIPAddressMiddleware::class,
+                'features.status' => App\Http\Middleware\FeatureStatusMiddleware::class,
                 'sided.layout' => App\Http\Middleware\SidedLayoutMiddleware::class,
                 'api.key' => App\Http\Middleware\VerifyApiKey::class,
                 'admin' => App\Http\Middleware\AdminRoleMiddleware::class,
                 'log.request' => App\Http\Middleware\LogRequestMiddleware::class,
             ]);
-            
+
             $middleware->web(append: [
                 App\Http\Middleware\UserLanguageMiddleware::class,
                 App\Http\Middleware\UserOnlineMiddleware::class
             ]);
-            
+
             $middleware->api(append: [
                 App\Http\Middleware\UserLanguageMiddleware::class,
                 App\Http\Middleware\UserOnlineMiddleware::class
             ]);
-            
+
             $middleware->statefulApi();
 
             $middleware->trustProxies('*');
+
+            $middleware->group('admin-area', ['web', 'admin']);
+
         })->withExceptions(function (Exceptions $exceptions) {
-            
+
         })->create();

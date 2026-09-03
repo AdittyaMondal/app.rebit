@@ -1,7 +1,7 @@
 @extends('businessLayout::index')
 
 @section('pageContent')
-    <div class="w-content">
+    <div class="w-full max-w-[var(--spacing-content)] border border-bord-sc rounded-2xl">
         <div class="rounded-2xl overflow-hidden">
             <div class="bg-lab-pr text-bg-pr p-6">
                 <div class="mb-2">
@@ -12,7 +12,7 @@
                 <h4 class="text-title-3 tracking-tighter font-medium">
                     {{ __('labels.hi_user', ['name' => me()->first_name]) }}
                 </h4>
-                
+
                 <p class="opacity-90 text-par-n">
                     {{ __('business/dashboard.welcome_title') }}
                 </p>

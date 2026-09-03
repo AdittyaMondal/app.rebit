@@ -3,7 +3,7 @@
 		<ToastNotification></ToastNotification>
 		<StoryFileUploader></StoryFileUploader>
 
-		<div class="grid grid-cols-5 h-14 mb-safe-bottom">
+		<div class="grid grid-cols-7 h-14 mb-safe-bottom">
 			<div class="flex items-center justify-center">
 				<RouterLink v-bind:to="{ name: 'home_index' }">
 					<PrimaryIconButton buttonColor="text-lab-pr" iconName="home-smile" iconType="line"></PrimaryIconButton>
@@ -14,8 +14,18 @@
 					<PrimaryIconButton buttonColor="text-lab-pr" iconName="search-lg" iconType="solid"></PrimaryIconButton>
 				</RouterLink>
 			</div>
+			<div class="flex items-center justify-center" v-if="$config('features.marketplace.enabled')">
+				<RouterLink v-bind:to="{ name: 'marketplace_index' }">
+					<PrimaryIconButton buttonColor="text-lab-pr" iconName="shopping-bag-03" iconType="line"></PrimaryIconButton>
+				</RouterLink>
+			</div>
 			<div class="flex items-center justify-center">
 				<PrimaryIconButton v-on:click="state.mainMenu.open" buttonColor="text-lab-pr" iconName="plus-square-dashed" iconType="line"></PrimaryIconButton>
+			</div>
+			<div class="flex items-center justify-center" v-if="$config('features.jobs.enabled')">
+				<RouterLink v-bind:to="{ name: 'jobs_index' }">
+					<PrimaryIconButton buttonColor="text-lab-pr" iconName="briefcase-01" iconType="line"></PrimaryIconButton>
+				</RouterLink>
 			</div>
 			<div class="flex items-center justify-center">
 				<div class="relative">

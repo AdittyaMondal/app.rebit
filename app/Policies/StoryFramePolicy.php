@@ -9,6 +9,6 @@ class StoryFramePolicy
 {
     public function delete(User $user, StoryFrame $frameData)
     {
-        return $user->id === $frameData->story->user_id || $user->isAdmin();
+        return $user->id === $frameData->story->user_id || $user->isRoot();
     }
 }

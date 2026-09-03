@@ -39,18 +39,9 @@ class WorldService
 
     public function getUserCategories(): array
     {
-        $localPath = var_path("world/user_categories/{$this->locale}.php");
+        $userFields = $this->getUserFields();
 
-        if(file_exists($localPath)) {
-            $userCategories = require($localPath);
-
-            return $userCategories;
-        }
-        else{
-            Log::error("The [{$this->locale}] user categories file is missing.");
-
-            throw new Exception("Required user categories [{$this->locale}] configuration file is missing.");
-        }
+        return $userFields['categories'] ?? [];
     }
 
     public function getCountryKeys(): array
@@ -65,5 +56,16 @@ class WorldService
         return collect($countries)->first(function($v, $key) use ($isoCode) {
             return $key == $isoCode;
         }, '--Country-Not-Found--');
+    }
+
+    private function getUserFields(): array
+    {
+        $localPath = var_path("world/user_fields/{$this->locale}.php");
+
+        if(file_exists($localPath)) {
+            $userFields = require($localPath);
+        }
+
+        return $userFields;
     }
 }

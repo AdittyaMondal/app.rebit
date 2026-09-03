@@ -11,9 +11,9 @@ class AddAdmin extends Command
 {
     use ValidatesInput;
     
-    protected $signature = 'admin:add';
+    protected $signature = 'admin:root';
 
-    protected $description = 'This command assigns the admin role to the provided user.';
+    protected $description = 'This command assigns the root admin role to the provided user.';
 
     public function handle()
     {
@@ -32,10 +32,11 @@ class AddAdmin extends Command
         }
 
         $adminData->update([
-            'role' => UserRole::ADMIN
+            'role' => UserRole::ROOT
         ]);
 
-        $this->info('Admin role assigned successfully.');
+        $this->info('Admin (Root) has been added successfully.');
+        $this->warn('Please use this mention to add root admin role to the first user in the system.');
 
         return true;
     }

@@ -16,12 +16,12 @@ class PaymentReceivedNotification extends Notification implements ShouldQueue
         BaseNotification,
         HasUserActor;
 
-    private $notificationType = Notifications::PAYMENT_RECEIVED;
+    public $notificationType = Notifications::PAYMENT_RECEIVED;
 
-    private array $actorData;
+    public array $actorData;
 
     private string $amount;
-    
+
     public function __construct(string $amount)
     {
         $this->actorData = $this->getUserActor();

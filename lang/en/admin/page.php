@@ -2,9 +2,7 @@
 
 return [
     'index_title' => 'Static pages',
-    'index_desc' => 'Here you can edit the static pages of the platform.',
 	'edit_title' => 'Edit page',
-	'edit_desc' => 'Edit the static pages of the platform. You can add translations for every language supported on your platform.',
 	'static_pages' => [
 		'about' => [
 			'title' => 'About us',

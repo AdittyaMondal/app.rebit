@@ -1,5 +1,5 @@
 <template>
-	<div class="flex gap-3 flex-wrap">
+	<div class="flex gap-3 flex-wrap" v-if="profileData.caption || profileData.country || profileData.join_date">
 		<div v-if="profileData.caption" class="inline-flex gap-1 text-lab-sc leading-zero items-center">
 			<span class="text-lab-tr">
 				<SvgIcon name="briefcase-01" type="line" classes="size-icon-small"></SvgIcon>
@@ -16,7 +16,7 @@
 				{{ profileData.country_name }}, <span v-if="profileData.city">{{ profileData.city }}</span>
 			</span>
 		</div>
-		<div class="inline-flex gap-1 text-lab-sc leading-zero items-center">
+		<div v-if="profileData.join_date" class="inline-flex gap-1 text-lab-sc leading-zero items-center">
 			<span class="text-lab-tr">
 				<SvgIcon name="calendar-check-01" type="line" classes="size-icon-small"></SvgIcon>
 			</span>
@@ -29,7 +29,7 @@
 
 <script>
 	import { defineComponent, inject } from 'vue';
-	
+
 	export default defineComponent({
 		setup: function() {
 			const profileData = inject('profileData');

@@ -5,12 +5,7 @@
 @endsection
 
 @section('pageContent')
-	<div class="mb-4">
-        <x-page-title titleText=" {{ __('admin/ban.show_title') }}"></x-page-title>
-        <x-page-desc>
-            {{ __('admin/ban.show_desc') }}
-        </x-page-desc>
-    </div>
+    <x-page-title titleText=" {{ __('admin/ban.show_title') }}"></x-page-title>
 
 	<div x-data="alpineComponent">
 		<x-sided-content>
@@ -19,8 +14,8 @@
 			</x-slot:sideContent>
 
 			<div class="mb-4">
-				<x-entity.header 
-					avatarUrl="{{ asset('assets/icons/avatar/slash-octagon.png') }}" 
+				<x-entity.header
+					avatarUrl="{{ asset('assets/icons/avatar/slash-octagon.png') }}"
 					name="{{ __('labels.blacklisted_content') }}">
 
 					<x-slot:controlOptions>

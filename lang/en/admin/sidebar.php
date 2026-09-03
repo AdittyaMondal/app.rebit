@@ -2,7 +2,8 @@
 
 return [
 	'home' => 'Home',
-    'dashboard' => 'Dashboard',
+    'branding' => 'Branding & Design',
+    'dashboard' => 'Overview',
 	'chats_groups' => 'Chats & Groups',
 	'users' => 'All users',
 	'general_settings' => 'General settings',
@@ -32,4 +33,15 @@ return [
 	'lab_tools' => 'Lab Tools',
 	'documentation' => 'Documentation',
 	'authorship' => 'Authorship requests',
+	'settings' => 'Settings',
+    'email_testing' => 'Email (SMTP) Testing',
+    'ffmpeg_settings' => 'FFMPEG Settings',
+    'ffmpeg_testing' => 'FFMPEG Testing',
+    'acquiring_settings' => 'Acquiring Settings',
+    'social_login' => 'Social Login',
+    'wallet_settings' => 'Wallet Settings',
+    'auth_settings' => 'Auth Settings',
+    'mobile_app_settings' => 'Mobile App Settings',
+    'custom_code' => 'Custom Code Injection',
+    'pwa_settings' => 'PWA Settings',
 ];

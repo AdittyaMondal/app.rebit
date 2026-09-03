@@ -12,7 +12,7 @@ class CDLocaleAction
 	 * It's not recommended to have more than one action per Action class.
 	 * This case is an exception. Delete and Create actions have the same logic.
 	 * 
-	 * (c) Team Rebit. Rebit Developer.
+	 * (c) Mansur Terla. ColibriPlus Developer.
 	 */
 
 	private string $localeCode;
@@ -23,6 +23,14 @@ class CDLocaleAction
 
 	public function __construct(string $localeCode)
 	{
+		// Guarded here rather than at the callers: localeCode is interpolated
+		// straight into copyDirectory()/deleteDirectory() paths below, so a
+		// value like '..' would resolve to the project root. 'size:2' on the
+		// request does not reject that.
+		if (! preg_match('/^[a-z]{2}$/', $localeCode)) {
+			throw new Exception("Invalid locale code: {$localeCode}");
+		}
+
 		$this->localeCode = $localeCode;
 
 		$this->translationPaths = [
@@ -33,7 +41,7 @@ class CDLocaleAction
 				var_path('world/countries'),
 				var_path('world/reports/post'),
 				var_path('world/reports/user'),
-				var_path('world/user_categories'),
+				var_path('world/user_fields'),
 			],
 		];
 	}
@@ -56,7 +64,7 @@ class CDLocaleAction
 	public function deleteLocale()
 	{
 		// Avoid deleting permanent locales.
-
+		
 		if (in_array($this->localeCode, config('localization.permanent_locales'))) {
 			throw new Exception("Cannot delete permanent locale: {$this->localeCode}");
 

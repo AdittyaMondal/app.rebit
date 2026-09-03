@@ -2,12 +2,7 @@
 
 @section('pageContent')
     <div class="mb-6">
-        <div class="mb-4">
-            <x-page-title titleText="{{ __('business/ads.index_title') }}"></x-page-title>
-            <x-page-desc>
-                {{ __('business/ads.index_desc') }} <a href="{{ asset(config('ads.document_links.advertising_guide')) }}" target="_blank" class="text-brand-900 underline">{{ __('labels.learn_more') }} &raquo;</a>
-            </x-page-desc>
-        </div>
+        <x-page-title titleText="{{ __('business/ads.index_title') }}"></x-page-title>
         <x-tabs.tabs>
             <x-tabs.tab-item :active="$type == 'all'" href="{{ route('business.ads.index', ['type' => 'all']) }}" textLabel="{{ __('business/ads.tabs.all') }}"></x-tabs.tab-item>
             <x-tabs.tab-item :active="$type == 'active'" href="{{ route('business.ads.index', ['type' => 'active']) }}" textLabel="{{ __('business/ads.tabs.active') }}"></x-tabs.tab-item>
@@ -16,7 +11,7 @@
     </div>
 
     @if($adsList->isNotEmpty())
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach ($adsList as $adData)
                 @include('business::ads.parts.index.ad-card', [
                     'adData' => $adData

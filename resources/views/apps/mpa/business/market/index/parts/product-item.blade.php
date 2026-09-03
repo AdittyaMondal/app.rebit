@@ -12,12 +12,7 @@
 		</div>
 	</x-table.td>
 	<x-table.td>
-		<div class="flex items-center gap-2">
-			{{ $productData->stock_quantity }}
-			@if($productData->stock_quantity <= 0)
-				<span class="text-cap-s font-semibold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full whitespace-nowrap">Out of stock</span>
-			@endif
-		</div>
+		{{ $productData->stock_quantity }}
 	</x-table.td>
 	<x-table.td>
 		{{ $productData->formatted_price }}

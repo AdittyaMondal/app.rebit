@@ -23,7 +23,7 @@ class DashController extends Controller
     private function getMetrics()
     {
         $totalUsers = cache()->remember('admin:dash:total_users', 60, function () {
-            return User::count();
+            return User::onboarded()->count();
         });
 
         $totalPublications = cache()->remember('admin:dash:total_publications', 60, function () {

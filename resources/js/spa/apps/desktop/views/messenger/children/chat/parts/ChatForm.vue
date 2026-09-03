@@ -1,48 +1,59 @@
 <template>
-	<div class="py-4 px-6 bg-bg-pr" v-bind:class="[isReplaying ? 'border-t border-t-bord-pr' : '']">
-		<div v-if="isReplaying" class="mb-3">
-			<MessageReplyPreview v-on:cancel="cancelMessageReply" v-bind:key="repliedMessage.id" v-bind:messageData="repliedMessage"></MessageReplyPreview>
-		</div>
-		<div class="block relative leading-none">
-			<div class="absolute left-4 top-3">
-				<div class="relative">
-					<button v-on:click.stop="state.isEmojisPickerOpen = true" v-bind:disabled="state.isSubmitting" class="outline-hidden size-icon-normal text-brand-900 disabled:opacity-80 disabled:cursor-wait">
-						<SvgIcon type="line" name="face-smile"></SvgIcon>
-					</button>
-					<template v-if="state.isEmojisPickerOpen">
-						<div class="block absolute bottom-6 left-0 w-80 z-50">
-							<EmojisPicker 
-								v-on:pick="insertMessageEmoji"
-							v-on:close="state.isEmojisPickerOpen = false"></EmojisPicker>
-						</div>
-					</template>
-				</div>
-			</div>
-	
-			<textarea ref="messageInputField" class="resize-none pl-12 pr-36 pt-2.5 pb-2 leading-normal text-lab-pr font-normal text-par-l bg-fill-qt w-full h-12 min-h-12 max-h-40 overflow-x-hidden overflow-y-auto rounded-3xl outline-hidden placeholder:text-par-l placeholder:text-lab-sc placeholder:font-normal"
-				v-on:input.trim="messageInputHandler"
-				v-on:keydown.enter="submitForm"
-				v-model.trim="inputMessageText"
-			v-bind:placeholder="isReplaying ? $t('chat.write_reply') : $t('chat.write_message')"></textarea>
-	
-			<div class="absolute right-4 top-3">
-				<div class="flex gap-4">
-					<button v-on:click="$comingSoon" v-bind:disabled="true" class="outline-hidden size-icon-normal text-brand-900 disabled:opacity-60 disabled:cursor-default">
-						<SvgIcon type="line" name="image-plus"></SvgIcon>
-					</button>
-					<button v-on:click="$comingSoon" v-bind:disabled="true" class="outline-hidden size-icon-normal text-brand-900 disabled:opacity-60 disabled:cursor-default">
-						<SvgIcon type="line" name="paperclip"></SvgIcon>
-					</button>
-					<button v-if="hasTyped" v-bind:disabled="state.isSubmitting" v-on:click="submitForm" class="outline-hidden size-icon-normal text-brand-900 disabled:opacity-60 disabled:cursor-wait">
-						<SvgIcon type="solid" name="send-03"></SvgIcon>
-					</button>
-					<button v-else v-bind:disabled="true" class="outline-hidden size-icon-normal text-brand-900 disabled:opacity-60 disabled:cursor-wait">
-						<SvgIcon type="line" name="microphone-01"></SvgIcon>
-					</button>
-				</div>
-			</div>
-		</div>
+	<div class="bg-bg-pr px-6" v-bind:class="[(isReplaying || state.videoRecorder.open || state.audioRecorder.open) ? 'border-t border-t-bord-card' : '']">
+        <template v-if="state.videoRecorder.open">
+            <VideoRecordPreview></VideoRecordPreview>
+        </template>
+        <template v-else-if="state.audioRecorder.open">
+            <AudioRecorder v-on:cancel="state.audioRecorder.open = false" v-on:sendAudio="sendAudio"></AudioRecorder>
+        </template>
+        <template v-else>
+            <div class="py-4">
+                <div v-if="isReplaying" class="mb-3">
+                    <MessageReplyPreview v-on:cancel="cancelMessageReply" v-bind:key="repliedMessage.id" v-bind:messageData="repliedMessage"></MessageReplyPreview>
+                </div>
+                <div class="relative leading-none">
+                    <div class="absolute left-3 top-3">
+                        <div class="relative">
+                            <IconButton v-on:click.stop="state.isEmojisPickerOpen = true" v-bind:disabled="state.isSubmitting" iconName="face-smile" iconType="line"></IconButton>
+                            <template v-if="state.isEmojisPickerOpen">
+                                <div class="block absolute bottom-6 left-0 w-80 z-50">
+                                    <EmojisPicker
+                                        v-on:pick="insertMessageEmoji"
+                                    v-on:close="state.isEmojisPickerOpen = false"></EmojisPicker>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <textarea ref="messageInputField" class="resize-none pl-11 pr-36 pt-2.5 pb-2 leading-normal text-lab-pr font-normal text-par-l border border-bord-card w-full h-12 min-h-12 max-h-40 overflow-x-hidden overflow-y-auto rounded-3xl outline-hidden placeholder:text-par-l placeholder:text-lab-sc placeholder:font-normal"
+                        v-on:input.trim="messageInputHandler"
+                        v-on:keydown.enter="submitForm"
+                        v-model.trim="inputMessageText"
+                    v-bind:placeholder="isReplaying ? $t('chat.write_reply') : $t('chat.write_message')"></textarea>
+
+                    <div class="absolute right-4 top-3">
+                        <div class="flex gap-4">
+                            <IconButton v-if="false" v-on:click="$comingSoon" v-bind:disabled="true" iconName="paperclip" iconType="line"></IconButton>
+                            <IconButton v-if="hasTyped" v-bind:disabled="state.isSubmitting" v-on:click="submitForm" iconName="send-03" iconType="solid"></IconButton>
+                            <template v-else>
+                                <IconButton v-on:click="$refs.messageImageFileInput.click()" iconName="image-01" iconType="line"></IconButton>
+                                <IconButton v-on:click.stop="state.videoRecorder.open = true" iconName="camera-03" iconType="line"></IconButton>
+                                <IconButton v-on:click.stop="state.audioRecorder.open = true" iconName="microphone-01" iconType="line"></IconButton>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
 	</div>
+
+    <template v-if="state.videoRecorder.open">
+        <VideoRecorder v-on:sendVideo="sendVideo" v-on:cancel="state.videoRecorder.open = false"></VideoRecorder>
+    </template>
+
+    <div class="hidden">
+        <input v-on:change="sendImage" type="file" accept="image/jpeg, image/png, image/webp, image/heic, image/heif, image/heif-sequence, image/heic-sequence" ref="messageImageFileInput">
+    </div>
 </template>
 
 <script>
@@ -51,8 +62,12 @@
 	import { useChatStore } from '@D/store/chats/chat.store.js';
 	import { colibriEventBus } from '@/kernel/events/bus/index.js';
 	import { colibriSounds } from '@/kernel/services/sounds/index.js';
-	
+
 	import MessageReplyPreview from '@D/views/messenger/children/chat/parts/form/MessageReplyPreview.vue';
+    import IconButton from '@D/views/messenger/children/chat/parts/ui/IconButton.vue';
+    import VideoRecorder from '@D/views/messenger/children/chat/parts/form/VideoRecorder.vue';
+    import AudioRecorder from '@D/views/messenger/children/chat/parts/form/AudioRecorder.vue';
+    import VideoRecordPreview from '@D/views/messenger/children/chat/parts/form/VideoRecordPreview.vue';
 
 	export default defineComponent({
 		emits: ['typing'],
@@ -64,7 +79,13 @@
 			const { autoResize, insertSymbolAtCaret } = useInputHandlers();
 			const state = reactive({
 				isSubmitting: false,
-				isEmojisPickerOpen: false
+				isEmojisPickerOpen: false,
+                videoRecorder: {
+                    open: false,
+                },
+                audioRecorder: {
+                    open: false,
+                },
 			});
 
             const messageInputHandler = function() {
@@ -83,6 +104,28 @@
 				});
 			});
 
+            const sendMessage = async function(payload = null) {
+                if(payload !== null) {
+                    try {
+                        state.isSubmitting = true;
+
+                        if(repliedMessage.value) {
+                            payload['parent_id'] = repliedMessage.value.id;
+                        }
+
+                        await chatStore.sendMessage(payload);
+
+                        state.isSubmitting = false;
+                        colibriSounds.chatMessageSent();
+
+
+                        repliedMessage.value = null;
+                    } catch (error) {
+                        alert(error);
+                    }
+                }
+            }
+
 			const submitForm = async function(event) {
 				if(! state.isSubmitting) {
 					if (event.shiftKey) {
@@ -91,34 +134,49 @@
 					else{
 						event.preventDefault();
 						state.isEmojisPickerOpen = false;
-	
-						if(inputMessageText.value.length) {
-							try {
-								state.isSubmitting = true;
 
-								let payload = {
-									content: inputMessageText.value
-								};
+						await sendMessage({
+                            content: inputMessageText.value,
+                        });
 
-								if(repliedMessage.value) {
-									payload['parent_id'] = repliedMessage.value.id;
-								}
+                        inputMessageText.value = '';
 
-								await chatStore.sendMessage(payload);
-
-								state.isSubmitting = false;
-								colibriSounds.chatMessageSent();
-	
-								inputMessageText.value = '';
-								repliedMessage.value = null;
-	
-								messageInputHandler();
-							} catch (error) {
-								alert(error);
-							}
-						}
+                        messageInputHandler();
 					}
 				}
+            }
+
+            const sendVideo = async (videoData) => {
+                state.videoRecorder.open = false;
+
+                await chatStore.sendMediaMessage({
+                    type: 'video',
+                    file: videoData.blob,
+                    extension: videoData.blob.type.includes('mp4') ? 'mp4' : 'webm',
+                    duration: videoData.duration,
+                });
+            }
+
+            const sendAudio = async (audioData) => {
+                state.audioRecorder.open = false;
+
+                await chatStore.sendMediaMessage({
+                    type: 'audio',
+                    extension: audioData.blob.type.includes('mp4') ? 'mp4' : 'webm',
+                    file: audioData.blob,
+                    duration: audioData.duration,
+                });
+            }
+
+            const sendImage = async (event) => {
+                const file = event.target.files[0];
+                const extension = file.name.split('.').pop();
+
+                await chatStore.sendMediaMessage({
+                    type: 'image',
+                    extension: extension,
+                    file: file,
+                });
             }
 
 			return {
@@ -126,6 +184,8 @@
 				repliedMessage: repliedMessage,
 				messageInputHandler: messageInputHandler,
 				submitForm: submitForm,
+                sendVideo: sendVideo,
+                sendAudio: sendAudio,
 				autoResize: autoResize,
                 messageInputField: messageInputField,
                 inputMessageText: inputMessageText,
@@ -141,14 +201,19 @@
 				}),
 				cancelMessageReply: () => {
 					repliedMessage.value = null;
-				}
+				},
+                sendImage: sendImage,
 			};
 		},
 		components: {
+            IconButton: IconButton,
 			EmojisPicker: defineAsyncComponent(() => {
                 return import('@D/components/emojis/EmojisPicker.vue');
             }),
-			MessageReplyPreview: MessageReplyPreview
+			MessageReplyPreview: MessageReplyPreview,
+            VideoRecorder: VideoRecorder,
+            VideoRecordPreview: VideoRecordPreview,
+            AudioRecorder: AudioRecorder,
 		}
 	});
 </script>

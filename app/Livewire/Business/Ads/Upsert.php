@@ -24,7 +24,7 @@ use App\Services\Filesystem\RoundRobin\RoundRobinService;
 class Upsert extends Component
 {
     use WithFileUploads;
-    
+
     public Ad $adData;
     public string $upsertType;
     public $formData = [];
@@ -50,7 +50,7 @@ class Upsert extends Component
             $this->uploadCreative();
         }
     }
-    
+
     public function render()
     {
         return view('livewire.business.ads.upsert');
@@ -134,7 +134,7 @@ class Upsert extends Component
         }
 
         $this->adData->update($updateData);
-        
+
         return redirect()->route('business.ads.index');
     }
 
@@ -145,7 +145,7 @@ class Upsert extends Component
 
             return false;
         }
-        
+
         try {
             $this->validate(rules: [
                 'creative' => [
@@ -161,11 +161,11 @@ class Upsert extends Component
 
             $imageUploadService = app(ImageUploadService::class);
             $roundRobinService = app(RoundRobinService::class);
-            
+
             $imageData = $imageUploadService
                 ->load($this->creative->getRealPath())
                 ->setStorageDisk($roundRobinService->getNextDisk())
-                ->setNamespace(Filesystem::getAdCreativeNamespace())
+                ->setNamespace(Filesystem::mediaNamespace('ads/creatives'))
                 ->crop(config('ads.ad.image_width'), config('ads.ad.image_height'))
                 ->compress()
                 ->upload();
@@ -185,7 +185,7 @@ class Upsert extends Component
                 $this->adMedia = $this->adData->media;
             }
         }
-        
+
         catch (ValidationException $e) {
             $this->addError('creative', $e->getMessage());
         }
@@ -235,7 +235,7 @@ class Upsert extends Component
 
                 $this->adMedia = $this->adData->media;
             }
-            
+
             catch (Throwable $th) {
                 $this->addError('creative', $th->getMessage());
             }

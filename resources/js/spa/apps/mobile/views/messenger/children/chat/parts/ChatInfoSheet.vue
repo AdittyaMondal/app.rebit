@@ -15,8 +15,8 @@
 					v-on:click="$emit('open-participants')"
 					v-bind:textLabel="$t('chat.participants_count', { count: chatData.chat_info.participants_count.formatted })"
 				iconName="users-01"></ActionSheetItem>
-	
-				<ActionSheetItem 
+
+				<ActionSheetItem
 					v-on:click="clearChat"
 					v-bind:textLabel="$t('chat.clear_conversation')"
 				iconName="brush-03"></ActionSheetItem>
@@ -25,7 +25,7 @@
 		<ActionSheetGroup v-on:click="$emit('close')">
 			<ActionSheetItem
 				v-on:click="reportChat"
-				itemColor="text-red-900" 
+				itemColor="text-red-900"
 				v-bind:textLabel="$t('labels.report_this_user', { user_name: chatData.chat_info.name })"
 			iconName="annotation-alert"></ActionSheetItem>
 

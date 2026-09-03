@@ -1,5 +1,4 @@
 <template>
-    
     <SidedContentLayout>
         <template v-slot:content>
             <TimelineContainer>
@@ -20,10 +19,8 @@
                                     <ProfileControls></ProfileControls>
                                 </div>
                             </div>
-                            <div class="mb-4">
-                                <ProfileName></ProfileName>
-                            </div>
-                            <div class="mb-3">
+                            <ProfileName></ProfileName>
+                            <div class="my-3 empty:hidden">
                                 <ProfileOverview></ProfileOverview>
                             </div>
                             <div class="block">
@@ -53,7 +50,7 @@
                         <TimelinePublicationSkeleton v-for="i in 3" v-bind:key="i"></TimelinePublicationSkeleton>
                     </template>
                 </div>
-    
+
                 <div v-if="! state.isLoading">
                     <div class="px-4 py-4 border-t border-t-bord-pr leading-zero">
                         <span class="text-cap-s text-lab-sc font-medium">{{ profileData.name }} @{{ profileData.username }}</span>
@@ -79,7 +76,7 @@
     import ContentTabs from '@D/components/general/tabs/content/ContentTabs.vue';
     import TabsLink from '@D/components/general/tabs/content/parts/TabsLink.vue';
     import TimelineContainer from '@D/components/layout/TimelineContainer.vue';
-    
+
     import TimelinePublicationSkeleton from '@D/components/timeline/feed/TimelinePublicationSkeleton.vue';
     import HeaderSkeleton from '@D/views/profile/parts/skeletons/HeaderSkeleton.vue';
     import ProfileAvatar from '@D/views/profile/parts/ProfileAvatar.vue';
@@ -116,7 +113,7 @@
 
             onMounted(() => {
 				profileId.value = props.id;
-				
+
                 fetchProfile();
             });
 
@@ -136,7 +133,7 @@
                         hash: route.hash
                     });
                 });
-			};	
+			};
 
             return {
                 state: state,

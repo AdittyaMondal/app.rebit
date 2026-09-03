@@ -1,12 +1,7 @@
 @extends('adminLayout::index')
 
 @section('pageContent')
-	<div class="mb-8">
-        <x-page-title titleText=" {{ __('admin/jobs.index_title') }}"></x-page-title>
-        <x-page-desc>
-            {{ __('admin/jobs.index_desc') }}
-        </x-page-desc>
-    </div>
+	<x-page-title titleText=" {{ __('admin/jobs.index_title') }}"></x-page-title>
 	<div class="mb-4">
 		<x-tabs.tabs>
 			<x-tabs.tab-item :active="$filters['approval'] == 'all'" href="{{ route('admin.jobs.index') }}" textLabel="{{ __('admin/filter.filters.jobs.tabs.all') }}"></x-tabs.tab-item>

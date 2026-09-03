@@ -18,16 +18,17 @@ class StoryMentionNotification extends Notification implements ShouldQueue
         BaseNotification,
         HasUserActor;
 
-    private array $actorData;
+    public array $actorData;
+
+    public $notificationType = Notifications::STORY_MENTIONED;
+
     private StoryFrame $frameData;
-    
+
     public function __construct(StoryFrame $frameData)
     {
         $this->actorData = $this->getUserActor();
         $this->frameData = $frameData;
     }
-
-    private $notificationType = Notifications::STORY_MENTIONED;
 
     public function via(object $notifiable): array
     {

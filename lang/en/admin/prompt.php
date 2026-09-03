@@ -126,4 +126,28 @@ return [
 		'title' => 'Delete chat?',
 		'description' => 'This chat will be deleted for all participants also. Including messages and other related data as messages, group, etc.',
 	],
+	'pin_post' => [
+		'title' => 'Pin post?',
+		'description' => 'Pinned posts appear in the global timeline and are visible to all users on main home page.',
+		'confirm_btn_text' => 'Yes, pin',
+	],
+	'unpin_post' => [
+		'title' => 'Unpin post?',
+		'description' => 'If you unpin the post, it will no longer appear in the global timeline.',
+		'confirm_btn_text' => 'Yes, unpin',
+	],
+	'delete_cashout' => [
+		'title' => 'Delete cashout?',
+		'description' => 'Are you sure you want to delete this cashout? This action cannot be undone.',
+	],
+    'reject_cashout' => [
+        'title' => 'Reject cashout?',
+        'description' => 'Money will be returned to the user\'s wallet. Are you sure you want to reject this cashout?',
+        'confirm_btn_text' => 'Yes, reject',
+    ],
+    'mark_as_paid' => [
+        'title' => 'Mark as paid?',
+        'description' => 'This confirms the funds have been sent to the user. This action cannot be undone.',
+        'confirm_btn_text' => 'Mark as paid',
+    ],
 ];

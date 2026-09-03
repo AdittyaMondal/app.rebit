@@ -2,7 +2,7 @@
     <div class="fixed inset-0 bg-fill-qt grid grid-cols-2">
 		<div class="w-full p-12">
 			<div class="flex mb-4">
-				<img v-bind:src="$embedder('assets.logos.url')" alt="Rebit" class="w-8">
+				<img v-bind:src="$embedder('assets.logos.url')" alt="ColibriPlus" class="w-8">
 			</div>
 			<h1 class="text-[94px] font-bold text-red-800 leading-none mb-2">
 				Bootstrap <br>

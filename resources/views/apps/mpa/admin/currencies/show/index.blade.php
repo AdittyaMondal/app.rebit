@@ -1,12 +1,7 @@
 @extends('adminLayout::index')
 
 @section('pageContent')
-	<div class="mb-4">
-		<x-page-title titleText=" {{ __('admin/currencies.show_title') }}"></x-page-title>
-		<x-page-desc>
-			{{ __('admin/currencies.show_desc') }}
-		</x-page-desc>
-	</div>
+	<x-page-title titleText=" {{ __('admin/currencies.show_title') }}"></x-page-title>
 
 	<x-sided-content>
 		<x-slot:sideContent>
@@ -14,8 +9,8 @@
 		</x-slot:sideContent>
 
 		<div class="mb-4">
-			<x-entity.header 
-				avatarUrl="{{ asset('assets/icons/avatar/currency-euro-circle.png') }}" 
+			<x-entity.header
+				avatarUrl="{{ asset('assets/icons/avatar/currency-euro-circle.png') }}"
 				name="{{ $currencyData->name }} ({{ strtoupper($currencyData->alpha_3_code) }})">
 			</x-entity.header>
 		</div>

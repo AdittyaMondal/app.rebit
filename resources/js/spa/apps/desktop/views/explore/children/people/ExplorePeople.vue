@@ -17,11 +17,6 @@
 						<SearchBar v-model.lazy="peopleSearchQuery" v-bind:placeholder="$t('labels.search')"></SearchBar>
 					</div>
 				</div>
-				<TimelineCallout
-					iconName="star-04"
-					iconType="solid"
-					v-bind:title="$t('info.follow_authors.title')"
-				v-bind:desc="$t('info.follow_authors.desc')"></TimelineCallout>
 				<Border></Border>
 				<template v-if="state.isLoading">
 					<PeopleListItemSkeleton v-for="i in 15" v-bind:key="i"></PeopleListItemSkeleton>
@@ -33,13 +28,13 @@
 					<template v-if="state.isSearchLoading">
 						<PeopleListItemSkeleton v-for="i in 15" v-bind:key="i"></PeopleListItemSkeleton>
 					</template>
-	
+
 					<div v-else class="block">
 						<PeopleListItem v-if="people.length" v-for="userData in people" v-bind:key="userData.id" v-bind:userData="userData"></PeopleListItem>
-	
+
 						<FluidEmptyState v-else v-bind:text="$t('empty_state.explore.people.filter')" iconName="search-lg" iconType="solid"></FluidEmptyState>
 					</div>
-	
+
 					<InfinityScrollContentLoader v-if="state.isLoadingContent"></InfinityScrollContentLoader>
 				</template>
 			</TimelineContainer>
@@ -63,14 +58,13 @@
 	import FluidEmptyState from '@D/components/page-states/empty/FluidEmptyState.vue';
 	import SearchBar from '@D/components/general/search/SearchBar.vue';
 	import InfinityScrollContentLoader from '@D/components/loaders/InfinityScrollContentLoader.vue';
-	import TimelineCallout from '@D/components/timeline/info/TimelineCallout.vue';
 	import ContentTabs from '@D/components/general/tabs/content/ContentTabs.vue';
     import TabsLink from '@D/components/general/tabs/content/parts/TabsLink.vue';
 
 	export default defineComponent({
 		setup: function() {
 			const peopleSearchQuery = ref('');
-			
+
 			const state = reactive({
 				noMoreContent: false,
                 isLoadingContent: false,
@@ -146,7 +140,6 @@
 			PeopleListItem: PeopleListItem,
 			AdGridItem: AdGridItem,
 			SearchBar: SearchBar,
-			TimelineCallout: TimelineCallout,
 			FluidEmptyState: FluidEmptyState,
 			PeopleListItemSkeleton: PeopleListItemSkeleton,
 			InfinityScrollContentLoader: InfinityScrollContentLoader,

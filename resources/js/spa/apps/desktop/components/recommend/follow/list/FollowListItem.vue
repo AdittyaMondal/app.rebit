@@ -1,7 +1,7 @@
 <template>
-	<div class="block py-3">
+	<div class="py-3">
 		<div class="flex items-center justify-between mb-1 cursor-pointer">
-			<AvatarRightSided 
+			<AvatarRightSided
 				v-bind:avatarSrc="userData.avatar_url"
 				v-bind:verified="userData.verified"
 				v-bind:name="userData.name"
@@ -21,7 +21,7 @@
 
 <script>
 	import { defineComponent } from 'vue';
-	
+
 	import AvatarRightSided from '@D/components/general/avatars/sided/small/AvatarRightSided.vue';
 	import FollowPillButton from '@D/components/inter-ui/buttons/follows/FollowPillButton.vue';
 

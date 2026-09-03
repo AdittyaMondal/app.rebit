@@ -1,4 +1,4 @@
-# Colibri Plus
+# Rebit
 
 Rebit is a robust social media script built from scratch using Laravel 11 and VueJS 3/4. It is designed as a commercial PHP application, intended for sale under a license model similar to platforms like CodeCanyon.
 
@@ -13,10 +13,10 @@ Rebit is a robust social media script built from scratch using Laravel 11 and Vu
 
 ### Software author
 
-Team Rebit (UI/UX designer & Full stack web developer)
+Mansur Terla (UI/UX designer & Full stack web developer)
 
 - Instagram: https://www.instagram.com/mansur_terla
-- Website: https://rebit.in
+- Website: https://www.terla.me
 - Telegram Direct: https://t.me/mansurtl_contact
 - WhatsApp: https://t.me/mansurtl_contact
-- Email: team@rebit.in
+- Email: mansurtl.contact@gmail.com

@@ -1,8 +1,7 @@
 <?php
 
 return [
-    'title' => 'Dashboard',
-	'desc' => 'Welcome to the dashboard',
+    'title' => 'Overview',
 	'metrics' => [
 		'users' => [
 			'title' => 'Users',

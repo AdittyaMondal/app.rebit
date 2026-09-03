@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Actions\User;
 
@@ -36,12 +48,13 @@ class CreateUserAction
             'theme' => theme_name(),
             'last_active' => now(),
             'ip_address' => request()->ip(),
-            'type' => config('user.authorize_users') ?UserType::AUTHOR : UserType::READER
+            'type' => config('user.authorize_users') ? UserType::AUTHOR : UserType::READER
         ], $this->userData));
 
         $userData->wallet()->create([
             'wallet_number' => $this->generateUniqueWalletNumber(),
             'balance' => config('wallet.default_balance'),
+            'currency' => config('app.default_currency'),
         ]);
 
         // Create privacy settings (Default all are set to: false)
@@ -85,7 +98,7 @@ class CreateUserAction
 
             $prefix = config('wallet.wallet_number_prefix');
 
-            if ($prefix) {
+            if($prefix) {
                 $number = "{$prefix}-{$number}";
             }
         }

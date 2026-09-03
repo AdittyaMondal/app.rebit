@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Pin\PinType;
 use App\Enums\Post\PostType;
 use App\Enums\Post\PostStatus;
 use App\Database\Configs\Table;
@@ -91,6 +92,11 @@ class Post extends Model
         return $this->morphMany(Report::class, 'reportable', 'reportable_type', 'reportable_id', 'id');
     }
 
+    public function pins()
+    {
+        return $this->morphMany(Pin::class, 'pinnable', 'pinnable_type', 'pinnable_id', 'id');
+    }
+
     public function media()
     {
         return $this->morphMany(Media::class, 'mediaable', 'mediaable_type', 'mediaable_id', 'id');
@@ -114,5 +120,10 @@ class Post extends Model
     public function getUrlAttribute()
     {
         return url("publication/{$this->hashid}");
+    }
+
+    public function isPinnedGlobal()
+    {
+        return $this->pins()->where('type', PinType::GLOBAL)->exists();
     }
 }

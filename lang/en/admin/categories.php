@@ -2,11 +2,8 @@
 
 return [
     'index_title' => 'Categories',
-    'index_desc' => 'From this panel, you can manage every category across the platform, such as Marketplace and Jobs.',
 	'show_title' => 'Category Details',
-	'show_desc' => 'Manage category details and add translations for every language supported on your platform.',
 	'edit_title' => 'Edit category',
-	'edit_desc' => 'Edit category details and add translations for every language supported on your platform.',
 	'about_category' => 'About category',
 	'category_translations' => 'Category translations',
 	'no_translations' => 'No translations found',

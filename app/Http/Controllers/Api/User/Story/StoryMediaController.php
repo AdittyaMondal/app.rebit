@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Story;
 
@@ -25,8 +37,8 @@ use App\Traits\Http\Controllers\Api\User\Story\InteractsWithDraftStoryFrame;
 class StoryMediaController extends Controller
 {
     use InteractsWithDraftStoryFrame,
-    ValidatesStoryMedia,
-    SupportsApiResponses;
+        ValidatesStoryMedia,
+        SupportsApiResponses;
 
     private $roundRobinService;
 
@@ -38,7 +50,7 @@ class StoryMediaController extends Controller
 
     public function uploadMedia(Request $request)
     {
-        if (!$this->canAddStoryFrame()) {
+        if(! $this->canAddStoryFrame()) {
             return $this->responseValidationError([
                 'message' => __('story.validation.frame_count.max', ['max' => config('story.max_frames_per_story')]),
                 'errors' => [
@@ -57,7 +69,7 @@ class StoryMediaController extends Controller
 
         $mediaType = Str::before($mediaFile->getMimeType(), '/');
 
-        if ($mediaType === 'image') {
+        if($mediaType === 'image') {
             $this->validateStoryImage($mediaFile);
 
             return $this->uploadStoryImage($mediaFile);
@@ -75,16 +87,16 @@ class StoryMediaController extends Controller
 
         $fileDeleteService = app(FileDeleteService::class);
 
-        if (!empty($storyMedia)) {
-            if ($this->draftStoryFrame->type->isImage()) {
+        if(! empty($storyMedia)) {
+            if($this->draftStoryFrame->type->isImage()) {
                 $fileDeleteService->setStorageDisk($storyMedia->disk)->deleteFile($storyMedia->source_path);
             }
 
-            else if ($this->draftStoryFrame->type->isVideo()) {
+            else if($this->draftStoryFrame->type->isVideo()) {
                 $videoStorageDisk = $storyMedia->disk;
 
-                if ($this->draftStoryFrame->status->isDraft()) {
-                    // Set the video disk as local, since the video has not 
+                if($this->draftStoryFrame->status->isDraft()) {
+                    // Set the video disk as local, since the video has not
                     // yet been processed or uploaded to public disks.
 
                     $videoStorageDisk = 'local';
@@ -113,8 +125,9 @@ class StoryMediaController extends Controller
             $imageData = $imageUploadService
                 ->setStorageDisk($this->roundRobinService->getNextDisk())
                 ->load($mediaFile->getRealPath())
-                ->setNamespace(Filesystem::getStoryImageNamespace())
+                ->setNamespace(Filesystem::mediaNamespace('stories/images'))
                 ->scaleTo1080x1920()
+                ->watermark()
                 ->compress()
                 ->upload();
 
@@ -149,8 +162,7 @@ class StoryMediaController extends Controller
                     'source_url' => storage_url($imageData['image_path'], $imageData['disk'])
                 ]
             ]);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return $this->responseValidationError([
                 'message' => $e->getMessage(),
                 'errors' => [
@@ -180,7 +192,7 @@ class StoryMediaController extends Controller
 
             $imageData = $imageUploadService
                 ->load($videoThumbnailPath)
-                ->setNamespace(Filesystem::getStoryVideoThumbnailNamespace())
+                ->setNamespace(Filesystem::mediaNamespace('stories/video_thumbnails'))
                 ->setStorageDisk($videoStorageDisk)
                 ->scaleTo1080x1920()
                 ->compress(20)
@@ -223,8 +235,7 @@ class StoryMediaController extends Controller
                     'duration' => parse_duration(config('story.video_clip_size'))
                 ]
             ]);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return $this->responseValidationError([
                 'message' => $e->getMessage(),
                 'errors' => [

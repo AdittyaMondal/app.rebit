@@ -16,10 +16,10 @@ class AccountLinkedNotification extends Notification implements ShouldQueue
         BaseNotification,
         HasUserActor;
 
-    private $notificationType = Notifications::ACCOUNT_LINKED;
+    public $notificationType = Notifications::ACCOUNT_LINKED;
 
-    private array $actorData;
-    
+    public array $actorData;
+
     public function __construct()
     {
         $this->actorData = $this->getUserActor();

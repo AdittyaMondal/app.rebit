@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Timeline;
 
@@ -25,13 +37,13 @@ class PostGifController extends Controller
 
         $this->fetchOrInitializeDraftPost();
 
-        if ($this->draftPost->type->isTextified()) {
+        if($this->draftPost->type->isTextified()) {
 
-            if (!$this->draftPost->exists) {
+            if(! $this->draftPost->exists) {
                 $this->draftPost->save();
             }
 
-            if ($this->draftPost->type->isTextified()) {
+            if($this->draftPost->type->isTextified()) {
                 $this->draftPost->type = PostType::GIF;
                 $this->draftPost->save();
             }
@@ -57,7 +69,7 @@ class PostGifController extends Controller
             ]);
         }
 
-        else {
+        else{
             return $this->responseValidationError([
                 'message' => 'Can not attach to this type of post Gif.',
                 'errors' => [

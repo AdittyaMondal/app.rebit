@@ -38,6 +38,22 @@ return [
             'root' => storage_path('app'),
             'throw' => false,
         ],
+        'pwa' => [
+            'driver' => 'local',
+            'root' => public_path('pwa'),
+            'url' => rtrim((string) env('APP_URL'), '/').'/pwa',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+        'assets' => [
+            'driver' => 'local',
+            'root' => public_path('assets'),
+            'url' => rtrim((string) env('APP_URL'), '/').'/assets',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
     ],
     'disks' => [
         // Never add here your disks. Add them in var/config/filesystems/disks.php
@@ -59,18 +75,8 @@ return [
     ],
 
     'upload_namespaces' => [
-        'post_images' => 'uploads/posts/images',
-        'post_video_thumbnails' => 'uploads/posts/video_thumbnails',
-        'post_videos' => 'uploads/posts/videos',
-        'post_audios' => 'uploads/posts/audios',
+        'media' => 'uploads',
         'user_avatars' => 'uploads/users/avatars',
-        'post_documents' => 'uploads/documents',
-        'product_images' => 'uploads/products/images',
-        'story_images' => 'uploads/stories/images',
-        'story_videos' => 'uploads/stories/videos',
-        'story_video_thumbnails' => 'uploads/stories/video_thumbnails',
-        'ad_creatives' => 'uploads/ads/creatives',
     ],
-
     'image_encoder' => 'webp', // One of: jpeg, png, webp.
 ];

@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Market;
 
@@ -25,7 +37,7 @@ class MarketController extends Controller
         $filterOption = $this->getValidatedFilters($request);
 
         $products = Product::listable()->filter($filterOption)->withRelations()->latest('id')->take(12)->get();
-
+        
         return $this->responseSuccess([
             'data' => ProductCollection::make($products)
         ]);
@@ -35,12 +47,12 @@ class MarketController extends Controller
     {
         $productData = Product::active()->withRelations()->findByHashId($productId);
 
-        if ($productData) {
+        if($productData) {
             // TODO: This is a temporary solution to allow the user to view the product if it is rejected.
             // We need to improve this in the future.
-
-            if (!$productData->approval->isApproved()) {
-                if (!me()->isAdmin() && !me()->id == $productData->user_id) {
+            
+            if(! $productData->approval->isApproved()) {
+                if(! me()->isRoot() && ! me()->id == $productData->user_id) {
                     return $this->responseResourceNotFoundError('Product', $productId);
                 }
             }
@@ -71,7 +83,7 @@ class MarketController extends Controller
         if ($productData) {
             $bookmarkedStatus = $productData->isBookmarkedBy(me()->id);
 
-            if ($bookmarkedStatus) {
+            if($bookmarkedStatus) {
                 $productData->removeBookmark(me()->id);
             }
             else {
@@ -80,12 +92,12 @@ class MarketController extends Controller
 
             return $this->responseSuccess([
                 'data' => [
-                    'bookmarked' => (!$bookmarkedStatus)
+                    'bookmarked' => (! $bookmarkedStatus)
                 ]
             ]);
         }
 
-        else {
+        else{
             return $this->responseResourceNotFoundError('Product', $productId);
         }
     }
@@ -93,13 +105,13 @@ class MarketController extends Controller
     public function getMetadata(Request $request)
     {
         $fiatCurrencyService = app(FiatCurrencyService::class);
-
+        
         return $this->responseSuccess([
             'data' => [
                 'filter' => [
                     'currencies' => $fiatCurrencyService->getPairedCurrencies(),
                     'conditions' => ProductCondition::physicalProductConditions(),
-                    'types' => ProductType::types(),
+                    'types' =>  ProductType::types(),
                 ]
             ]
         ]);

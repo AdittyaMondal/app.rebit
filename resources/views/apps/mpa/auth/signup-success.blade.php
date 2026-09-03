@@ -2,6 +2,6 @@
 
 @section('pageContent')
     <div class="block">
-        @livewire('user.auth.signup-success-form', ['confirmationData' => $confirmationData])
+        @livewire('user.auth.signup-success', ['confirmationData' => $confirmationData])
     </div>
 @endsection

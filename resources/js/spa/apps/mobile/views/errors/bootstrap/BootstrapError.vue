@@ -3,7 +3,7 @@
 		<div class="p-8">
 			<div class="mb-4 border-b border-edge-pr pb-4">
 				<div class="flex mb-4">
-					<img v-bind:src="$embedder('assets.logos.url')" alt="Rebit" class="w-8">
+					<img v-bind:src="$embedder('assets.logos.url')" alt="ColibriPlus" class="w-8">
 				</div>
 				<h1 class="text-title-2 font-bold mb-2">
 					Bootstrap Error

@@ -33,7 +33,7 @@
             </div>
             <div class="shrink-0 w-6/12">
                 <h4 class="text-lab-sc text-cap-l text-center font-medium truncate">
-                    {{ audioData.metadata.file_name }}
+                    {{ audioLabel }}
                 </h4>
             </div>
             <div class="w-3/12 shrink-0 inline-flex items-center justify-end">
@@ -109,10 +109,10 @@
                 function updateProgress() {
                     const currentTime = audioFile.value.seek();
                     const duration = audioFile.value.duration();
-                    
+
                     audioStore.updateStateValue('progressBar', Math.round((currentTime / duration) * 100));
                     audioStore.updateStateValue('playbackTime', Math.round(currentTime));
-                    
+
                     if (audioFile.value.playing()) {
                         window.progressTimer = requestAnimationFrame(updateProgress);
                     }
@@ -133,7 +133,7 @@
 
             const pauseAudio = () => {
                 if(playerState.value.playing) {
-                    audioFile.value.pause(); 
+                    audioFile.value.pause();
                 }
             }
 
@@ -144,7 +144,7 @@
                     const clickPosition = (event.clientX - rect.left);
                     const percentage = (clickPosition / rect.width);
                     const newTime = (audioFile.value.duration() * percentage);
-                    
+
                     audioFile.value.seek(newTime);
 
                     playAudio();
@@ -158,7 +158,7 @@
 
             onMounted(() => {
                 initializeAudioFile();
-                
+
                 audioFile.value.play();
 
                 colibriEventBus.on('soundbar:play', () => {
@@ -174,6 +174,8 @@
                     initializeAudioFile();
                     audioFile.value.play();
                 });
+
+                colibriEventBus.on('media:pause-all', pauseAudio);
             });
 
             onUnmounted(() => {
@@ -181,6 +183,8 @@
                 colibriEventBus.off('soundbar:reinitialize');
 
                 audioFile.value.pause();
+
+                colibriEventBus.off('media:pause-all', pauseAudio);
             });
 
             return {
@@ -190,6 +194,9 @@
                 pauseAudio: pauseAudio,
                 seekAudio: seekAudio,
                 state: state,
+                audioLabel: computed(() => {
+                    return audioStore.label ? audioStore.label : audioData.value.metadata.file_name;
+                }),
                 changeSpeedRate: () => {
                     const currentIndex = speedRates.indexOf(playerState.value.rate);
 

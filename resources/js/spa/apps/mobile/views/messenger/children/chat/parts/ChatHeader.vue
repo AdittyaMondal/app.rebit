@@ -1,7 +1,7 @@
 <template>
-	<div class="px-4 py-3 flex items-center leading-none gap-2.5 border-b border-bord-tr">
+	<div class="px-4 py-3 flex items-center leading-none gap-2.5">
 		<div class="shrink-0">
-			<PrimaryIconButton 
+			<PrimaryIconButton
 				v-on:click="$emit('close')"
 				buttonColor="text-lab-pr"
 				iconSize="icon-medium"
@@ -28,7 +28,12 @@
 						{{ $t('chat.participants_count', { count: chatData.chat_info.participants_count.formatted }) }}
 					</template>
 					<template v-else>
-						{{ $t('labels.was_online_at', { time: chatData.chat_info.last_active.formatted }) }}
+                        <template v-if="chatData.chat_info.last_active">
+                            {{ $t('labels.was_online_at', { time: chatData.chat_info.last_active.formatted }) }}
+                        </template>
+                        <template v-else>
+                            {{ $t('labels.was_online_at', { time: 'N/A' }) }}
+                        </template>
 					</template>
 				</template>
 			</p>
@@ -49,7 +54,7 @@
 	v-on:close="state.participantsMenu.close"></ChatParticipants>
 </template>
 
-<script>	
+<script>
 	import { defineComponent, computed, reactive } from 'vue';
 	import { useMenu } from '@/kernel/vue/composables/menu/index.js';
 	import { useRouter } from 'vue-router';

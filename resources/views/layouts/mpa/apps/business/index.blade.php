@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name') }}</title>
-        
+
         @include('layouts.parts.meta')
         @include('layouts.parts.favicons')
 
@@ -23,29 +23,46 @@
         @endif
 
         @stack('styles')
-        
+
         @stack('scripts')
 
         @livewireStyles
     </head>
 
-    <body @class(['pt-24', (theme_name() == 'dark' ? 'bg-black' : 'bg-fill-fv')])>
-        @if(theme_name() == 'light')
-            <img src="{{ asset('assets/backgrounds/modal-bg.png') }}" alt="Background" class="fixed opacity-50 w-full inset-0 -z-10">
-        @endif
+    <body @class(['pt-20', (theme_name() == 'dark' ? 'bg-black' : 'bg-pr')])
+        x-data="{ sidebarOpen: false }"
+        x-on:keydown.escape.window="sidebarOpen = false"
+        :class="{ 'overflow-hidden': sidebarOpen }"
+    >
         <x-main>
+            {{-- Mobile sidebar backdrop --}}
+            <div
+                x-show="sidebarOpen"
+                x-transition:enter="transition-opacity ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition-opacity ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                x-on:click="sidebarOpen = false"
+                class="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                style="display: none;"
+            ></div>
+
             @include('businessLayout::parts.sidebar')
-    
+
             @include('businessLayout::parts.header')
-            
+
             <x-container>
-                <div class="app-min-vh px-8">
+                <x-messages.primary></x-messages.primary>
+
+                <div class="app-min-vh px-4 md:px-8">
                     @yield('pageContent')
                 </div>
             </x-container>
-    
+
             <x-modals.confirm.confirm></x-modals.confirm.confirm>
-    
+
             @livewireScripts
         </x-main>
     </body>

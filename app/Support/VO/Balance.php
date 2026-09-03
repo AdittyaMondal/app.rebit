@@ -59,11 +59,16 @@ class Balance implements ValueObjectInterface
 		$amount = bcadd($this->amount, $amount);
 		return new self($amount, $this->currency);
 	}
-	
+
+	public function set(float $amount): Balance
+	{
+		return new self($amount, $this->currency);
+	}
+
 	public function subtract(float $amount): Balance
 	{
 		$newAmount = bcsub($this->amount, $amount);
-		
+
 		if ($newAmount < 0) {
 			$newAmount = 0;
 		}

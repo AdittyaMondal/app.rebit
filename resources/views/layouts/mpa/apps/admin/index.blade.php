@@ -7,7 +7,7 @@
 
         <title>{{ config('app.name') }}</title>
 
-        @include('layouts.parts.meta')        
+        @include('layouts.parts.meta')
         @include('layouts.parts.favicons')
 
         @vite([
@@ -25,38 +25,32 @@
         @endif
 
         @stack('styles')
-        
+
         @stack('scripts')
 
         @livewireStyles
     </head>
 
-    <body @class(['pt-24 pb-6', (theme_name() == 'dark' ? 'bg-black' : 'bg-fill-fv')])>
-        @if(theme_name() == 'light')
-            <img src="{{ asset('assets/backgrounds/modal-bg.png') }}" alt="Background" class="fixed user-select-none pointer-events-none opacity-50 w-full inset-0 -z-10">
-        @endif
-
+    <body @class(['pt-20 pb-6', (theme_name() == 'dark' ? 'bg-black' : 'bg-pr')])>
         <x-main>
             @include('adminLayout::parts.sidebar')
-    
+
             @include('adminLayout::parts.header')
 
             <x-container>
-                <div class="px-8">
-                    <x-messages.primary></x-messages.primary>
-                </div>
-                <div class="app-min-vh px-8">
+                <x-messages.primary></x-messages.primary>
+                <div class="app-min-vh">
                     @yield('pageContent')
                 </div>
 
-                <div class="fixed bg-bg-pr border-t border-bord-tr bottom-0 right-0 left-sidebar-width px-16 h-6 flex items-center">
+                <div class="fixed bg-bg-pr border-t border-bord-tr bottom-0 right-0 left-80 px-16 h-6 flex items-center">
                     <span class="block text-lab-sc text-cap-s">{{ __('admin/info.you_are_admin')}}</span>
                 </div>
             </x-container>
-    
+
             <x-modals.confirm.confirm></x-modals.confirm.confirm>
-            
-            
+
+
             @livewireScripts
         </x-main>
     </body>

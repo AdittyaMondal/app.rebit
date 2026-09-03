@@ -120,7 +120,7 @@ const Router = createRouter({
                 fluidLayout: true
             },
             name: 'messenger_index',
-            redirect: { 
+            redirect: {
                 name: 'messenger_inbox'
             },
             children: [
@@ -183,7 +183,6 @@ const Router = createRouter({
                 sectionName: 'settings',
                 layout: Layouts.FLAT,
                 auth: true,
-                rightOffset: true,
                 fluidLayout: true
             },
             name: 'settings_index',
@@ -291,6 +290,9 @@ const Router = createRouter({
                 },
                 {
                     path: 'theme',
+                    meta: {
+                        feature: 'dark_theme',
+                    },
                     component: function() {
                         return import('@D/views/settings/children/theme/ThemeSettings.vue');
                     },
@@ -379,7 +381,17 @@ const Router = createRouter({
             },
             name: 'publication_index'
 		},
-
+        {
+			path: '/about-author',
+			component: function() {
+                return import('@D/views/mtl/MTLIndex.vue');
+            },
+            meta: {
+                layout: Layouts.INFO,
+                auth: false
+            },
+            name: 'mtl_index'
+		},
         {
 			path: '/live-stream',
 			component: function() {
@@ -510,19 +522,13 @@ const Router = createRouter({
 	linkExactActiveClass: 'active',
 });
 
-Router.beforeEach((to, from, next) => {
+Router.beforeEach((to, from) => {
     let feature = to.meta.feature || null;
 
     if(feature) {
         if(! config(`features.${feature}.enabled`)) {
-            return next({ name: 'error_404' });
+            return { name: 'error_404' };
         }
-        else {
-            next();
-        }
-    }
-    else {
-        next();
     }
 });
 

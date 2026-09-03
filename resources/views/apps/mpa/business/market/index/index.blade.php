@@ -2,12 +2,7 @@
 
 @section('pageContent')
     <div class="mb-6">
-        <div class="mb-8">
-            <x-page-title titleText="{{ __('business/market.index_title') }}"></x-page-title>
-            <x-page-desc>
-                {{ __('business/market.index_desc') }} <a href="{{ asset(config('marketplace.document_links.trade_guide')) }}" target="_blank" class="text-brand-900 underline">{{ __('labels.learn_more') }} &raquo;</a>
-            </x-page-desc>
-        </div>
+        <x-page-title titleText="{{ __('business/market.index_title') }}"></x-page-title>
         <x-tabs.tabs>
             <x-tabs.tab-item :active="$type == 'all'" href="{{ route('business.market.index', ['type' => 'all']) }}" textLabel="{{ __('business/market.tabs.all') }}"></x-tabs.tab-item>
             <x-tabs.tab-item :active="$type == 'active'" href="{{ route('business.market.index', ['type' => 'active']) }}" textLabel="{{ __('business/market.tabs.active') }}"></x-tabs.tab-item>

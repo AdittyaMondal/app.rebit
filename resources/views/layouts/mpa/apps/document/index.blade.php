@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>{{ config('app.name') }}</title>
-        
+
         @include('layouts.parts.meta')
         @include('layouts.parts.favicons')
 
@@ -17,14 +17,12 @@
         ])
 
         @stack('styles')
-        
+
         @stack('scripts')
+
+        @include('layouts.parts.head-code')
     </head>
     <body class="bg-bg-pr pt-14">
-        <div class="fixed inset-0 -z-10">
-            <img class="size-full object-fill opacity-30" src="{{ asset('assets/backgrounds/default.png') }}" alt="Background">
-        </div>
-
         @include('layouts.mpa.parts.header')
 
         <div class="flex-col flex min-h-screen">
@@ -35,5 +33,7 @@
             </div>
             @include('layouts.mpa.parts.footer')
         </div>
+
+        @include('layouts.parts.footer-code')
     </body>
 </html>

@@ -26,6 +26,8 @@ Route::prefix('config')->group(base_path('routes/admin/config/web.php'));
 
 Route::prefix('payments')->group(base_path('routes/admin/payments/web.php'));
 
+Route::prefix('acquiring')->group(base_path('routes/admin/acquiring/web.php'));
+
 Route::prefix('reports')->group(base_path('routes/admin/reports/web.php'));
 
 Route::prefix('lang')->group(base_path('routes/admin/lang/web.php'));
@@ -43,3 +45,5 @@ Route::prefix('categories')->group(base_path('routes/admin/categories/web.php'))
 Route::prefix('pages')->group(base_path('routes/admin/pages/web.php'));
 
 Route::prefix('chats')->group(base_path('routes/admin/chats/web.php'));
+
+Route::prefix('cashouts')->group(base_path('routes/admin/cashouts/web.php'));

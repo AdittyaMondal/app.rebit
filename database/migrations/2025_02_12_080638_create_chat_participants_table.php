@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('last_read_message_id')->default(0);
             $table->json('metadata');
             $table->timestamp('last_read_at')->nullable();
-            $table->timestamp('joined_at');
+            $table->timestamp('joined_at')->useCurrent();
         });
     }
 

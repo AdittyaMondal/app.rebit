@@ -1,11 +1,21 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Settings;
 
 use Illuminate\Http\Request;
-use App\Enums\User\ASRStatus;
-use App\Models\AuthorshipRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -45,7 +55,7 @@ class AccountSettingsController extends Controller
                     'gender' => $this->me->gender,
                     'caption' => $this->me->getCaption()
                 ]
-            ] 
+            ]
         ]);
     }
 
@@ -58,7 +68,7 @@ class AccountSettingsController extends Controller
                 'security_settings' => [
                     'login_notification' => $this->me->securitySettings->login_notification
                 ]
-            ] 
+            ]
         ]);
     }
 
@@ -118,18 +128,18 @@ class AccountSettingsController extends Controller
         $request->validate([
             'theme' => ['required', 'string', 'in:light,dark']
         ]);
-        
-        $themeMode = $this->me->theme;
 
-        $this->me->update([
-            'theme' => $request->get('theme')
-        ]);
+        if(config('features.dark_theme.enabled')) {
+            $this->me->update([
+                'theme' => $request->input('theme')
+            ]);
+        }
 
         return $this->responseSuccess([
             'data' => [
                 'theme' => [
-                    'new_mode' => $request->get('theme'),
-                    'previous_mode' => $themeMode
+                    'new_mode' => $request->input('theme'),
+                    'previous_mode' => $this->me->theme
                 ]
             ]
         ]);
@@ -231,15 +241,23 @@ class AccountSettingsController extends Controller
         $request->validate([
             'account_id' => ['required', 'integer']
         ]);
-        
+
         $accountId = $request->get('account_id');
         $linkedAccounts = $this->fetchLinkedUsers();
         $accountData = $linkedAccounts->where('id', $accountId)->first();
 
-        // TODO: 
+        // Prevent switching if it's disabled.
+
+        if(! config('features.switch_account.enabled')) {
+            return $this->responseSuccess([
+                'data' => null
+            ]);
+        }
+
+        // TODO:
         // For mobile API add sanctum token refresh
         // and handle switch account in mobile app
-        
+
         if($accountData && $accountData->id !== $this->me->id) {
             Auth::guard('web')->logout();
             Auth::guard('web')->login($accountData, true);
@@ -266,7 +284,7 @@ class AccountSettingsController extends Controller
 
         else {
             $masterAccount = $this->me->masterAccount;
-            
+
 
             if($masterAccount) {
                 $masterLinkedAccounts = $masterAccount->linkedAccounts()->excludeSelf()->get();

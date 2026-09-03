@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Bootstrap;
 
@@ -18,8 +30,8 @@ class BootstrapController extends Controller
                 'version' => ColibriPlus::VERSION,
                 'name' => config('app.name'),
                 'author' => [
-                    'name' => 'Team Rebit. Full-Stack Web Developer.',
-                    'email' => 'team@rebit.in'
+                    'name' => 'Mansur Terla. Full-Stack Web Developer.',
+                    'email' => 'mansurtl.contact@gmail.com'
                 ],
                 'auth' => [
                     'status' => auth_check(),
@@ -31,7 +43,7 @@ class BootstrapController extends Controller
 
     private function getUserData()
     {
-        if (auth_check()) {
+        if(auth_check()) {
             $me = me();
 
             $userData = [
@@ -52,19 +64,20 @@ class BootstrapController extends Controller
                     'date' => $me->verified_at ? $me->verified_at->getIso() : null
                 ],
                 'meta' => [
-                    'is_admin' => $me->isAdmin()
+                    'is_admin' => $me->isAdmin(),
+                    'is_root' => $me->isRoot()
                 ]
             ];
 
-            if ($me->isAdmin()) {
+            if($me->isAdmin() || $me->isRoot()) {
                 $userData['meta']['admin'] = [
                     'url' => route('admin.dash.index'),
                 ];
             }
-
-            return $userData;
+            
+            return $userData;   
         }
-
+        
         return null;
     }
 }

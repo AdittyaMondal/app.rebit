@@ -28,10 +28,11 @@
                 </x-form.text-input>
             </div>
             <div class="mb-6">
-                <x-form.select 
-                    :options="$categories" 
-                    name="formData.category_id" 
+                <x-form.select
+                    :options="$categories"
+                    name="formData.category_id"
                     wire:model="formData.category_id"
+                    placeholder="{{ __('business/market.form.category_placeholder') }}"
                 labelText="{{ __('business/market.form.category') }} *"></x-form.select>
             </div>
             <div class="mb-6">
@@ -57,10 +58,11 @@
                 </div>
             </div>
             <div class="mb-6">
-                <x-form.select 
+                <x-form.select
                     :options="$conditions"
-                    name="formData.condition" 
+                    name="formData.condition"
                     wire:model="formData.condition"
+                    placeholder="{{ __('business/market.form.condition_placeholder') }}"
                 labelText="{{ __('business/market.form.condition') }} *"></x-form.select>
             </div>
             <div class="mb-6">
@@ -129,7 +131,7 @@
                 {{ __('business/market.form.photos') }} *
             </label>
             <div class="mb-2">
-                <div class="grid grid-cols-4 gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                     <div class="aspect-square" x-data>
                         <button x-on:click="$refs.input.click()" type="button" class="border-2 cursor-pointer border-fill-pr border-dashed size-full rounded-md px-4 text-brand-900 transition-all ease-linear hover:border-brand-900">
                             <span class="flex flex-col items-center justify-center size-full">
@@ -188,6 +190,7 @@
                     <a href="{{ route('business.market.index') }}">
                         <x-ui.buttons.pill
                             variant="danger"
+                            size="sm"
                         btnText="{{ __('business/market.form.cancel_button') }}"></x-ui.buttons.pill>
                     </a>
                 </div>

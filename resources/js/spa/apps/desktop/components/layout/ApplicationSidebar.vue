@@ -31,7 +31,7 @@
     import ApplicationNavbar from '@D/components/layout/ApplicationNavbar.vue';
     import ApplicationActionBar from '@D/components/layout/parts/navbar/ApplicationActionBar.vue';
     import ApplicationFooter from '@D/components/layout/ApplicationFooter.vue';
-    
+
     export default defineComponent({
         components: {
             ApplicationNavbar: ApplicationNavbar,

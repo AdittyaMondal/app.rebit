@@ -2,7 +2,7 @@
     <div v-for="(imageGroup, index) in postMedia" v-bind:key="index">
         <div v-if="imageGroup.length == 1" class="block">
             <div v-for="imageItem in imageGroup" v-bind:key="imageItem.id" class="overflow-hidden" v-bind:class="[postMedia.length > 1 ? 'mt-px' : '' ]">
-                <ProgressiveImageLoader 
+                <ProgressiveImageLoader
                     v-bind:base64Image="imageItem.lqip_base64"
                     v-bind:src="imageItem.source_url"
                     v-bind:isSensitive="isSensitive"
@@ -12,7 +12,7 @@
         <div v-else-if="imageGroup.length == 2">
             <div class="grid grid-cols-2 gap-px">
                 <div v-for="imageItem in imageGroup" v-bind:key="imageItem.id" class="overflow-hidden max-h-96">
-                    <ProgressiveImageLoader 
+                    <ProgressiveImageLoader
                         v-bind:base64Image="imageItem.lqip_base64"
                         v-bind:src="imageItem.source_url"
                         v-bind:isSensitive="isSensitive"
@@ -22,12 +22,12 @@
         </div>
         <div v-else-if="imageGroup.length == 3">
             <div class="grid grid-cols-3 gap-px">
-                <div v-for="(imageItem, idx) in imageGroup" 
+                <div v-for="(imageItem, idx) in imageGroup"
                     v-bind:key="imageItem.id"
-                    class="aspect-square overflow-hidden" 
+                    class="aspect-square overflow-hidden"
                 v-bind:class="{'col-span-2 row-span-2': (idx == 0)}">
 
-                    <ProgressiveImageLoader 
+                    <ProgressiveImageLoader
                         v-bind:base64Image="imageItem.lqip_base64"
                         v-bind:src="imageItem.source_url"
                         v-bind:isSensitive="isSensitive"
@@ -37,13 +37,13 @@
         </div>
         <div v-else-if="imageGroup.length == 4">
             <div class="grid grid-cols-3 gap-px">
-                <div 
-                    v-for="(imageItem, idx) in imageGroup" 
+                <div
+                    v-for="(imageItem, idx) in imageGroup"
                     v-bind:key="imageItem.id"
-                    class="aspect-square overflow-hidden" 
+                    class="aspect-square overflow-hidden"
                 v-bind:class="{'col-span-3': (idx == 3)}">
 
-                    <ProgressiveImageLoader 
+                    <ProgressiveImageLoader
                         v-bind:base64Image="imageItem.lqip_base64"
                         v-bind:src="imageItem.source_url"
                         v-bind:isSensitive="isSensitive"
@@ -53,12 +53,12 @@
         </div>
         <div v-else-if="imageGroup.length == 5">
             <div class="grid grid-cols-3 gap-px mb-px">
-                <div 
+                <div
                     v-for="imageItem in imageGroup.slice(0, 3)"
                     v-bind:key="imageItem.id"
                 class="aspect-square overflow-hidden">
 
-                    <ProgressiveImageLoader 
+                    <ProgressiveImageLoader
                         v-bind:base64Image="imageItem.lqip_base64"
                         v-bind:src="imageItem.source_url"
                         v-bind:isSensitive="isSensitive"
@@ -66,12 +66,12 @@
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-px">
-                <div 
+                <div
                     v-for="imageItem in imageGroup.slice(3)"
                     v-bind:key="imageItem.id"
                 class="col-span-1 overflow-hidden">
 
-                    <ProgressiveImageLoader 
+                    <ProgressiveImageLoader
                         v-bind:base64Image="imageItem.lqip_base64"
                         v-bind:src="imageItem.source_url"
                         v-bind:isSensitive="isSensitive"
@@ -99,9 +99,13 @@
         },
         setup: function(props) {
             const postMedia = computed(() => {
-                return Arr.make(props.postMedia).chunk(5).value();
+                try {
+                    return Arr.make(props.postMedia).chunk(5).value();
+                } catch (error) {
+                    return [];
+                }
             });
-            
+
             return {
                 postMedia: postMedia
             }

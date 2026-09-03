@@ -5,6 +5,8 @@ return [
 	'share_copied' => 'Link has been copied to clipboard!',
 	'profile_link_copied' => 'Profile link has been copied to clipboard!',
 	'post_published' => 'The post has been published!',
+    'user_muted' => 'All notifications from this user will be silenced!',
+    'user_unmuted' => 'User is unmuted! You will receive notifications from them again.',
 	'media' => [
 		'post_deleted' => 'The post has been deleted!',
 		'comment_deleted' => 'Comment has been deleted!',

@@ -62,13 +62,13 @@ class ProcessStoryVideo implements ShouldQueue
             if(file_exists($videoNewAbsLocalPath)) {
                 $videoData = $videoUploadService
                     ->setStorageDisk($frameMedia->disk)
-                    ->setNamespace(Filesystem::getStoryVideoNamespace())
+                    ->setNamespace(Filesystem::mediaNamespace('stories/videos'))
                     ->upload($videoNewAbsLocalPath);
-                
+
                 $frameMedia->source_path = $videoData['video_path'];
                 $frameMedia->status = MediaStatus::PROCESSED;
                 $frameMedia->save();
-                
+
                 $this->frameData->duration_seconds = (intval($this->frameData->duration_seconds) > config('story.video_clip_size')) ? config('story.video_clip_size') : intval($this->frameData->duration_seconds);
                 $this->frameData->status = StoryStatus::ACTIVE;
 
@@ -78,7 +78,7 @@ class ProcessStoryVideo implements ShouldQueue
                 $fileDeleteService->setStorageDisk('local')->deleteFile($videoTempNewPath);
             }
         }
-        
+
         catch (Exception $e) {
             Log::error('Story video processing failed after 5 attempts. Error: ' . $e->getMessage());
 

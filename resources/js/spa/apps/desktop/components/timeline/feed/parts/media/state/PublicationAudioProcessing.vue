@@ -1,7 +1,7 @@
 <template>
-    <div class="w-full rounded-b-2xl border-t border-bord-pr px-4 py-2 items-center justify-center flex overflow-hidden">
+    <div class="w-full pb-2 items-center flex overflow-hidden mt-2">
         <div class="shrink-0">
-            <h4 class="text-lab-pr text-cap-s leading-none">
+            <h4 class="text-lab-pr text-cap-l leading-none animate-pulse">
                 {{ $t('labels.audio_processing') }}
             </h4>
         </div>
@@ -36,7 +36,7 @@
                     ColibriBRD.private(BRD.getChannel('AUTH_USER', [userId])).listen(BRD.getEvent('TIMELINE_MEDIA_PROCESSED'), function (event) {
                         if(event.data.mediaable_id == mediaItem.value.mediaable_id) {
                             timelineStore.setPostMedia(event.data);
-                            
+
                             toastSuccess(__t('toast.post_published'));
                         }
                     });

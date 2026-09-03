@@ -11,12 +11,11 @@
 					{{ $t('labels.follow_recommendations') }}
 				</h5>
 			</div>
-			<div>
-				<FollowListItem v-for="userData in followRecommendations" v-bind:key="userData.id" v-bind:userData="userData"></FollowListItem> 
+			<div class="block">
+				<FollowListItem v-for="userData in followRecommendations" v-bind:key="userData.id" v-bind:userData="userData"></FollowListItem>
 			</div>
-
 			<div>
-				<RouterLink v-bind:to="{ name: 'explore_people' }" class="text-par-s hover:underline text-lab-sc cursor-pointer">
+				<RouterLink v-bind:to="{ name: 'explore_people' }" class="text-par-m hover:underline text-lab-sc cursor-pointer">
 					{{ $t('labels.more_suggestions') }}
 				</RouterLink>
 			</div>
@@ -25,27 +24,53 @@
 </template>
 
 <script>
-	import { defineComponent, reactive, onMounted, computed } from 'vue';
+	import { defineComponent, reactive, onMounted, computed, onBeforeUnmount } from 'vue';
 	import { useRecommendStore } from '@D/store/recommend/recommend.store.js';
 
 	import FollowListItem from '@D/components/recommend/follow/list/FollowListItem.vue';
-	
+
 	export default defineComponent({
 		setup: function(props, context) {
 			const recommendStore = useRecommendStore();
 
 			const state = reactive({
-				isLoading: true
+				isLoading: false
 			});
 
 			const followRecommendations = computed(() => {
 				return recommendStore.followRecommendations;
 			});
 
-			onMounted(async () => {
-				await recommendStore.fetchFollowRecommendations();
+            var updateInterval = null;
+            var updateAttempts = 0;
 
-				state.isLoading = false;
+            const updateFollowRecommendations = async function() {
+                state.isLoading = true;
+
+                await recommendStore.fetchFollowRecommendations();
+
+                updateAttempts++;
+
+                if(updateAttempts > 10) {
+                    clearInterval(updateInterval);
+                }
+
+                state.isLoading = false;
+            }
+
+			onMounted(async () => {
+                if(! followRecommendations.value.length) {
+                    await updateFollowRecommendations();
+                }
+
+                // Update follow recommendations every 20 minutes.
+                updateInterval = setInterval(updateFollowRecommendations, (1000 * 60 * 20));
+			});
+
+			onBeforeUnmount(() => {
+				if(updateInterval) {
+					clearInterval(updateInterval);
+				}
 			});
 
 			return {

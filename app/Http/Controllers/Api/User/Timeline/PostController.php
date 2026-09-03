@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Timeline;
 
@@ -28,27 +40,27 @@ use App\Traits\Http\Controllers\Api\User\Timeline\InteractsWithDraftPost;
 class PostController extends Controller
 {
     use SupportsApiResponses,
-    AuthorizesRequests,
-    InteractsWithDraftPost,
-    ValidatesPollData,
-    ValidatesPostData;
-
+        AuthorizesRequests,
+        InteractsWithDraftPost,
+        ValidatesPollData,
+        ValidatesPostData;
+    
     public function createPost(Request $request)
     {
         $this->initializePostAndValidateData($request);
-
+        
         $this->defineAndSetPostStatus();
 
-        if ($this->draftPost->content) {
+        if($this->draftPost->content) {
             $this->draftPost->text_language = $this->draftPost->getContentLanguage();
         }
 
         $quotedPostId = $request->integer('quoted_post_id', null);
 
-        if ($quotedPostId) {
+        if($quotedPostId) {
             $quotedPost = Post::activeById($quotedPostId)->first();
 
-            if ($quotedPost) {
+            if($quotedPost) {
                 $this->draftPost->quote_post_id = $quotedPost->id;
                 $this->draftPost->is_quoting = true;
 
@@ -58,17 +70,17 @@ class PostController extends Controller
 
         $postMarks = $request->array('marks', []);
 
-        if (!empty($postMarks['is_ai_generated'])) {
+        if(! empty($postMarks['is_ai_generated'])) {
             $this->draftPost->is_ai_generated = true;
         }
 
-        if (!empty($postMarks['is_sensitive'])) {
+        if(! empty($postMarks['is_sensitive'])) {
             $this->draftPost->is_sensitive = true;
         }
-
+        
         $this->draftPost->save();
 
-        $finalPost = $this->getFinialPost();
+        $finalPost = $this->getFinialPost(); 
 
         $finalPost->user->increment('publications_count', 1);
 
@@ -85,10 +97,10 @@ class PostController extends Controller
 
         $postData = Post::activeById($postId)->first();
 
-        if ($postData) {
+        if($postData) {
             $bookmarkedStatus = $postData->isBookmarkedBy(me()->id);
 
-            if ($bookmarkedStatus) {
+            if($bookmarkedStatus) {
                 $postData->removeBookmark(me()->id);
             }
             else {
@@ -97,7 +109,7 @@ class PostController extends Controller
 
             return $this->responseSuccess([
                 'data' => [
-                    'bookmarked' => (!$bookmarkedStatus)
+                    'bookmarked' => (! $bookmarkedStatus)
                 ]
             ]);
         }
@@ -122,10 +134,10 @@ class PostController extends Controller
             $responseData['data']['draft'] = DraftPostResource::make($this->draftPost);
         }
 
-        if ($quotedPostId) {
+        if($quotedPostId) {
             $quotedPost = Post::activeById($quotedPostId)->with('user')->first();
 
-            if ($quotedPost) {
+            if($quotedPost) {
                 $responseData['data']['quoted_post'] = QuoteResource::make($quotedPost);
             }
         }
@@ -137,7 +149,7 @@ class PostController extends Controller
     {
         $this->draftPost->status = PostStatus::ACTIVE;
 
-        if ($this->draftPost->type->isVideo()) {
+        if($this->draftPost->type->isVideo()) {
             $this->draftPost->status = PostStatus::PROCESSING_VIDEO;
         }
     }
@@ -150,16 +162,16 @@ class PostController extends Controller
             'content' => $request->get('content', null)
         ]);
 
-        if ($request->filled('content')) {
+        if($request->filled('content')) {
             $this->draftPost->content = normalize_nls($request->get('content', ''));
         }
 
-        if ($this->draftPost->type->isPoll()) {
+        if($this->draftPost->type->isPoll()) {
             $this->validatePollData([
                 'poll_options' => $request->get('poll_options', [])
             ]);
 
-            if (!$this->draftPost->exists) {
+            if(! $this->draftPost->exists) {
                 $this->draftPost->save();
             }
 
@@ -209,8 +221,8 @@ class PostController extends Controller
                 ->setReactable($postData)
                 ->setUnifiable(strtolower($reactionUnifiedId))
                 ->handleReaction();
-
-            if (!$postData->is_owner && $isReactionAdded) {
+                
+            if (! $postData->is_owner && $isReactionAdded) {
                 $postData->user->notify(new PostReactedNotification($postData, strtolower($reactionUnifiedId)));
             }
 
@@ -218,7 +230,7 @@ class PostController extends Controller
                 'data' => ReactionCollection::make($postData->reactions)
             ]);
         }
-
+        
         catch (Exception $e) {
             return $this->responseError([
                 'message' => $e->getMessage(),
@@ -258,7 +270,7 @@ class PostController extends Controller
                 'preview_image_base64' => $linkPreview['preview_image_base64']
             ]
         ]);
-
+        
         return $this->responseSuccess([
             'data' => LinkSnapshotResource::make($linkSnapshotData)
         ]);

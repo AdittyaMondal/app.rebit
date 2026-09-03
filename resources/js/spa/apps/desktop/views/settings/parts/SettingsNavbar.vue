@@ -73,6 +73,7 @@
                 v-bind:routeData="{ name: 'settings_social_media' }"></LinkItem>
 
                 <LinkItem
+                    v-if="$config('features.dark_theme.enabled')"
                     iconName="moon-02"
                     v-bind:textLabel="$t('labels.theme')"
                 v-bind:routeData="{ name: 'settings_theme' }"></LinkItem>
@@ -108,7 +109,7 @@
             <LinksGroupDivider></LinksGroupDivider>
 
             <LinksGroupTitle v-bind:textLabel="$t('settings.advanced_settings')"></LinksGroupTitle>
-            
+
             <div class="block">
                 <LinkItem
                     iconName="keyboard-01"
@@ -123,7 +124,7 @@
             <LinksGroupDivider></LinksGroupDivider>
 
             <LinksGroupTitle v-bind:textLabel="$t('settings.additional_settings')"></LinksGroupTitle>
-            
+
             <div class="block">
                 <LinkItem
                     iconName="alert-triangle"

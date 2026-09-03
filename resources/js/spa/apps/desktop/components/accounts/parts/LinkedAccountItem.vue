@@ -4,7 +4,7 @@
 	class="block hover:bg-fill-qt smoothing border-b border-bord-pr p-4 last:border-none">
 		<div class="flex justify-between items-center">
 			<div class="flex-1 overflow-hidden pr-12">
-				<AvatarRightSided 
+				<AvatarRightSided
 					v-bind:avatarSrc="accountData.avatar_url"
 					v-bind:verified="accountData.verified"
 					v-bind:name="accountData.name"
@@ -19,15 +19,17 @@
 					</div>
 				</div>
 			</div>
-			<div class="shrink-0">
-				<div v-if="accountData.isSwitching" class="w-6">
-					<PrimaryDotsAnimation></PrimaryDotsAnimation>
-				</div>
-				<div v-else class="size-icon-small">
-					<SvgIcon class="text-green-900" v-if="accountData.is_active" name="check-circle" type="solid"></SvgIcon>
-					<SvgIcon class="text-lab-sc" v-else name="circle" type="line"></SvgIcon>
-				</div>
-			</div>
+            <template v-if="$config('features.switch_account.enabled')">
+                <div class="shrink-0">
+                    <div v-if="accountData.isSwitching" class="w-6">
+                        <PrimaryDotsAnimation></PrimaryDotsAnimation>
+                    </div>
+                    <div v-else class="size-icon-small">
+                        <SvgIcon class="text-green-900" v-if="accountData.is_active" name="check-circle" type="solid"></SvgIcon>
+                        <SvgIcon class="text-lab-sc" v-else name="circle" type="line"></SvgIcon>
+                    </div>
+                </div>
+            </template>
 		</div>
 	</div>
 </template>

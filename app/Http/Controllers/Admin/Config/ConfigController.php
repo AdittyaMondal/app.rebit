@@ -11,14 +11,39 @@ use Illuminate\Support\Facades\Validator;
 
 class ConfigController extends Controller
 {
+    public function index()
+    {
+        return view('admin::config.index');
+    }
+
+    public function branding()
+    {
+        return view('admin::config.branding.index');
+    }
+
+    public function codeInjection()
+    {
+        return view('admin::config.code.index');
+    }
+
     public function general()
     {
         return view('admin::config.general.index');
     }
 
+    public function ffmpeg()
+    {
+        $tab = request()->input('tab', 'ffmpeg');
+        $tab = in_array($tab, ['ffmpeg', 'ffmpeg-test']) ? $tab : 'ffmpeg';
+
+        return view('admin::config.ffmpeg.index', [
+            'tab' => $tab,
+        ]);
+    }
+
     public function email()
     {
-        $tab = request()->get('tab', 'email');
+        $tab = request()->input('tab', 'email');
         $tab = in_array($tab, ['email', 'testing']) ? $tab : 'email';
 
         return view('admin::config.email.index', [
@@ -55,7 +80,7 @@ class ConfigController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $email = $request->get('email');
+        $email = $request->input('email');
 
         try {
             Mail::raw(__('email.testing.body', ['app_name' => config('app.name')]), function ($message) use ($email) {
@@ -68,5 +93,35 @@ class ConfigController extends Controller
                 'email' => $th->getMessage(),
             ]);
         }
+    }
+
+    public function socialLogin()
+    {
+        return view('admin::social.google.index');
+    }
+
+    public function wallet()
+    {
+        return view('admin::config.wallet.index');
+    }
+
+    public function auth()
+    {
+        return view('admin::config.auth.index');
+    }
+
+    public function mobileApps()
+    {
+        $tab = request()->route('tab', 'mobile');
+        $tab = in_array($tab, ['mobile', 'pwa']) ? $tab : 'mobile';
+
+        return view('admin::config.mobile.index', [
+            'tab' => $tab,
+        ]);
+    }
+
+    public function backup()
+    {
+        return view('admin::config.backup.index');
     }
 }

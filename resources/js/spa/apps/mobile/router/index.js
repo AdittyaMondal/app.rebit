@@ -11,87 +11,6 @@ const Router = createRouter({
     },
 	routes: [
         {
-			path: '/jobs',
-			component: function () {
-                return import('@D/views/jobs/children/board/JobsIndex.vue');
-            },
-			alias: '/jobs',
-            meta: {
-                layout: Layouts.MAIN,
-                auth: true,
-                feature: 'jobs',
-                hideHeader: true,
-            },
-            name: 'jobs_index'
-		},
-        {
-            path: '/saved/jobs',
-            component: function() {
-                return import('@D/views/jobs/children/saved/JobBookmarks.vue');
-            },
-            name: 'saved_jobs',
-            meta: {
-                layout: Layouts.MAIN,
-                auth: true,
-                feature: 'jobs',
-                hideHeader: true,
-            }
-        },
-        {
-            path: '/jobs/:job_id',
-            component: function() {
-                return import('@D/views/jobs/children/job/JobShow.vue');
-            },
-            meta: {
-                layout: Layouts.MAIN,
-                auth: true,
-                feature: 'jobs',
-                hideHeader: true,
-            },
-            name: 'jobs_show',
-            props: true
-        },
-        {
-			path: '/marketplace',
-			component: function() {
-                return import('@D/views/marketplace/children/catalog/MarketplaceIndex.vue');
-            },
-            meta: {
-                layout: Layouts.MAIN,
-                auth: true,
-                feature: 'marketplace',
-                hideHeader: true,
-            },
-            name: 'marketplace_index',
-		},
-        {
-            props: true,
-			path: '/marketplace/product/:product_id',
-			component: function() {
-                return import('@D/views/marketplace/children/product/ProductShow.vue');
-            },
-            meta: {
-                layout: Layouts.MAIN,
-                auth: true,
-                feature: 'marketplace',
-                hideHeader: true,
-            },
-            name: 'marketplace_show',
-		},
-        {
-            path: '/saved/products',
-            component: function() {
-                return import('@D/views/marketplace/children/saved/ProductBookmarks.vue');
-            },
-            name: 'saved_products',
-            meta: {
-                layout: Layouts.MAIN,
-                auth: true,
-                feature: 'marketplace',
-                hideHeader: true,
-            }
-        },
-        {
             path: '/wallet',
             component: function() {
                 return import('@M/views/wallet/WalletIndex.vue');
@@ -117,11 +36,6 @@ const Router = createRouter({
             name: 'home_index'
 		},
         {
-            // Catch /switcher/device/mobile URLs that might land on the SPA
-            path: '/switcher/device/:type',
-            redirect: { name: 'home_index' }
-        },
-        {
 			path: '/messenger',
 			component: function() {
                 return import('@M/views/messenger/MessengerIndex.vue');
@@ -132,7 +46,7 @@ const Router = createRouter({
                 auth: true
             },
             name: 'messenger_index',
-            redirect: { 
+            redirect: {
                 name: 'messenger_inbox'
             },
             children: [
@@ -197,6 +111,13 @@ const Router = createRouter({
                         return import('@M/views/settings/children/navigators/SettingsNav.vue');
                     },
                     name: 'settings_navigator'
+                },
+                {
+                    path: 'blocked',
+                    component: function() {
+                        return import('@M/views/settings/children/blocked/BlockSettings.vue');
+                    },
+                    name: 'settings_blocked'
                 },
                 {
                     path: 'account-settings',
@@ -265,7 +186,7 @@ const Router = createRouter({
         {
 			path: '/@:id([a-zA-Z0-9._]+)',
 			component: function() {
-                return import('@M/views/profile/ProfilePage.vue');
+                return import('@M/views/profile/ProfileIndex.vue');
             },
             meta: {
                 layout: Layouts.MAIN,
@@ -398,22 +319,6 @@ const Router = createRouter({
             }
         },
 	]
-});
-
-Router.beforeEach((to, from, next) => {
-    let feature = to.meta.feature || null;
-
-    if(feature) {
-        if(! config(`features.${feature}.enabled`)) {
-            return next({ name: 'error_404' });
-        }
-        else {
-            next();
-        }
-    }
-    else {
-        next();
-    }
 });
 
 export default Router;

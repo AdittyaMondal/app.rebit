@@ -5,12 +5,7 @@
 @endsection
 
 @section('pageContent')
-	<div class="mb-4">
-        <x-page-title titleText=" {{ __('admin/ban.index_title') }}"></x-page-title>
-        <x-page-desc>
-            {{ __('admin/ban.index_desc') }}
-        </x-page-desc>
-    </div>
+    <x-page-title titleText=" {{ __('admin/ban.index_title') }}"></x-page-title>
 
 	<x-table.table>
 		<x-table.thead>

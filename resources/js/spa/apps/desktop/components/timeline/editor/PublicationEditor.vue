@@ -20,13 +20,13 @@
                             v-on:input="textInputHandler"
                             ref="postTextInputField"
                             v-model="postData.content"
-                            class="resize-none w-full min-h-[80px] leading-5 bg-transparent text-par-l text-lab-pr2 pr-4 outline-hidden placeholder:font-light placeholder:text-par-l pt-0.5" 
+                            class="resize-none w-full min-h-[80px] leading-5 bg-transparent text-par-l text-lab-pr2 pr-4 outline-hidden placeholder:font-light placeholder:text-par-l pt-0.5"
                         v-bind:placeholder="postTextInputPlaceholder"></textarea>
 
                         <template v-if="state.emojisMenu.status">
                             <div class="relative">
                                 <div class="absolute top-full left-0 w-80 z-50">
-                                    <EmojisPicker 
+                                    <EmojisPicker
                                         v-on:pick="insertPostEmoji"
                                     v-on:close="state.emojisMenu.close"></EmojisPicker>
                                 </div>
@@ -42,8 +42,8 @@
                         {{ $t('labels.ai_generated') }}
                     </div>
                 </div>
-                <MentionsPicker 
-                    v-on:select="selectMention" 
+                <MentionsPicker
+                    v-on:select="selectMention"
                 classes="absolute top-0 left-0 w-80 z-50 border border-bord-pr rounded-lg popup-background-tr"></MentionsPicker>
                 <template v-if="state.isDragging">
                     <MediaFileDropper v-on:click="state.isDragging = false"></MediaFileDropper>
@@ -67,7 +67,7 @@
                         </template>
                         <template v-else-if="PostTypeUtils.isVideo(postData.type)">
                             <PostVideoPreview
-                                v-for="mediaItem in postMedia" v-bind:key="mediaItem.id" 
+                                v-for="mediaItem in postMedia" v-bind:key="mediaItem.id"
                                 v-bind:mediaItem="mediaItem"
                             v-on:delete="deletePostMedia"></PostVideoPreview>
                         </template>
@@ -100,25 +100,17 @@
                         <div class="absolute w-96 top-full left-0 z-50" v-if="state.mainMenu.status">
                             <RichMenu v-outside-click="state.mainMenu.close" v-on:click="state.mainMenu.close">
                                 <RichMenuItem
-                                    v-on:click="selectImage" 
-                                    v-bind:disabled="postMediaButtonStatus(PostType.IMAGE)" 
+                                    v-on:click="selectImage"
+                                    v-bind:disabled="postMediaButtonStatus(PostType.IMAGE)"
                                     iconName="image-05"
                                     v-bind:title="$t('editor.main_menu.image.title')"
                                 v-bind:description="$t('editor.main_menu.image.description')"></RichMenuItem>
                                 <RichMenuItem
-                                    v-on:click="selectVideo" 
-                                    v-bind:disabled="postMediaButtonStatus(PostType.VIDEO)" 
+                                    v-on:click="selectVideo"
+                                    v-bind:disabled="postMediaButtonStatus(PostType.VIDEO)"
                                     iconName="video-recorder"
                                     v-bind:title="$t('editor.main_menu.video.title')"
                                 v-bind:description="$t('editor.main_menu.video.description')"></RichMenuItem>
-                                <RouterLink v-bind:to="{ name: 'live_index' }">
-                                    <RichMenuItem
-                                        iconName="signal-01"
-                                        iconType="line"
-                                        trailingIconName="arrow-up-right"
-                                        v-bind:title="$t('editor.main_menu.live.title')"
-                                    v-bind:description="$t('editor.main_menu.live.description')"></RichMenuItem>
-                                </RouterLink>
                                 <RichMenuItem
                                     v-on:click="createPoll"
                                     v-bind:disabled="postMediaButtonStatus(PostType.POLL)"
@@ -133,13 +125,13 @@
                                 v-bind:description="$t('editor.main_menu.audio.description')"></RichMenuItem>
                                 <RichMenuItem
                                     v-on:click="selectDocument"
-                                    v-bind:disabled="postMediaButtonStatus(PostType.DOCUMENT)" 
+                                    v-bind:disabled="postMediaButtonStatus(PostType.DOCUMENT)"
                                     iconName="sticker-square"
                                     v-bind:title="$t('editor.main_menu.document.title')"
                                 v-bind:description="$t('editor.main_menu.document.description')"></RichMenuItem>
                                 <RichMenuItem
                                     v-on:click="state.recorderMenu.open"
-                                    v-bind:disabled="postMediaButtonStatus(PostType.RECORDING)"  
+                                    v-bind:disabled="postMediaButtonStatus(PostType.RECORDING)"
                                     iconName="recording-02"
                                     iconType="line"
                                     v-bind:title="$t('editor.main_menu.recording.title')"
@@ -147,7 +139,7 @@
                                 v-bind:description="$t('editor.main_menu.recording.description')"></RichMenuItem>
                                 <RichMenuItem
                                     v-on:click.stop="state.gifMenu.open(); state.mainMenu.close();"
-                                    v-bind:disabled="postMediaButtonStatus(PostType.GIF)"  
+                                    v-bind:disabled="postMediaButtonStatus(PostType.GIF)"
                                     iconName="gif"
                                     iconType="line"
                                     v-bind:title="$t('editor.main_menu.gif.title')"
@@ -169,31 +161,6 @@
                     <span class="w-px h-4 bg-bord-sc"></span>
                     <div class="shrink-0 inline-flex relative">
                         <MediaCreateButton v-on:click="openCheatSheetPanel" iconName="type-01"></MediaCreateButton>
-                    </div>
-                    <span class="w-px h-4 bg-bord-sc"></span>
-                    <div class="shrink-0 inline-flex relative">
-                        <button
-                            v-on:click="refineWithAI"
-                            v-bind:disabled="!postData.content || !postData.content.trim().length || state.isAiRefining"
-                            class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-par-s font-medium transition-all duration-200"
-                            v-bind:class="state.isAiRefining ? 'text-amber-500 opacity-80' : 'text-lab-sc hover:text-amber-500 hover:bg-fill-tr'"
-                            v-bind:title="$t('editor.ai_refine') || 'AI Refine'"
-                        >
-                            <span v-if="state.isAiRefining" class="size-4 inline-block animate-spin">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                            </span>
-                            <span v-else class="size-4 inline-block">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 4.804A7.968 7.968 0 0 0 5.5 4c-1.03 0-2.016.195-2.922.551A9.076 9.076 0 0 1 4.5 3.5a9.1 9.1 0 0 1 4.5-1.206V4.804zM12 2.294a9.1 9.1 0 0 1 4.5 1.206c.69.397 1.33.868 1.922 1.405A7.968 7.968 0 0 0 16 4.5a7.968 7.968 0 0 0-2-.696V2.294z" />
-                                    <path fill-rule="evenodd" d="M12 2a1 1 0 0 1 1 1v2.07a8.002 8.002 0 0 1 5.536 2.394 1 1 0 0 1-1.414 1.414A6 6 0 1 0 12 18a6 6 0 0 0 4.122-1.636 1 1 0 1 1 1.414 1.414A8 8 0 1 1 11 5.07V3a1 1 0 0 1 1-1z" clip-rule="evenodd" />
-                                    <path d="m14.828 10.172 1.415-1.414a1 1 0 1 1 1.414 1.414L16.243 11.586l1.414 1.414a1 1 0 0 1-1.414 1.414l-1.415-1.414-1.414 1.414a1 1 0 0 1-1.414-1.414L13.414 11.586 12 10.172a1 1 0 1 1 1.414-1.414l1.414 1.414z" />
-                                </svg>
-                            </span>
-                            <span>{{ state.isAiRefining ? 'Refining...' : 'AI' }}</span>
-                        </button>
                     </div>
                     <span class="w-px h-4 bg-bord-sc"></span>
                     <div class="shrink-0 inline-flex relative">
@@ -250,7 +217,7 @@
 <script>
     import { defineComponent, defineAsyncComponent, onMounted, ref, reactive, computed, nextTick } from 'vue';
     import { PostTypeUtils, PostType } from '@/kernel/enums/post/post.type.js';
-    
+
     import { colibriAPI } from '@/kernel/services/api-client/native/index.js';
     import { colibriEventBus } from '@/kernel/events/bus/index.js';
     import { imagePasteHandler } from '@/kernel/events/image-paste/index.js';
@@ -262,11 +229,11 @@
     import { useMenu } from '@/kernel/vue/composables/menu/index.js';
 
     import DropdownButton from '@D/components/general/dropdowns/parts/DropdownButton.vue';
-    
+
     import PrimaryTextButton from '@D/components/inter-ui/buttons/PrimaryTextButton.vue';
     import MediaCreateButton from '@D/components/timeline/editor/buttons/MediaCreateButton.vue';
     import EmojisPickerButton from '@D/components/timeline/editor/buttons/EmojisPickerButton.vue';
-    
+
     import MentionsPicker from '@D/components/mentions/MentionsPicker.vue';
     import DropdownMenu from '@D/components/general/dropdowns/parts/DropdownMenu.vue';
     import DropdownMenuItem from '@D/components/general/dropdowns/parts/DropdownMenuItem.vue';
@@ -285,7 +252,7 @@
 
             const { openCheatSheetPanel } = useCheatSheet();
             const { autoResize, insertSymbolAtCaret, matchMention, matchLink, completeText } = useInputHandlers();
-            
+
             const authStore = useAuthStore();
             const timelineStore = useTimelineStore();
             const postEditorStore = usePostEditorStore();
@@ -303,7 +270,6 @@
                 isDragging: false,
                 isLinkPreviewing: false,
                 isFetchingLinkPreview: false,
-                isAiRefining: false,
                 moreMenu: useMenu(),
                 emojisMenu: useMenu(),
                 recorderMenu: useMenu(),
@@ -320,7 +286,7 @@
 
                 if(! state.isLinkPreviewing && ! state.isFetchingLinkPreview) {
                     const linkMatch = matchLink(postTextInputField.value);
-                    
+
                     if(PostTypeUtils.isText(postData.value.type) && linkMatch && ! ignoredLinkSnapshots.value.includes(linkMatch)) {
                         // If the link has already been previewed and ignored, don't preview it again
                         // This is to prevent spamming the API with the same link over and over
@@ -345,6 +311,10 @@
                     }
                 }
 
+                if(postTextInputField.value.value.length <= 10) {
+                    postEditorStore.preservedPostData = {};
+                }
+
                 autoResize(postTextInputField.value);
             }
 
@@ -365,7 +335,7 @@
 
                 colibriAPI().postEditor().with(formData).withHeaders({
                     'Content-Type': 'multipart/form-data'
-                }).uploadProgress((progressEvent) => {                    
+                }).uploadProgress((progressEvent) => {
                     state.postMediaUploadProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
                 }).sendTo(`media/${type}/upload`).then((response) => {
 
@@ -374,7 +344,6 @@
                     state.postMediaUploadProgress = 0;
 
                     resetFileInputTags();
-
                 }).catch((error) => {
                     toastError(error.response.data.message);
 
@@ -406,10 +375,10 @@
 
             const submitForm = async () => {
                 state.postSubmitting = true;
-                
+
                 await colibriAPI().postEditor().with(getFormSubmitData()).sendTo('create').then((response) => {
                     timelineStore.prependPost(response.data.data);
-                    
+
                     autoResize(postTextInputField.value);
 
                     postEditorStore.finishEditing();
@@ -460,59 +429,6 @@
                 state.gifMenu.close();
             };
 
-            const refineWithAI = async () => {
-                const workerUrl = import.meta.env.VITE_AI_REFINE_WORKER_URL;
-                const authToken = import.meta.env.VITE_AI_REFINE_SECRET_TOKEN || import.meta.env.AI_REFINE_SECRET_TOKEN;
-
-                if (!workerUrl) {
-                    toastError('AI Refine is not configured. Please set the Worker URL.');
-                    return;
-                }
-
-                const currentText = postData.value.content;
-                if (!currentText || !currentText.trim()) {
-                    return;
-                }
-
-                state.isAiRefining = true;
-
-                try {
-                    const response = await fetch(workerUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${authToken}`
-                        },
-                        body: JSON.stringify({ text: currentText })
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(errorData.error || 'AI refinement failed');
-                    }
-
-                    const data = await response.json();
-
-                    if (data.refined_text) {
-                        postData.value.content = data.refined_text;
-
-                        // Auto-resize the textarea to fit the new content
-                        nextTick(() => {
-                            autoResize(postTextInputField.value);
-                        });
-
-                        toastSuccess('Post refined with AI ✨');
-                    } else {
-                        toastError('AI could not refine the post. Please try again.');
-                    }
-                } catch (error) {
-                    console.error('AI Refine Error:', error);
-                    toastError(error.message || 'Failed to refine post. Please try again.');
-                } finally {
-                    state.isAiRefining = false;
-                }
-            };
-
             return {
                 state: state,
                 userData: userData,
@@ -522,7 +438,6 @@
                 PostTypeUtils: PostTypeUtils,
                 PostType: PostType,
                 openCheatSheetPanel: openCheatSheetPanel,
-                refineWithAI: refineWithAI,
                 onImageSelect: (event) => {
                     uploadPostMedia(event.target.files[0], 'image');
                 },
@@ -541,6 +456,10 @@
                     uploadPostMedia(audioFile, 'audio');
                 },
                 onMediaPaste: (event) => {
+                    postEditorStore.preservedPostData = {
+                        content: postData.value.content
+                    };
+
                     imagePasteHandler(event, (imageFile) => {
                         uploadPostMedia(imageFile, 'image');
                     });

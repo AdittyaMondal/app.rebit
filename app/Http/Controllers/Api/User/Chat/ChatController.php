@@ -1,46 +1,63 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Chat;
 
-use Exception;
-use Throwable;
-use App\Models\Chat;
-use App\Models\User;
-use App\Support\Num;
-use App\Rules\X\XRule;
-use App\Models\Message;
-use App\Models\Product;
-use App\Models\HiddenChat;
-use App\Models\JobListing;
-use Illuminate\Support\Str;
-use App\Enums\Chat\ChatType;
-use Illuminate\Http\Request;
-use App\Constants\Relationship;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
-use App\Events\User\Chat\MessageReadEvent;
-use App\Services\Reaction\ReactionService;
-use Illuminate\Database\Eloquent\Collection;
-use App\Events\User\Chat\MessageDeletedEvent;
-use App\Traits\Http\Api\SupportsApiResponses;
-use App\Events\User\Chat\MessageReceivedEvent;
 use App\Actions\Chat\MessageGlobalDeleteAction;
 use App\Actions\Chat\MessagesLocalDeleteAction;
+use App\Constants\Relationship;
+use App\Enums\Chat\ChatType;
+use App\Events\User\Chat\MessageDeletedEvent;
+use App\Events\User\Chat\MessageReadEvent;
+use App\Events\User\Chat\MessageReceivedEvent;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\User\Chat\ChatCollection;
 use App\Http\Resources\User\Chat\MessageCollection;
 use App\Http\Resources\User\Chat\ParticipantCollection;
 use App\Http\Resources\User\Chat\RequestCollection;
-use App\Http\Resources\User\Timeline\ReactionCollection;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Resources\User\Overview\UserOverviewResource;
+use App\Http\Resources\User\Timeline\ReactionCollection;
+use App\Models\Chat;
 use App\Models\ChatInvite;
+use App\Models\HiddenChat;
+use App\Models\JobListing;
+use App\Models\Message;
+use App\Models\Product;
+use App\Models\User;
 use App\Notifications\User\Chat\MessageReceivedNotification;
+use App\Rules\X\XRule;
+use App\Services\Reaction\ReactionService;
+use App\Services\Relations\BlockService;
+use App\Services\Relations\FollowService;
+use App\Support\Num;
+use App\Traits\Http\Api\SupportsApiResponses;
+use App\Traits\Http\Controllers\Api\User\Chat\WithMediaUpload;
+use Exception;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Throwable;
 
 class ChatController extends Controller
 {
     use SupportsApiResponses,
-    AuthorizesRequests;
+        WithMediaUpload,
+        AuthorizesRequests;
 
     private $unreadCount = 0;
 
@@ -91,7 +108,7 @@ class ChatController extends Controller
         $participatedChats->each(function ($chatData) {
             $participantData = $chatData->participants()->where('user_id', me()->id)->first();
 
-            if ($participantData) {
+            if($participantData) {
                 $this->unreadCount += $chatData->messages()
                     ->whereNot('user_id', me()->id)
                     ->where('id', '>', $participantData->last_read_message_id)
@@ -109,17 +126,17 @@ class ChatController extends Controller
 
     public function markAsRead(string $chatId)
     {
-        if (Str::isUuid($chatId)) {
+        if(Str::isUuid($chatId)) {
 
             $chatData = Chat::participatedChats()->where('chat_id', $chatId)->first();
 
-            if ($chatData) {
+            if($chatData) {
                 $userParticipant = $chatData->participants()->where('user_id', me()->id)->first();
                 $lastMessageData = $chatData->messages()->latest()->first();
                 $statusUpdated = false;
 
-                if ($lastMessageData && $userParticipant) {
-                    if ($userParticipant->last_read_message_id < $lastMessageData->id) {
+                if($lastMessageData && $userParticipant) {
+                    if($userParticipant->last_read_message_id < $lastMessageData->id) {
                         $statusUpdated = true;
                         $userParticipant->update([
                             'last_read_message_id' => $lastMessageData->id,
@@ -132,9 +149,8 @@ class ChatController extends Controller
                                 'user_id' => me()->id,
                                 'last_read_message_id' => $lastMessageData->id
                             ]));
-                        }
-                        catch (Throwable $th) {
-                        // Pass
+                        } catch (Throwable $th) {
+                            // Pass
                         }
                     }
                 }
@@ -152,10 +168,10 @@ class ChatController extends Controller
 
     public function getChatParticipants(string $chatId)
     {
-        if (Str::isUuid($chatId)) {
+        if(Str::isUuid($chatId)) {
             $chatData = Chat::participatedChats()->where('chat_id', $chatId)->first();
 
-            if ($chatData) {
+            if($chatData) {
                 $chatParticipants = $chatData->participants()->with('user:id,first_name,last_name,username,avatar,caption,last_active,verified')->take(7)->get();
 
                 return $this->responseSuccess([
@@ -169,12 +185,13 @@ class ChatController extends Controller
 
     public function getChatMessages(Request $request, string $chatId)
     {
-        if (Str::isUuid($chatId)) {
+        if(Str::isUuid($chatId)) {
             $chatData = Chat::participatedChats()->where('chat_id', $chatId)->first();
 
-            if ($chatData) {
+            if($chatData) {
                 $chatMessages = $chatData->messages()->excludeDeleted()->with([
                     'reactions',
+                    'media',
                     'participant',
                     'user:id,first_name,last_name,username,avatar,verified',
                     'parent.user:id,first_name,last_name,username,verified',
@@ -197,7 +214,7 @@ class ChatController extends Controller
 
         $userData = User::active()->excludeSelf()->find($userId);
 
-        if (empty($userData)) {
+        if(empty($userData)) {
             return $this->responseResourceNotFoundError('User', $userId);
         }
         else {
@@ -217,7 +234,7 @@ class ChatController extends Controller
 
         $userData = User::active()->excludeSelf()->find($userId);
 
-        if (empty($userData)) {
+        if(empty($userData)) {
             return $this->responseResourceNotFoundError('User', $userId);
         }
         else {
@@ -238,10 +255,10 @@ class ChatController extends Controller
 
     public function getChatData(Request $request, string $chatId)
     {
-        if (Str::isUuid($chatId)) {
+        if(Str::isUuid($chatId)) {
             $chatData = Chat::participatedChats()->where('chat_id', $chatId)->first();
 
-            if ($chatData) {
+            if($chatData) {
                 $participantsCount = $chatData->participants()->count();
                 $isParticipant = $chatData->isParticipant(me()->id);
 
@@ -280,32 +297,40 @@ class ChatController extends Controller
                         ->participants()
                         ->whereNot('user_id', me()->id)
                         ->select([
-                        'user_id',
-                        'last_read_message_id',
-                        'last_read_at',
-                    ])->get()->toArray();
+                            'user_id',
+                            'last_read_message_id',
+                            'last_read_at',
+                        ])->get()->toArray();
 
                     // TODO: Add deleted user support.
+
+                    $blockedAny = $this->isBlockedAny($interlocutorData);
 
                     $chatInfo['chat_info']['id'] = $interlocutorData->id;
                     $chatInfo['chat_info']['name'] = $interlocutorData->name;
                     $chatInfo['chat_info']['username'] = $interlocutorData->username;
-                    $chatInfo['chat_info']['avatar_url'] = $interlocutorData->avatar_url;
-                    $chatInfo['chat_info']['description'] = $interlocutorData->bio;
+                    $chatInfo['chat_info']['avatar_url'] = ($blockedAny) ? asset(config('user.avatar')) : $interlocutorData->avatar_url;
+                    $chatInfo['chatInfo']['description'] = ($blockedAny) ? null : $interlocutorData->bio;
                     $chatInfo['chat_info']['verified'] = $interlocutorData->isVerified();
-                    $chatInfo['chat_info']['followers_count'] = [
+
+                    $chatInfo['chat_info']['followers_count'] = ($blockedAny) ? null : [
                         'raw' => $interlocutorData->followers_count,
                         'formatted' => Num::abbreviate($interlocutorData->followers_count)
                     ];
-                    $chatInfo['chat_info']['last_active'] = [
+
+                    $chatInfo['chat_info']['last_active'] = ($blockedAny) ? null : [
                         'raw' => $interlocutorData->getLastActive()->getTimestamp(),
                         'formatted' => $interlocutorData->getLastActive()->getCalendar()
                     ];
+
                     $chatInfo['chat_info']['meta'] = [
                         'relationship' => [
                             Relationship::FOLLOW_GROUP => [
-                                Relationship::FOLLOWED_BY => $interlocutorData->isFollowing(me()),
-                            ]
+                                Relationship::FOLLOWED_BY => ($blockedAny) ? false : (new FollowService($interlocutorData, me()))->isFollowing(),
+                            ],
+                            Relationship::BLOCK_GROUP => [
+                                Relationship::BLOCKING => $blockedAny
+                            ],
                         ]
                     ];
                 }
@@ -335,24 +360,35 @@ class ChatController extends Controller
             'chat_id' => $request->get('chat_id'),
             'content' => $request->get('content'),
             'parent_id' => $request->get('parent_id'),
+            'media_type' => $request->get('media_type'),
+            'media' => $request->file('media'),
+            'media_duration' => $request->get('media_duration'),
         ], [
             'chat_id' => ['required', 'uuid'],
             'parent_id' => ['nullable', 'integer'],
-            'content' => ['required', 'string', 'min:1', XRule::join('max', config('chat.message.validation.content.max'))],
+            'content' => ['nullable', 'required_without:media', 'string', 'min:1', XRule::join('max', config('chat.message.validation.content.max'))],
+            'media_type' => ['nullable', 'required_with:media', 'string', Rule::in(config('chat.validation.message.media_type.types'))],
+            // TODO: Add validation types from config not hardcoded.
+            'media_duration' => ['nullable', 'requiredIf:media_type,video,audio', 'integer', 'min:1'],
+            'media' => ['nullable', 'required_without:content', 'file',
+                XRule::join('mimes', config('chat.validation.message.media.mimes')),
+                XRule::join('mimetypes', config('chat.validation.message.media.mimetypes')),
+                XRule::join('max', config('chat.validation.message.media.max'))
+            ],
         ]);
 
-        if ($validator->passes()) {
-            $chatId = $request->get('chat_id');
-            $messageContent = $request->get('content');
+        if($validator->passes()) {
+            $chatId = $request->input('chat_id');
+            $messageContent = $request->input('content');
             $parentId = $request->integer('parent_id');
             $chatData = Chat::participatedChats()->where('chat_id', $chatId)->first();
 
-            if ($chatData) {
+            if($chatData) {
                 $participantData = $chatData->participants()->where('user_id', me()->id)->first();
                 $otherParticipants = $chatData->participants()->whereNot('user_id', me()->id)->get();
                 $messageContentLanguage = '';
 
-                if ($messageContent) {
+                if($messageContent) {
                     $messageContentLanguage = detect_text_language($messageContent);
                 }
 
@@ -364,10 +400,10 @@ class ChatController extends Controller
                     'text_language' => $messageContentLanguage
                 ];
 
-                if ($parentId) {
+                if($parentId) {
                     $replayableMessageExists = $chatData->messages()->where('id', $parentId)->exists();
 
-                    if (empty($replayableMessageExists)) {
+                    if(empty($replayableMessageExists)) {
                         return $this->responseResourceNotFoundError('Message', $parentId);
                     }
 
@@ -381,15 +417,25 @@ class ChatController extends Controller
                     'last_read_at' => now()
                 ]);
 
+                // Handle media upload.
+                if($request->hasFile('media')) {
+                    $mediaDuration = $request->input('media_duration') ?? 0;
+                    $mediaType = $request->input('media_type');
+                    $mediaFile = $request->file('media');
+
+                    $this->uploadMedia($messageData, $mediaFile, $mediaType, $mediaDuration);
+
+                    $messageData->load('media');
+                }
+
                 try {
                     event(new MessageReceivedEvent($messageData));
 
                     $otherParticipants->each(function ($participantData) {
                         $participantData->user->notify(new MessageReceivedNotification());
                     });
-                }
-                catch (Throwable $th) {
-                // Pass
+                } catch (Throwable $th) {
+                    // Pass
                 }
 
                 $chatData->update([
@@ -407,7 +453,7 @@ class ChatController extends Controller
 
             return $this->responseResourceNotFoundError('Chat', $chatId);
         }
-        else {
+        else{
             return $this->throwValidationError($validator);
         }
     }
@@ -415,23 +461,23 @@ class ChatController extends Controller
     public function launcherSendMessage(Request $request)
     {
         $validator = Validator::make([
-            'chat_id' => $request->get('chat_id'),
-            'content' => $request->get('content'),
-            'payload' => $request->get('payload')
+            'chat_id' => $request->input('chat_id'),
+            'content' => $request->input('content'),
+            'payload' => $request->input('payload')
         ], [
             'chat_id' => ['required', 'uuid'],
             'content' => ['required', 'string', 'min:1', XRule::join('max', config('chat.message.validation.content.max'))],
             'payload' => ['nullable', 'array']
         ]);
 
-        if ($validator->passes()) {
-            $chatId = $request->get('chat_id');
-            $messageContent = $request->get('content');
-            $payload = $request->get('payload');
+        if($validator->passes()) {
+            $chatId = $request->input('chat_id');
+            $messageContent = $request->input('content');
+            $payload = $request->input('payload');
 
             $chatData = Chat::participatedChats()->where('chat_id', $chatId)->first();
 
-            if ($chatData) {
+            if($chatData) {
                 $participantData = $chatData->participants()->where('user_id', me()->id)->first();
 
                 $messageInsertData = [
@@ -449,21 +495,20 @@ class ChatController extends Controller
 
                 try {
                     event(new MessageReceivedEvent($messageData));
-                }
-                catch (Throwable $th) {
-                // Pass
+                } catch (Throwable $th) {
+                    // Pass
                 }
 
                 if ($chatData->type->isDirect()) {
                     HiddenChat::where('chat_id', $chatData->id)->delete();
                 }
 
-                if ($payload) {
+                if($payload) {
                     $resourceId = data_get_integer($payload, 'id', 0);
                     $resourceType = data_get($payload, 'type', null);
 
-                    if ($resourceId) {
-                        if ($resourceType == 'product') {
+                    if($resourceId) {
+                        if($resourceType == 'product') {
                             try {
                                 $productData = Product::listable()->find($resourceId);
 
@@ -476,13 +521,12 @@ class ChatController extends Controller
                                         'preview_image_base64' => null
                                     ]
                                 ]);
-                            }
-                            catch (Exception $e) {
-                            // Pass
+                            } catch (Exception $e) {
+                                // Pass
                             }
                         }
 
-                        else if ($resourceType == 'job') {
+                        else if($resourceType == 'job') {
                             try {
                                 $jobData = JobListing::listable()->find($resourceId);
                                 $jobData->increment('applications_count');
@@ -497,9 +541,8 @@ class ChatController extends Controller
                                         'preview_image_base64' => null
                                     ]
                                 ]);
-                            }
-                            catch (Exception $e) {
-                            // Pass
+                            } catch (Exception $e) {
+                                // Pass
                             }
                         }
                     }
@@ -512,7 +555,7 @@ class ChatController extends Controller
 
             return $this->responseResourceNotFoundError('Chat', $chatId);
         }
-        else {
+        else{
             return $this->throwValidationError($validator);
         }
     }
@@ -567,7 +610,7 @@ class ChatController extends Controller
             $query->where('id', $messageId);
         })->first();
 
-        if (!empty($chatData)) {
+        if(! empty($chatData)) {
             $messageData = $chatData->messages()->find($messageId);
         }
 
@@ -576,7 +619,7 @@ class ChatController extends Controller
                 $payload = $request->array('payload', []);
                 $isGlobalDelete = ($messageData->isSender() && empty($payload['delete_for_all']) != true);
 
-                if ($isGlobalDelete) {
+                if($isGlobalDelete) {
                     (new MessageGlobalDeleteAction($messageData))->execute();
 
                     event(new MessageDeletedEvent($messageData));
@@ -606,12 +649,11 @@ class ChatController extends Controller
         return $this->responseResourceNotFoundError('Message', $messageId);
     }
 
-    public function clearConversation(string $chatId)
-    {
-        if (Str::isUuid($chatId)) {
+    public function clearConversation(string $chatId) {
+        if(Str::isUuid($chatId)) {
             $chatData = Chat::participatedChats()->where('chat_id', $chatId)->first();
 
-            if ($chatData) {
+            if($chatData) {
                 $batchSize = 1000;
 
                 $chatData->messages()->excludeDeleted()->chunk($batchSize, function ($messagesChunkList) {
@@ -627,13 +669,12 @@ class ChatController extends Controller
         return $this->responseResourceNotFoundError('Chat', $chatId);
     }
 
-    public function archiveChat(string $chatId)
-    {
-        if (Str::isUuid($chatId)) {
+    public function archiveChat(string $chatId) {
+        if(Str::isUuid($chatId)) {
             $chatData = Chat::participatedChats()->where('chat_id', $chatId)->first();
 
-            if ($chatData) {
-                if (!$chatData->isArchived(me()->id)) {
+            if($chatData) {
+                if(! $chatData->isArchived(me()->id)) {
                     $chatData->archiveChat(me()->id);
                 }
 
@@ -646,12 +687,11 @@ class ChatController extends Controller
         return $this->responseResourceNotFoundError('Chat', $chatId);
     }
 
-    public function unarchiveChat(string $chatId)
-    {
-        if (Str::isUuid($chatId)) {
+    public function unarchiveChat(string $chatId) {
+        if(Str::isUuid($chatId)) {
             $chatData = Chat::participatedChats()->where('chat_id', $chatId)->first();
 
-            if ($chatData) {
+            if($chatData) {
                 $chatData->unarchiveChat(me()->id);
 
                 return $this->responseSuccess([
@@ -663,12 +703,11 @@ class ChatController extends Controller
         return $this->responseResourceNotFoundError('Chat', $chatId);
     }
 
-    public function deleteChat(string $chatId)
-    {
-        if (Str::isUuid($chatId)) {
+    public function deleteChat(string $chatId) {
+        if(Str::isUuid($chatId)) {
             $chatData = Chat::participatedChats()->where('chat_id', $chatId)->first();
 
-            if ($chatData) {
+            if($chatData) {
                 $batchSize = 1000;
 
                 $chatData->messages()->excludeDeleted()->chunk($batchSize, function ($messagesChunkList) {
@@ -703,7 +742,7 @@ class ChatController extends Controller
 
         $chatData = $chatData->first();
 
-        if (empty($chatData)) {
+        if(empty($chatData)) {
             $chatData = Chat::create([
                 'chat_id' => Str::uuid(),
                 'type' => ChatType::DIRECT,
@@ -717,5 +756,12 @@ class ChatController extends Controller
         }
 
         return $chatData;
+    }
+
+    private function isBlockedAny(User $interlocutorData): bool
+    {
+        $blockService = new BlockService(me(), $interlocutorData);
+
+        return $blockService->blockedAny();
     }
 }

@@ -55,5 +55,15 @@ return [
             ],
             'description' => 'Use the search to find chats by participants name, title or description of the group, ID or chat hash ID, or browse by their type (direct or group).',
         ],
+        'cashouts' => [
+            'tabs' => [
+                'all' => 'All Requests',
+                'paid' => 'Paid',
+                'rejected' => 'Rejected',
+                'pending' => 'Pending',
+                'cancelled' => 'Cancelled',
+            ],
+            'description' => 'Use the search to find cashouts by user name, email or request code.',
+        ],
     ]
 ];

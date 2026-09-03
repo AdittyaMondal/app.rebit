@@ -8,13 +8,35 @@
 				<div class="overflow-hidden">
 					<div class="flex" v-bind:class="{ 'flex-row-reverse': isSender }">
 						<div class="overflow-hidden flex-1 rounded-xl p-1 w-fit min-w-3/12 max-w-80"
-						v-bind:class="[isSender ? 'bg-fill-qt border border-fill-fv' : 'border border-bord-pr']">
+						v-bind:class="[ messageData.type !== 'video_circle' ? (isSender ? 'bg-fill-qt border border-fill-fv' : 'border border-bord-pr') : '']">
 
-							<template v-if="hasLinkSnapshot">
+							<template v-if="hasLinkSnapshot && isNotDeleted">
 								<div class="w-full mb-1">
 									<LinkSnapshot v-bind:linkSnapshot="messageData.relations.link_snapshot"></LinkSnapshot>
 								</div>
 							</template>
+
+                            <template v-if="hasMedia && isNotDeleted">
+                                <div class="w-full mb-1">
+                                    <template v-if="messageData.type === 'image'">
+                                        <MessageImage v-bind:mediaData="{ mediaItem: messageData.relations.media, userName: messageUser.name, date: messageData.date.iso }"></MessageImage>
+                                    </template>
+                                    <template v-else-if="messageData.type === 'video_circle'">
+                                        <CircleVideoPlayer
+                                            v-bind:thumbnailUrl="messageData.relations.media.thumbnail_url"
+                                            v-bind:duration="messageData.relations.media.metadata.duration"
+                                        v-bind:videoUrl="messageData.relations.media.source_url"></CircleVideoPlayer>
+                                    </template>
+
+                                    <template v-else-if="messageData.type === 'audio'">
+                                        <div class="p-1">
+                                            <AudioPlayer
+                                                v-bind:mediaItem="messageData.relations.media"
+                                            v-bind:label="messageUser.name"></AudioPlayer>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
 
 							<template v-if="messageData.has_parent">
 								<div class="mb-1">
@@ -38,7 +60,7 @@
 								<template v-if="isSender">
 									<span v-if="isMessageSeen" class="size-4 text-brand-900">
 										<SvgIcon type="line" name="message-double-check"></SvgIcon>
-									</span>	
+									</span>
 									<span v-else class="size-4 text-lab-sc">
 										<SvgIcon type="line" name="message-check"></SvgIcon>
 									</span>
@@ -68,7 +90,7 @@
 			</div>
 			<ActionSheetGroup>
 				<ActionSheetItem v-on:click="state.reactionMenu.open" iconName="heart-rounded" v-bind:textLabel="$t('dd.add_reaction')"></ActionSheetItem>
-				
+
 				<ActionSheetItem v-on:click="reply" iconName="pencil-line" v-bind:textLabel="$t('dd.message.reply', { name: messageUser.name })"></ActionSheetItem>
 
 				<ActionSheetItem v-on:click="deleteMessage" itemColor="text-red-900" iconName="trash-04" v-bind:textLabel="$t('dd.message.delete_message')"></ActionSheetItem>
@@ -98,6 +120,8 @@
 	import ReactionsViewer from '@/kernel/vue/components/reactions/ReactionsViewer.vue';
 	import ReactionsPicker from '@M/views/messenger/children/chat/parts/ReactionsPicker.vue';
 	import ChatMessageReply from '@M/views/messenger/children/chat/parts/ChatMessageReply.vue';
+    import CircleVideoPlayer from '@/kernel/vue/components/players/CircleVideoPlayer.vue';
+    import AudioPlayer from '@M/components/players/audio/AudioPlayer.vue';
 
 	export default defineComponent({
 		props: {
@@ -137,6 +161,9 @@
 				messageUser: computed(() => {
 					return messageData.value.relations.user;
 				}),
+                hasMedia: computed(() => {
+                    return messageData.value.relations?.media;
+                }),
 				replyData: computed(() => {
 					return messageData.value.relations.parent;
 				}),
@@ -202,10 +229,15 @@
 			ActionSheetReactions: ActionSheetReactions,
 			ReactionsViewer: ReactionsViewer,
 			ReactionsPicker: ReactionsPicker,
+            CircleVideoPlayer: CircleVideoPlayer,
 			ChatMessageReply: ChatMessageReply,
 			LinkSnapshot: defineAsyncComponent(() => {
                 return import('@M/components/media/links/LinkSnapshot.vue');
-            })
+            }),
+            MessageImage: defineAsyncComponent(() => {
+                return import('@M/views/messenger/children/chat/parts/media/MessageImage.vue');
+            }),
+            AudioPlayer: AudioPlayer,
 		}
 	});
 </script>

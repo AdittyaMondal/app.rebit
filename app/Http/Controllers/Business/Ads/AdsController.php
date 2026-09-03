@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Business\Ads;
 
@@ -14,12 +26,12 @@ class AdsController extends Controller
     {
         $type = $request->string('type', 'all');
         $type = in_array($type, ['all', 'active', 'archived']) ? $type : 'all';
-
-        $adsList = me()->advertising()->with(['user', 'media'])->excludeDraft()->when($type, function ($query) use ($type) {
-            if ($type == 'active') {
+        
+        $adsList = me()->advertising()->with(['user', 'media'])->excludeDraft()->when($type, function($query) use ($type) {
+            if($type == 'active') {
                 $query->where('status', AdStatus::PUBLISHED);
             }
-            else if ($type == 'archived') {
+            else if($type == 'archived') {
                 $query->where('status', [AdStatus::COMPLETED, AdStatus::PAUSED]);
             }
         })->latest('id')->paginate(10);
@@ -49,8 +61,8 @@ class AdsController extends Controller
     private function fetchOrInitializeDraftAd()
     {
         $adData = me()->advertising()->where('status', AdStatus::DRAFT)->first();
-
-        if (empty($adData)) {
+    
+        if(empty($adData)) {
             me()->advertising()->create([
                 'status' => AdStatus::DRAFT
             ]);
@@ -85,7 +97,7 @@ class AdsController extends Controller
     {
         $adData = me()->advertising()->findOrFail($adId);
 
-        if ($adData->status->isPublished()) {
+        if($adData->status->isPublished()) {
             $adData->update(['status' => AdStatus::PAUSED]);
         }
 
@@ -96,7 +108,7 @@ class AdsController extends Controller
     {
         $adData = me()->advertising()->findOrFail($adId);
 
-        if ($adData->status->isPaused()) {
+        if($adData->status->isPaused()) {
             $adData->update(['status' => AdStatus::PUBLISHED]);
         }
 

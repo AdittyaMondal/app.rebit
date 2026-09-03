@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="theme-color" content="#ffffff">
+        <meta name="color-scheme" content="light only">
 
         <title>{{ config('app.name') }}</title>
 
@@ -22,6 +24,8 @@
         @endif
 
         @include('layouts.spa.apps.parts.pwa')
+
+        @include('layouts.parts.head-code')
     </head>
     <body class="font-sans antialiased bg-bg-pr min-w-[1200px]">
         <x-device-switcher.desktop></x-device-switcher.desktop>
@@ -29,5 +33,7 @@
         @yield('pageContent')
 
         @include('layouts.spa.apps.parts.embeds')
+
+        @include('layouts.parts.footer-code')
     </body>
 </html>

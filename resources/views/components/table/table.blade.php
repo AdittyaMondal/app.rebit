@@ -1,4 +1,4 @@
-<div class="bg-bg-pr rounded-2xl pt-5">
+<div class="bg-bg-pr rounded-2xl pt-5 border border-bord-sc overflow-x-auto">
     @if(isset($filter))
         <div class="pb-4">
             <div class="px-4">
@@ -8,7 +8,7 @@
         </div>
     @endif
 
-    <table class="w-full">
+    <table class="w-full min-w-[640px]">
         {{ $slot }}
     </table>
 </div>

@@ -20,10 +20,10 @@ class PostCommentedNotification extends Notification implements ShouldQueue
         BaseNotification,
         HasUserActor;
 
-    private $notificationType = Notifications::POST_COMMENTED;
+    public $notificationType = Notifications::POST_COMMENTED;
 
     private Post $postData;
-    private array $actorData;
+    public array $actorData;
     private string $commentContent;
 
     public function __construct(Post $postData, string $commentContent)

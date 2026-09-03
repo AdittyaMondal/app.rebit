@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Actions\User;
 
@@ -9,16 +21,16 @@ use App\Services\World\IpLocationService;
 
 class UpdateUserDeviceAction
 {
-    private $ipLocationService;
+	private $ipLocationService;
+	
+	public function __construct()
+	{
+		$this->ipLocationService = app(IpLocationService::class);
+	}
 
-    public function __construct()
-    {
-        $this->ipLocationService = app(IpLocationService::class);
-    }
-
-    public function execute(User $user)
-    {
-        $request = request();
+	public function execute(User $user)
+	{
+		$request = request();
         $userAgent = $request->header('User-Agent');
         $agent = new Agent();
         $agent->setUserAgent($userAgent);
@@ -27,15 +39,15 @@ class UpdateUserDeviceAction
 
         $userDevice = $user->devices()->where('device_hash', $deviceHash)->first();
 
-        if (empty($userDevice)) {
+        if(empty($userDevice)) {
             $userLocationData = [];
 
-            if (in_array($userIp, ['127.0.0.1', '::1']) != true) {
+            if(in_array($userIp, ['127.0.0.1', '::1']) != true) {
                 $locationData = $this->ipLocationService->getLocation($userIp);
 
-                if ($locationData) {
-                    $userLocationData = $locationData;
-                }
+				if($locationData) {
+					$userLocationData = $locationData;
+				}
             }
 
             $userDevice = $user->devices()->create([
@@ -62,20 +74,19 @@ class UpdateUserDeviceAction
 
             $request->session()->invalidate();
             $request->session()->regenerateToken();
-
+            
             $userDevice->delete();
         }
 
-        else {
+        else{
             $userDevice->update([
                 'last_online' => now(),
                 'session_id' => session()->getId()
             ]);
         }
-    }
+	}
 
-    private function generateDeviceHash(Agent $agent)
-    {
+    private function generateDeviceHash(Agent $agent) {
         return hash('sha256', join('-', [
             $agent->platform(),
             $agent->version($agent->platform()),

@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Resources\User\Timeline;
 
@@ -39,7 +51,6 @@ class CommentResource extends JsonResource
             ],
             'meta' => [
                 'permissions' => [
-                    'is_admin' => auth_check() ? me()->isAdmin() : false,
                     'can_edit' => auth_check() ? me()->can('update', $this->resource) : false,
                     'can_delete' => auth_check() ? me()->can('delete', $this->resource) : false
                 ],
@@ -50,7 +61,7 @@ class CommentResource extends JsonResource
 
     private function getParentCommentData()
     {
-        if ($this->parent) {
+        if($this->parent) {
             return [
                 'content' => Str::limit($this->parent->content, 120),
                 'user' => [

@@ -8,20 +8,38 @@
 				<SpinnerIcon strokeColor="stroke-white" strokeWidth="1"></SpinnerIcon>
 			</div>
 		</div>
-		
-		<div class="from-black/60 to-transparent bg-gradient-to-t absolute bottom-0 left-0 right-0 px-2 pb-2 pt-6">
-			<div class="flex items-center justify-between">
-				<div class="ml-2 inline-flex items-center gap-2">
+
+		<div class="from-black/60 to-transparent bg-linear-to-t absolute bottom-0 left-0 right-0 px-2 pb-2 pt-6">
+            <div v-on:click="seekVideo" class="h-4 cursor-pointer flex-1 mx-2 flex items-center">
+                <div class="h-[2px] bg-white/50 rounded-full w-full overflow-hidden">
+                    <span class="h-full block max-w-full bg-white transition-width ease-in-out" v-bind:style="{width: `${state.progressBar}%`}"></span>
+                </div>
+            </div>
+			<div class="flex items-center gap-2">
+				<div class="ml-2 inline-flex items-center gap-2 flex-1">
 					<VideoDurationTime v-if="state.isPlaying" v-bind:videoDuration="$filters.secondsToDuration(state.playbackTime)"></VideoDurationTime>
 					<VideoDurationTime v-else v-bind:videoDuration="duration"></VideoDurationTime>
 				</div>
-				
-				<PrimaryIconButton
-					v-on:click="toggleMute"
-					v-bind:iconName="state.isMuted ? 'volume-x' : 'volume-max'" 
+                <PrimaryIconButton
+					v-on:click="togglePlay"
+					v-bind:iconName="state.isPlaying ? 'pause' : 'play'"
+                    iconType="solid"
 					buttonColor="text-white"
 					iconSize="icon-small"
-				hoverText="hover:text-white/80"></PrimaryIconButton>
+				hoverText="text-white/70 hover:text-white"></PrimaryIconButton>
+				<PrimaryIconButton
+					v-on:click="toggleFullscreen"
+					iconName="maximize-02"
+                    iconType="line"
+					buttonColor="text-white"
+					iconSize="icon-small"
+				hoverText="text-white/70 hover:text-white"></PrimaryIconButton>
+				<PrimaryIconButton
+					v-on:click="toggleMute"
+					v-bind:iconName="state.isMuted ? 'volume-x' : 'volume-max'"
+					buttonColor="text-white"
+					iconSize="icon-small"
+                hoverText="text-white/70 hover:text-white"></PrimaryIconButton>
 			</div>
 		</div>
 	</div>
@@ -30,7 +48,7 @@
 <script>
 	import { defineComponent, watch, reactive, onMounted, onUnmounted } from 'vue';
 	import { useIntersectionObserver } from '@/kernel/vue/composables/inter-obs/index.js';
-	
+
 	import PrimaryIconButton from '@M/components/inter-ui/buttons/PrimaryIconButton.vue';
 	import VideoDurationTime from '@/kernel/vue/components/media/video/VideoDurationTime.vue';
 	import SpinnerIcon from '@/kernel/vue/components/icons/SpinnerIcon.vue';
@@ -54,7 +72,7 @@
 			const { isIntersecting, videoPlayerRef } = useIntersectionObserver({
 				threshold: 0.5
 			});
-			
+
 			const state = reactive({
 				isMuted: false,
 				isLoaded: false,
@@ -67,10 +85,10 @@
                 function updateProgress() {
                     const currentTime = videoPlayerRef.value.currentTime;
                     const duration = videoPlayerRef.value.duration;
-                    
+
                     state.progressBar = Math.round((currentTime / duration) * 100);
                     state.playbackTime = Math.round(currentTime);
-                    
+
                     if (state.isPlaying) {
                         window.colibriVideoTimer = requestAnimationFrame(updateProgress);
                     }
@@ -148,10 +166,34 @@
 				}
 			};
 
+            const toggleFullscreen = () => {
+                if(document.fullscreenElement) {
+                    document.exitFullscreen();
+                }
+                else {
+                    videoPlayerRef.value.requestFullscreen();
+                }
+            };
+
+            const seekVideo = (event) => {
+                const progressBar = event.currentTarget;
+                const rect = progressBar.getBoundingClientRect();
+                const clickPosition = (event.clientX - rect.left);
+                const percentage = (clickPosition / rect.width);
+                const newTime = (props.duration.seconds * percentage);
+                videoPlayerRef.value.currentTime = newTime;
+
+                if(! state.isPlaying) {
+                    playVideo();
+                }
+            };
+
 			return {
 				videoPlayerRef: videoPlayerRef,
 				state: state,
 				toggleMute: toggleMute,
+				toggleFullscreen: toggleFullscreen,
+                seekVideo: seekVideo,
 				togglePlay: () => {
 					if(state.isLoaded) {
 						if(state.isPlaying) {

@@ -10,8 +10,8 @@ class AdminRoleMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! auth_check() || ! me()->isAdmin()) {
-            abort(404);
+        if (! auth_check() || ! (me()->isAdmin() || me()->isRoot())) {
+            return redirect()->route('admin.auth.login');
         }
 
         return $next($request);

@@ -36,6 +36,11 @@ class Media extends Model
         return $this->morphTo('mediaable', 'mediaable_id', 'mediaable_type', 'id', 'id');
     }
 
+    public function message()
+    {
+        return $this->belongsTo(Message::class, 'mediaable_id', 'id');
+    }
+
     public function post()
     {
         return $this->belongsTo(Post::class, 'mediaable_id', 'id');

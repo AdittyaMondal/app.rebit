@@ -1,10 +1,9 @@
 @extends('businessLayout::index')
 
 @section('pageContent')
-	<div class="mb-6">
-		<x-page-title titleText="{{ __('business/settings.index_title') }}"></x-page-title>
-	</div>
-	<div class="block bg-bg-pr rounded-2xl p-6">
+    <x-page-title titleText="{{ __('business/settings.index_title') }}"></x-page-title>
+
+	<div class="bg-bg-pr rounded-2xl p-6 border border-bord-sc">
 		<div class="mb-3">
 			<div class="mb-24">
 				<h5 class="text-par-l font-semibold text-lab-pr2 mb-1">
@@ -35,6 +34,7 @@
 				<div class="block mt-4">
 					<a href="{{ route('business.settings.edit') }}">
 						<x-ui.buttons.pill
+							size="sm"
 							type="button"
 						btnText="{{ __('business/settings.edit_account_btn') }}"></x-ui.buttons.pill>
 					</a>

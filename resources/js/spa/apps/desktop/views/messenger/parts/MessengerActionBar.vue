@@ -1,5 +1,5 @@
 <template>
-	<div class="w-action-bar shrink-0 border-r border-r-bord-pr">
+	<div class="w-action-bar shrink-0">
 		<div class="flex flex-col h-full w-full items-center py-6">
 			<RouterLink v-bind:to="{ name: 'home_index' }" class="flex justify-center mb-4">
 				<img class="h-7" v-bind:src="$embedder('assets.logos.url')" alt="Logo">
@@ -24,12 +24,12 @@
 			<div class="w-full px-4 py-2">
 				<Border></Border>
 			</div>
-			<RouterLink v-bind:to="{ name: 'messenger_archive' }" class="block">
-				<ActionBarButton v-bind:hasBg="false" iconName="archive" iconType="line"></ActionBarButton>
+			<RouterLink v-bind:to="{ name: 'messenger_inbox' }" v-slot="{ isActive }" class="block">
+				<ActionBarButton v-bind:hasBg="isActive" iconName="message-chat-circle" iconType="line"></ActionBarButton>
 			</RouterLink>
-			<div class="mb-2">
-				<ActionBarButton v-on:click="$comingSoon" v-bind:hasBg="false" iconName="phone" iconType="line"></ActionBarButton>
-			</div>
+			<RouterLink v-bind:to="{ name: 'messenger_archive' }" v-slot="{ isActive }" class="block">
+				<ActionBarButton v-bind:hasBg="isActive" iconName="archive" iconType="line"></ActionBarButton>
+			</RouterLink>
 
 			<div class="mt-auto w-full">
 				<div class="mb-2">
@@ -65,7 +65,7 @@
 			const state = reactive({
 				mainMenu: useMenu()
 			});
-			
+
 			return {
 				state: state,
 				userData: computed(() => {

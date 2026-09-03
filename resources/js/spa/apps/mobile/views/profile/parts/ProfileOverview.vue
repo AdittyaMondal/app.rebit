@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col gap-3">
+	<div class="flex flex-col gap-3" v-if="profileData.country || profileData.join_date">
 		<div v-if="profileData.country" class="inline-flex gap-1 text-lab-pr2 leading-zero items-center">
 			<span class="text-lab-pr3">
 				<SvgIcon name="marker-pin-01" type="line" classes="size-icon-small"></SvgIcon>
@@ -10,7 +10,7 @@
 				<span v-if="profileData.city">{{ profileData.city }}</span>
 			</span>
 		</div>
-		<div class="inline-flex gap-1 text-lab-pr2 leading-zero items-center">
+		<div v-if="profileData.join_date" class="inline-flex gap-1 text-lab-pr2 leading-zero items-center">
 			<span class="text-lab-pr3">
 				<SvgIcon name="calendar-check-01" type="line" classes="size-icon-small"></SvgIcon>
 			</span>

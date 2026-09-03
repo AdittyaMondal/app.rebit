@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Search;
 
@@ -21,17 +33,17 @@ class AutocompleteController extends Controller
             'query' => ['required', 'string', 'min:2', 'max:255']
         ])->validate();
 
-        if ($validated['query']) {
+        if($validated['query']) {
             $mentionedUsers = User::active()->whereLike('username', "%{$validated['query']}%")->limit(50)->get();
-
-            if ($mentionedUsers->isNotEmpty()) {
-                $searchResults = $mentionedUsers->map(function ($user) {
+            
+            if($mentionedUsers->isNotEmpty()) {
+                $searchResults = $mentionedUsers->map(function($user) {
                     return [
-                    'id' => $user->id,
-                    'username' => $user->username,
-                    'name' => $user->name,
-                    'avatar_url' => $user->avatar_url,
-                    'caption' => $user->caption,
+                        'id' => $user->id,
+                        'username' => $user->username,
+                        'name' => $user->name,
+                        'avatar_url' => $user->avatar_url,
+                        'caption' => $user->caption,
                     ];
                 });
             }

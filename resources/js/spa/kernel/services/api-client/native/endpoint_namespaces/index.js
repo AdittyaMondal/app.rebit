@@ -54,8 +54,8 @@ export default {
 
         return this;
     },
-    follows: function() {
-        this.namespace = 'follows';
+    relations: function() {
+        this.namespace = 'relations';
 
         return this;
     },
@@ -121,6 +121,16 @@ export default {
     },
     storyEditor: function() {
         this.namespace = 'story/editor';
+
+        return this;
+    },
+    pins: function() {
+        this.namespace = 'pins';
+
+        return this;
+    },
+    ai: function() {
+        this.namespace = 'ai';
 
         return this;
     }

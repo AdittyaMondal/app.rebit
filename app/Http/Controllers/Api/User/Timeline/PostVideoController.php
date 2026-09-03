@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Timeline;
 
@@ -21,8 +33,8 @@ use App\Traits\Http\Controllers\Api\User\Timeline\InteractsWithDraftPost;
 class PostVideoController extends Controller
 {
     use InteractsWithDraftPost,
-    SupportsApiResponses,
-    ValidatesPostVideo;
+        SupportsApiResponses,
+        ValidatesPostVideo;
 
     private $videoUploadService;
     private $roundRobinService;
@@ -47,13 +59,13 @@ class PostVideoController extends Controller
 
         $this->fetchOrInitializeDraftPost();
 
-        if ($this->draftPost->type->isTextified()) {
+        if($this->draftPost->type->isTextified()) {
 
-            if (!$this->draftPost->exists) {
+            if(! $this->draftPost->exists) {
                 $this->draftPost->save();
             }
 
-            if ($this->draftPost->type->isTextified()) {
+            if($this->draftPost->type->isTextified()) {
                 $this->draftPost->type = PostType::VIDEO;
                 $this->draftPost->save();
             }
@@ -71,8 +83,9 @@ class PostVideoController extends Controller
 
                 $imageData = $this->imageUploadService
                     ->load($videoThumbnailPath)
-                    ->setNamespace(Filesystem::getPostVideoThumbnailNamespace())
+                    ->setNamespace(Filesystem::mediaNamespace('posts/video_thumbnails'))
                     ->setStorageDisk($videoStorageDisk)
+                    ->watermark()
                     ->compress(20)
                     ->upload();
 
@@ -101,8 +114,7 @@ class PostVideoController extends Controller
                     ]
                 ]);
 
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 return $this->responseValidationError([
                     'message' => $e->getMessage(),
                     'errors' => [
@@ -114,7 +126,7 @@ class PostVideoController extends Controller
             }
         }
 
-        else {
+        else{
             $errorMessage = __('post.validation.wrong_type_attachment', ['file_type' => __('labels.video')]);
 
             return $this->responseValidationError([
@@ -134,8 +146,7 @@ class PostVideoController extends Controller
             list($width, $height) = $this->getVideoDimensions($videoPath);
 
             return $width < $height;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }

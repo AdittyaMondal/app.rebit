@@ -5,7 +5,7 @@
 | This file is part of the pre initialization of the VueJS application.
 | It prepares the framework before the actual application starts.
 |
-| @Author: (Team Rebit)
+| @Author: (Mansur Terla)
 */
 
 import '@/kernel/helpers/helpers.js';

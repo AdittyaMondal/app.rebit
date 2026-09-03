@@ -31,8 +31,8 @@ async function initializeI18n() {
     });
 }
 
-const RebitI18n = await initializeI18n();
-window.__t = RebitI18n.global.t;
+const ColibriPlusI18n = await initializeI18n();
+window.__t = ColibriPlusI18n.global.t;
 
 const PiniaInstance = createPinia();
 
@@ -47,7 +47,7 @@ Application.use(PrimeVue, {
     unstyled: true
 });
 
-Application.use(RebitI18n);
+Application.use(ColibriPlusI18n);
 
 Application.component('Border', defineAsyncComponent(() => {
     return import("@/kernel/vue/components/general/Border.vue");
@@ -82,4 +82,4 @@ Application.component('PrimarySpinAnimation', defineAsyncComponent(() => {
     return import("@D/components/general/animations/PrimarySpinAnimation.vue");
 }));
 
-Application.mount("#Rebit-desktop-app");
+Application.mount("#colibriplus-desktop-app");

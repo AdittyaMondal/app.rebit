@@ -3,7 +3,7 @@
         <template v-slot:content>
             <TimelineContainer>
                 <HomeHeader></HomeHeader>
-                
+
                 <div class="block" v-if="state.isLoading">
                     <TimelinePublicationSkeleton v-for="i in 3" v-bind:key="i"></TimelinePublicationSkeleton>
                 </div>
@@ -16,9 +16,17 @@
                         <PublicationEditorTrigger></PublicationEditorTrigger>
                     </div>
                     <Border></Border>
+                    <template v-if="globalPinnedPosts.length">
+                        <TimelinePublication
+                            v-for="pinnedPostData in globalPinnedPosts"
+                            v-bind:postData="pinnedPostData"
+                            v-bind:isPinned="true"
+                            v-on:delete="handlePostDelete(pinnedPostData)"
+                        v-bind:key="pinnedPostData.hash_id"></TimelinePublication>
+                    </template>
                     <FeedUpdate v-if="timelineNewPosts.length" v-bind:posts="timelineNewPosts" v-on:click="applyTimelineUpdate"></FeedUpdate>
                     <div v-if="timelinePosts.length">
-                        <TimelinePublication 
+                        <TimelinePublication
                             v-for="postData in timelinePosts"
                             v-bind:postData="postData"
                             v-on:delete="handlePostDelete(postData)"
@@ -53,6 +61,7 @@
 <script>
     import { defineComponent, ref, reactive, onMounted, computed, onUnmounted } from 'vue';
     import { useTimelineStore } from '@D/store/timeline/timeline.store.js';
+    import { usePinsStore } from '@D/store/timeline/pins.store.js';
     import { useDeletePost } from '@/kernel/vue/composables/delete-post/index.js';
     import { useInfiniteScroll } from '@/kernel/vue/composables/infinite-scroll/index.js';
     import { colibriEventBus } from '@/kernel/events/bus/index.js';
@@ -61,7 +70,7 @@
     import TimelinePublication from '@D/components/timeline/feed/TimelinePublication.vue';
     import TimelinePublicationSkeleton from '@D/components/timeline/feed/TimelinePublicationSkeleton.vue';
     import PublicationEditorTrigger from '@D/features/home/parts/PublicationEditorTrigger.vue';
-    
+
     import TimelineContainer from '@D/components/layout/TimelineContainer.vue';
     import ScrollTopButton from '@D/components/inter-ui/buttons/ScrollTopButton.vue';
     import FollowRecommendationList from '@D/components/recommend/follow/list/FollowRecommendationList.vue';
@@ -69,7 +78,7 @@
     import SidedContentLayout from '@D/components/layout/SidedContentLayout.vue';
     import HomeHeader from '@D/views/home/parts/HomeHeader.vue';
     import FeedUpdate from '@D/components/timeline/update/FeedUpdate.vue';
-    
+
     export default defineComponent({
         setup: function() {
             const state = reactive({
@@ -86,6 +95,7 @@
             let updateAttempts = 0;
             const { postDeleter } = useDeletePost();
             const timelineStore = useTimelineStore();
+            const pinsStore = usePinsStore();
 
             const timelineNewPosts = computed(() => {
                 return timelineStore.update;
@@ -95,10 +105,16 @@
                 return timelineStore.posts;
             });
 
+            const globalPinnedPosts = computed(() => {
+                return pinsStore.posts;
+            });
+
             onMounted(async () => {
                 state.isLoading = true;
 
                 await timelineStore.initialLoad();
+
+                pinsStore.fetchGlobalPins();
 
                 state.isLoading = false;
 
@@ -113,9 +129,9 @@
                             }
                             else {
                                 state.isUpdating = true;
-        
+
                                 await timelineStore.updateFeed();
-        
+
                                 state.isUpdating = false;
 
                                 updateAttempts++;
@@ -166,6 +182,7 @@
                 timelinePosts: timelinePosts,
                 state: state,
                 timelineNewPosts: timelineNewPosts,
+                globalPinnedPosts: globalPinnedPosts,
                 handlePostDelete: (postData) => {
                     postDeleter(postData, (postId) => {
                         colibriEventBus.emit('timeline:post-deleted', postId);

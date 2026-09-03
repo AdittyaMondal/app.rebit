@@ -1,4 +1,4 @@
-@if (config('pwa.enabled'))
+@if (config('app.pwa_enabled'))
 	<link rel="manifest" href="{{ asset('pwa/manifest.json') }}">
 	<script src="{{ asset('pwa/service-worker.js') }}"></script>
 

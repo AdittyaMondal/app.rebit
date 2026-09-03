@@ -28,6 +28,6 @@
 				@endforeach
 			</x-form.radio-group>
 		</div>
-		<x-ui.buttons.pill type="submit" btnText="{{ $upsertType == 'create' ? __('admin/categories.form.submit_button') : __('admin/categories.form.update_button') }}"></x-ui.buttons.pill>
+		<x-ui.buttons.pill size="sm" type="submit" btnText="{{ $upsertType == 'create' ? __('admin/categories.form.submit_button') : __('admin/categories.form.update_button') }}"></x-ui.buttons.pill>
 	</x-accordion.form>
 </form>

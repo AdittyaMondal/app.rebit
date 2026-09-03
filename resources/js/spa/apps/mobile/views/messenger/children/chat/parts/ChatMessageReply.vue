@@ -7,7 +7,33 @@
 				<h3 class="text-cap-l font-semibold leading-none mb-0.5" v-bind:style="{ color: messageColor }">
 					{{ replyData.user.name }}
 				</h3>
-				<p class="text-par-s text-lab-pr2 break-words" v-html="replyData.content"></p>
+                <template v-if="replyData.type === 'image' && replyData.relations.media">
+                    <div class="mt-1 flex items-center gap-2">
+                        <img v-bind:src="replyData.relations.media.source_url" v-bind:alt="replyData.relations.media.name" class="size-6 object-cover rounded-sm">
+                        <p class="text-par-s truncate text-lab-sc max-w-content">
+                            {{ $t('labels.image_message') }}
+                        </p>
+                    </div>
+                </template>
+                <template v-if="replyData.type === 'video_circle' && replyData.relations.media">
+                    <div class="mt-1 flex items-center gap-2">
+                        <img v-bind:src="replyData.relations.media.thumbnail_url" v-bind:alt="replyData.relations.media.name" class="size-6 object-cover rounded-sm">
+                        <p class="text-par-s truncate text-lab-sc max-w-content">
+                            {{ $t('labels.video_message') }}
+                        </p>
+                    </div>
+                </template>
+                <template v-if="replyData.type === 'audio' && replyData.relations.media">
+                    <div class="mt-1 flex items-center gap-2">
+                        <div class="shrink-0">
+                            <AvatarExtraSmall v-bind:avatarSrc="replyData.user.avatar_url"></AvatarExtraSmall>
+                        </div>
+                        <p class="text-par-s truncate text-lab-sc max-w-content">
+                            {{ $t('labels.audio_message') }}
+                        </p>
+                    </div>
+                </template>
+				<p v-else class="text-par-s text-lab-pr2 break-words" v-html="replyData.content"></p>
 			</div>
 		</div>
 	</div>
@@ -15,6 +41,8 @@
 
 <script>
 	import { defineComponent, computed } from 'vue';
+
+    import AvatarExtraSmall from '@M/components/general/avatars/AvatarExtraSmall.vue';
 
 	export default defineComponent({
 		props: {
@@ -29,6 +57,9 @@
 					return props.replyData.participant.color;
 				})
 			}
+		},
+		components: {
+			AvatarExtraSmall: AvatarExtraSmall,
 		}
 	});
 </script>

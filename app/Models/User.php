@@ -8,7 +8,6 @@ use App\Enums\User\UserStatus;
 use App\Support\DateFormatter;
 use App\Database\Configs\Table;
 use App\Enums\NotificationType;
-use App\Enums\User\FollowStatus;
 use Laravel\Sanctum\HasApiTokens;
 use App\Services\World\WorldService;
 use Illuminate\Notifications\Notifiable;
@@ -20,7 +19,7 @@ use App\Models\Traits\Pagination\SupportsManualPagination;
 
 class User extends Authenticatable
 {
-    use FetchesDrafts, 
+    use FetchesDrafts,
         SupportsManualPagination,
         Notifiable,
         HasApiTokens,
@@ -77,6 +76,11 @@ class User extends Authenticatable
         return $this->hasOne(Story::class, 'user_id', 'id');
     }
 
+    public function mutes()
+    {
+        return $this->hasMany(Mute::class, 'muter_id', 'id');
+    }
+
     public function groups()
     {
         return $this->hasMany(Group::class, 'user_id', 'id');
@@ -115,6 +119,11 @@ class User extends Authenticatable
     public function reports()
     {
         return $this->morphMany(Report::class, 'reportable', 'reportable_type', 'reportable_id', 'id');
+    }
+
+    public function pins()
+    {
+        return $this->hasMany(Pin::class, 'user_id', 'id');
     }
 
     public function socialLinks()
@@ -158,87 +167,9 @@ class User extends Authenticatable
         return $this->hasMany(Follow::class, 'follower_id', 'id')->with('following');
     }
 
-    public function isFollowing(User $user)
+    public function cashouts()
     {
-        return Follow::where([
-            'follower_id' => $this->id,
-            'following_id' => $user->id,
-            'status' => FollowStatus::FOLLOWING
-        ])->exists();
-        
-        return false;
-    }
-
-    public function follow(User $user)
-    {
-        if($user->permitSettings->followers->onlyApproved()) {
-            $follow = Follow::create([
-                'follower_id' => $this->id,
-                'following_id' => $user->id,
-                'status' => FollowStatus::REQUESTED
-            ]);
-
-            return $follow;
-        }
-        else {
-            $follow = Follow::create([
-                'follower_id' => $this->id,
-                'following_id' => $user->id,
-                'status' => FollowStatus::FOLLOWING
-            ]);
-
-            $user->increment('followers_count', 1);
-            $this->increment('following_count', 1);
-
-            return $follow;
-        }
-    }
-
-    public function acceptFollowRequest(User $user)
-    {
-        $follow = Follow::where([
-            'follower_id' => $user->id,
-            'following_id' => $this->id,
-            'status' => FollowStatus::REQUESTED
-        ])->first();
-
-        if($follow) {
-            $follow->update([
-                'status' => FollowStatus::FOLLOWING
-            ]);
-
-            $user->increment('following_count');
-            $this->increment('followers_count');
-        }
-
-        return $follow;
-    }
-
-    public function unFollow(User $user)
-    {
-        Follow::where([
-            'follower_id' => $this->id,
-            'following_id' => $user->id
-        ])->delete();
-        
-        $user->decrement('followers_count', max(0, $user->followers_count - 1));
-        $this->decrement('following_count', max(0, $this->following_count - 1));
-    }
-
-    public function followRequested(User $user)
-    {
-        return Follow::where([
-            'follower_id' => $this->id,
-            'following_id' => $user->id,
-            'status' => FollowStatus::REQUESTED
-        ])->exists();
-
-        return false;
-    }
-
-    public function canFollow(User $user)
-    {
-        return $this->id !== $user->id;
+        return $this->hasMany(Cashout::class, 'user_id', 'id');
     }
 
     public function scopeReader($query)
@@ -259,6 +190,11 @@ class User extends Authenticatable
     public function scopeActive($query)
     {
         return $query->where('status', UserStatus::ACTIVE);
+    }
+
+    public function scopeOnboarded($query)
+    {
+        return $query->whereNot('status', UserStatus::ONBOARDING);
     }
 
     public function scopeActiveByUsername($query, $username)
@@ -290,13 +226,13 @@ class User extends Authenticatable
         if($this->country === null) {
             return "";
         }
-        
+
         return (new WorldService)->getCountryName($this->country);
     }
 
     public function getBirthDateAttribute()
     {
-        
+
         $monthName = __('labels.months.' . $this->birth_month);
         return "{$this->birth_day} {$monthName}, {$this->birth_year}";
     }
@@ -362,6 +298,11 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->role === UserRole::ADMIN;
+    }
+
+    public function isRoot()
+    {
+        return $this->role === UserRole::ROOT;
     }
 
     public function isAuthor()

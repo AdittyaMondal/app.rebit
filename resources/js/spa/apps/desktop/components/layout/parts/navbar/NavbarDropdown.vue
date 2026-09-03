@@ -11,7 +11,7 @@
 
         <div v-if="state.mainMenu.status" v-on:click.stop="state.mainMenu.close" v-outside-click="state.mainMenu.close" class="absolute top-full left-6 z-50">
             <DropdownMenu>
-                <template v-if="isAdmin">
+                <template v-if="canAccessAdminPanel">
                     <a v-bind:href="adminPanelUrl" target="_blank">
                         <DropdownMenuItem iconName="shield-02" v-bind:textLabel="$t('labels.admin_panel')"></DropdownMenuItem>
                     </a>
@@ -20,7 +20,7 @@
                 <RouterLink v-bind:to="{ name: 'settings_index' }" class="block w-full">
                     <DropdownMenuItem iconName="settings-01" v-bind:textLabel="$t('labels.account_settings')"></DropdownMenuItem>
                 </RouterLink>
-                <RouterLink v-bind:to="{ name: 'wallet_index' }"  class="block w-full">
+                <RouterLink v-if="$config('features.wallet.enabled')" v-bind:to="{ name: 'wallet_index' }" class="block w-full">
                     <DropdownMenuItem iconName="wallet-02" iconType="line" v-bind:textLabel="$t('labels.wallet')"></DropdownMenuItem>
                 </RouterLink>
                 <Border/>
@@ -48,8 +48,8 @@
             });
 
             return {
-                isAdmin: computed(() => {
-                    return authStore.userData.meta.is_admin;
+                canAccessAdminPanel: computed(() => {
+                    return authStore.userData.meta.is_admin || authStore.userData.meta.is_root;
                 }),
                 adminPanelUrl: computed(() => {
                     return authStore.userData.meta.admin.url;

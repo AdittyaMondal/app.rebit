@@ -1,31 +1,44 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Story;
 
-use Throwable;
-use App\Models\Story;
-use App\Rules\X\XRule;
-use App\Models\StoryFrame;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Enums\Story\StoryStatus;
-use App\Http\Controllers\Controller;
-use App\Events\User\Story\StoryCreatedEvent;
 use App\Actions\Story\DeleteStoryFrameAction;
-use App\Traits\Http\Api\SupportsApiResponses;
-use App\Http\Resources\User\Story\StoryResource;
+use App\Database\Configs\Table;
+use App\Enums\Story\StoryStatus;
+use App\Events\User\Story\StoryCreatedEvent;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\User\Story\FeedCollection;
-use App\Http\Resources\User\Story\ViewCollection;
 use App\Http\Resources\User\Story\StoryCollection;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Http\Resources\User\Story\StoryResource;
+use App\Http\Resources\User\Story\ViewCollection;
+use App\Models\Story;
+use App\Models\StoryFrame;
+use App\Rules\X\XRule;
+use App\Traits\Http\Api\SupportsApiResponses;
 use App\Traits\Http\Controllers\Api\User\Story\InteractsWithDraftStoryFrame;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Throwable;
 
 class StoryController extends Controller
 {
     use InteractsWithDraftStoryFrame,
-    AuthorizesRequests,
-    SupportsApiResponses;
+        AuthorizesRequests,
+        SupportsApiResponses;
 
     public function __construct()
     {
@@ -34,10 +47,10 @@ class StoryController extends Controller
 
     public function getStories(Request $request, string $storyId)
     {
-        if (Str::isUuid($storyId)) {
+        if(Str::isUuid($storyId)) {
             $storyData = Story::active()->where('story_uuid', $storyId)->withRelations()->first();
 
-            if ($storyData) {
+            if($storyData) {
                 $otherRelevantStories = Story::active()->whereNot('story_uuid', $storyId)->withRelations()->get();
                 $stories = $otherRelevantStories->prepend($storyData);
 
@@ -55,24 +68,26 @@ class StoryController extends Controller
         $storiesFeed = Story::active()->with([
             'user:id,avatar,first_name,last_name',
             'frames.views'
-        ])->latest('updated_at')->get();
+        ])->whereNotIn('user_id', function($query) {
+            $query->select('blocked_id')->from(Table::BLOCKS)->where('blocker_id', me()->id);
+        })->whereNotIn('user_id', function($query) {
+            $query->select('blocker_id')->from(Table::BLOCKS)->where('blocked_id', me()->id);
+        })->latest('updated_at')->get();
 
-        if ($storiesFeed->isNotEmpty()) {
+        if($storiesFeed->isNotEmpty()) {
             return $this->responseSuccess([
                 'data' => FeedCollection::make($storiesFeed)
             ]);
         }
 
-        return $this->responseSuccess([
-            'data' => []
-        ]);
+        return $this->responseNotFoundError();
     }
 
     public function create(Request $request)
     {
         $storyMedia = $this->draftStoryFrame->media->first();
 
-        if (empty($storyMedia)) {
+        if(empty($storyMedia)) {
             return $this->responseError([
                 'message' => 'Media file is required before creating a story.',
                 'errors' => [
@@ -83,23 +98,28 @@ class StoryController extends Controller
             ]);
         }
 
-        else {
+        else{
             $request->validate([
                 'content' => ['nullable', 'string', XRule::join('max', config('story.validation.content.max'))]
             ]);
 
             $isVideo = $this->draftStoryFrame->type->isVideo();
 
-            $this->draftStoryFrame->update([
+            $updateData = [
                 'content' => e($request->string('content')),
-                'status' => $isVideo ?StoryStatus::PROCESSING : StoryStatus::ACTIVE,
-                'expires_at' => now()->addHours(24),
-                'duration_seconds' => $isVideo ? 1 : config('story.image_clip_size')
-            ]);
+                'status' => $isVideo ? StoryStatus::PROCESSING : StoryStatus::ACTIVE,
+                'expires_at' => now()->addHours(24)
+            ];
+
+            if(! $isVideo) {
+                $updateData['duration_seconds'] = config('story.image_clip_size');
+            }
+
+            $this->draftStoryFrame->update($updateData);
 
             event(new StoryCreatedEvent($this->draftStoryFrame));
 
-            if (empty($isVideo)) {
+            if(empty($isVideo)) {
                 $myStory = me()->story()->withRelations()->first();
 
                 return $this->responseSuccess([
@@ -117,13 +137,13 @@ class StoryController extends Controller
     {
         $storyFrameId = $request->integer('frame_id');
 
-        if (is_positive($storyFrameId)) {
+        if(is_positive($storyFrameId)) {
             $frameData = StoryFrame::active()->where('id', $storyFrameId)->first();
 
-            if ($frameData) {
+            if($frameData) {
                 $isSeen = $frameData->views()->where('user_id', me()->id)->exists();
 
-                if (empty($isSeen)) {
+                if(empty($isSeen)) {
                     $frameData->views()->create([
                         'user_id' => me()->id,
                         'viewed_at' => now()
@@ -133,7 +153,7 @@ class StoryController extends Controller
                 }
 
                 return $this->responseSuccess([
-                    'data' => null
+                   'data' => null
                 ]);
             }
         }
@@ -145,21 +165,20 @@ class StoryController extends Controller
     {
         $storyFrameId = $request->integer('frame_id');
 
-        if (is_positive($storyFrameId)) {
+        if(is_positive($storyFrameId)) {
             $frameData = StoryFrame::where('id', $storyFrameId)->with('story')->first();
 
             try {
                 $this->authorize('delete', $frameData);
 
-                if ($frameData) {
+                if($frameData) {
                     (new DeleteStoryFrameAction($frameData))->execute();
                 }
 
                 return $this->responseSuccess([
                     'data' => null
                 ]);
-            }
-            catch (Throwable $th) {
+            } catch (Throwable $th) {
                 return $this->responseResourceNotFoundError('StoryFrame', $storyFrameId);
             }
         }
@@ -169,14 +188,14 @@ class StoryController extends Controller
 
     public function getStoryViews(Request $request, $frameId)
     {
-        if (is_positive($frameId)) {
+        if(is_positive($frameId)) {
             $frameData = StoryFrame::active()->where('id', $frameId)->first();
 
-            if ($frameData) {
+            if($frameData) {
                 $frameViews = $frameData->views()->withUser()->get();
 
                 return $this->responseSuccess([
-                    'data' => ViewCollection::make($frameViews)
+                   'data' => ViewCollection::make($frameViews)
                 ]);
             }
         }

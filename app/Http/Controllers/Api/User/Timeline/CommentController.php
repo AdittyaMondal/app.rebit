@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Timeline;
 
@@ -40,14 +52,14 @@ class CommentController extends Controller
 
         $postData = Post::activeById($postId)->first();
 
-        if (empty($postData)) {
+        if(empty($postData)) {
             return $this->responseResourceNotFoundError('Post', $postId);
         }
-
+        
         if ($parentId) {
             $commentParentData = $postData->comments()->find($parentId);
 
-            if (empty($commentParentData)) {
+            if(empty($commentParentData)) {
                 return $this->responseResourceNotFoundError('Comment', $parentId);
             }
         }
@@ -65,12 +77,12 @@ class CommentController extends Controller
         $postData->comments_count = $postData->comments()->count();
         $postData->save();
 
-        if (!$postData->is_owner && empty($parentId)) {
+        if(! $postData->is_owner && empty($parentId)) {
             $postData->user->notify(new PostCommentedNotification($postData, $commentContent));
         }
 
         else {
-            if (!empty($commentParentData) && !$commentParentData->is_owner) {
+            if(! empty($commentParentData) && ! $commentParentData->is_owner) {
                 $commentParentData->user->notify(new CommentMentionNotification($commentParentData, $commentContent));
             }
         }
@@ -92,17 +104,17 @@ class CommentController extends Controller
     {
         $commentData = Comment::where('id', $request->integer('id'))->first();
 
-        if ($commentData) {
+        if($commentData) {
             try {
                 $this->authorize('delete', $commentData);
 
                 $postData = $commentData->post;
-
+        
                 (new DeleteCommentAction($commentData))->execute();
 
                 $postData->comments_count = $postData->comments()->count();
                 $postData->save();
-
+        
                 return $this->responseSuccess([
                     'data' => [
                         'post' => [
@@ -113,8 +125,8 @@ class CommentController extends Controller
                         ]
                     ]
                 ]);
-            }
-
+            } 
+            
             catch (AuthorizationException $e) {
                 return $this->responseUnauthorizedError();
             }
@@ -150,7 +162,7 @@ class CommentController extends Controller
                     ->setUnifiable(strtolower($reactionUnifiedId))
                     ->handleReaction();
 
-                if (!$commentData->is_owner && $isReactionAdded) {
+                if(! $commentData->is_owner && $isReactionAdded) {
                     $commentData->user->notify(new CommentReactedNotification($commentData, strtolower($reactionUnifiedId)));
                 }
 
@@ -161,7 +173,7 @@ class CommentController extends Controller
 
             return $this->responseResourceNotFoundError('Comment', $commentId);
         }
-
+        
         catch (Exception $e) {
             return $this->responseError([
                 'message' => $e->getMessage(),
