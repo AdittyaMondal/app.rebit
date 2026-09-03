@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.rebit.app",
+      "sha256_cert_fingerprints": [
+        "99:79:86:97:61:B2:4B:CC:DD:69:4D:71:96:4B:4A:BA:61:EE:95:4A:AB:5C:46:2C:20:69:B1:9F:60:6A:78:78"
+      ]
+    }
+  }
+]
