@@ -71,13 +71,14 @@ class ConvertAndCompressPostAudio implements ShouldQueue
                 // and it is not local public folder of the application.
 
                 $audioFileDuration = $audioUploadService->getAudioDuration($audioTempNewPath);
+                $audioFileSize = filesize($audioNewAbsLocalPath) ?? 0;
 
                 $audioFilePath = $audioUploadService
-                    ->setNamespace(Filesystem::getPostAudioNamespace())
+                    ->setNamespace(Filesystem::mediaNamespace('posts/audios'))
                     ->setStorageDisk($postMedia->disk)
                     ->upload($audioNewAbsLocalPath);
 
-                $audioFileSize = Storage::disk('local')->size($audioTempNewPath);
+
                 $mediaMetadata = $postMedia->metadata;
                 $newFilename = Str::beforeLast($mediaMetadata['file_name'], '.');
 
@@ -102,7 +103,7 @@ class ConvertAndCompressPostAudio implements ShouldQueue
 
                 Storage::disk('local')->delete($audioTempOldPath);
                 Storage::disk('local')->delete($audioTempNewPath);
-                
+
                 // Broadcast audio processed event with updated post media and user id
                 // to notify users that audio has been processed.
 
@@ -113,10 +114,10 @@ class ConvertAndCompressPostAudio implements ShouldQueue
                 }
             }
         }
-        
+
         catch (Exception $e) {
             Log::error('Post audio processing failed after 5 attempts. Error: ' . $e->getMessage());
-            
+
             $this->fail();
         }
     }

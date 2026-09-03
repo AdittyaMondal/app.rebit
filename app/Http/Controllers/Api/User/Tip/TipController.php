@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\User\Tip;
 
-use Throwable;
-use App\Rules\X\XRule;
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Traits\Http\Api\SupportsApiResponses;
 use App\Actions\Recommend\FetchFollowRecommendation;
+use App\Http\Controllers\Controller;
+use App\Rules\X\XRule;
+use App\Services\Relations\FollowService;
+use App\Traits\Http\Api\SupportsApiResponses;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Throwable;
 
 class TipController extends Controller
 {
@@ -82,7 +83,7 @@ class TipController extends Controller
             if($followRecommendation->isNotEmpty()) {
                 try {
                     $followRecommendation->each(function($userData) {
-                        $this->me->follow($userData);
+                        (new FollowService($this->me, $userData))->follow();
                     });
                 } catch (Throwable $th) {
                     logger()->error('Error following recommended users on onboard.', [

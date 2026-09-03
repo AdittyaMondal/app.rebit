@@ -8,13 +8,13 @@ use Illuminate\Http\UploadedFile;
 abstract class AbstractUploadService
 {
     private string $fileNamespace;
-    
+
     protected $storageDisk;
 
     public function determineStoragePath($extension = null)
     {
         $uuid = Str::uuid();
-        
+
         return "{$this->fileNamespace}/{$uuid}.{$extension}";
     }
 

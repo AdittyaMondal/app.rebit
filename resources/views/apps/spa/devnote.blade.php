@@ -1,7 +1,7 @@
 <!-- 
 	Anything great begins with: ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ (In the name of Allah)
 
-	This software designed (UI/UX) and developed by self taught freelancer (Web designer and Full stack web-developer - Team Rebit.
+	This software designed (UI/UX) and developed by self taught freelancer (Web designer and Full stack web-developer - Mansur Terla.
 	
 	Application tech stack:
 

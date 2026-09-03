@@ -32,7 +32,7 @@
 
 <script>
     import { defineComponent, onMounted, ref, computed, reactive, watch } from 'vue';
-    
+
     import { useInboxStore } from '@D/store/chats/inbox.store.js';
 
     import ChatItemSkeleton from '@D/views/messenger/history/parts/ChatItemSkeleton.vue';
@@ -60,10 +60,10 @@
 						return chatItem.type === 'group';
 					});
 				}
-				
+
 				return inboxStore.chatsHistory;
             });
-            
+
             const isSearching = computed(() => {
                 return chatsSearchQuery.value.length > 0;
             });

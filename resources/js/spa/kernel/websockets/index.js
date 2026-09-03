@@ -21,7 +21,7 @@ try {
             cluster: false
         });
 
-        window.ColibriBRD.connector.pusher.connection.bind('connected', function () {
+        window.ColibriBRD.connector.pusher.connection.bind('connected', function() {
             console.log('📶 Websockets connection is established.');
 
             window.ColibriBRConnected = true;
@@ -29,7 +29,7 @@ try {
     }
 
     else {
-        console.info("📶 Websockets connection is disabled. Please configure your broadcaster server and enable Reverb connection in your app settings. (Rebit)");
+        console.info("📶 Websockets connection is disabled. Please configure your broadcaster server and enable Reverb connection in your app settings. (ColibriPlus)");
     }
 }
 

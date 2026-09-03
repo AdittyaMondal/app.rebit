@@ -8,15 +8,15 @@ use App\Models\Group;
 class GroupPolicy
 {
     public function edit(User $user, Group $groupData) {
-        return $groupData->user_id === $user->id || $user->isAdmin();
+        return $groupData->user_id === $user->id || $user->isRoot();
     }
 
     public function update(User $user, Group $groupData) {
-        return $groupData->user_id === $user->id || $user->isAdmin();
+        return $groupData->user_id === $user->id || $user->isRoot();
     }
 
     public function delete(User $user, Group $groupData) {
-        return $groupData->user_id === $user->id || $user->isAdmin();
+        return $groupData->user_id === $user->id || $user->isRoot();
     }
 
     public function leave(User $user, Group $groupData) {

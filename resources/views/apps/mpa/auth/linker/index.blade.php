@@ -2,6 +2,6 @@
 
 @section('pageContent')
     <div class="block">
-		  @livewire('user.linker.linker-form')
+        @livewire('user.linker.linker')
     </div>
 @endsection

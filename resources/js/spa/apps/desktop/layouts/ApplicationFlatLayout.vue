@@ -3,6 +3,8 @@
 
     <ToastNotification></ToastNotification>
     <AccountSwitcherModal></AccountSwitcherModal>
+
+    <ConfirmationModal></ConfirmationModal>
 </template>
 
 <script>
@@ -10,11 +12,13 @@
 
     import ToastNotification from '@D/components/notifications/toast/ToastNotification.vue';
     import AccountSwitcherModal from '@D/components/accounts/AccountSwitcherModal.vue';
+    import ConfirmationModal from '@D/components/general/modals/prompt/ConfirmationModal.vue';
 
     export default defineComponent({
         components: {
             ToastNotification: ToastNotification,
-            AccountSwitcherModal: AccountSwitcherModal
+            AccountSwitcherModal: AccountSwitcherModal,
+            ConfirmationModal: ConfirmationModal
         }
     });
 </script>

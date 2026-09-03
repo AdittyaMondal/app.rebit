@@ -8,7 +8,12 @@
 				{{ chatData.chat_info.name }} <VerificationBadge v-if="chatData.chat_info.verified" size="sm"></VerificationBadge>
 			</h2>
 			<p class="text-par-s text-lab-sc">
-				{{ $t('labels.was_online_at', { time: chatData.chat_info.last_active.formatted }) }}
+				<template v-if="chatData.chat_info.last_active">
+					{{ $t('labels.was_online_at', { time: chatData.chat_info.last_active.formatted }) }}
+				</template>
+				<template v-else>
+					{{ $t('labels.was_online_at', { time: 'N/A' }) }}
+				</template>
 			</p>
 		</div>
 	</div>

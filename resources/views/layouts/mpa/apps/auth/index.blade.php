@@ -19,9 +19,11 @@
         @else
             @vite('resources/css/spa/apps/desktop/auth.css')
         @endif
-        
+
         @livewireStyles
         @stack('styles')
+
+        @include('layouts.parts.head-code')
     </head>
     <body class="bg-bg-pr pt-14" style="min-width: 320px;">
         @include('layouts.mpa.parts.header')
@@ -37,5 +39,7 @@
 
         @stack('scripts')
         @livewireScripts
+
+        @include('layouts.parts.footer-code')
     </body>
 </html>

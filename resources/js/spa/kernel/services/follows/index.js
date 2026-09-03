@@ -11,7 +11,7 @@ const colibriFollow = function() {
 			return this;
 		},
 		follow: async function() {
-			return await colibriAPI().follows().with({
+			return await colibriAPI().relations().with({
 				id: this.__followableId
 			}).sendTo(`follow/${this.__followableType}`).then((response) => {
 				return response.data.data;
@@ -25,7 +25,7 @@ const colibriFollow = function() {
 			});
 		},
 		accept: function() {
-			colibriAPI().follows().with({
+			colibriAPI().relations().with({
 				id: this.__followableId
 			}).sendTo(`accept/${this.__followableType}`);
 		}

@@ -2,12 +2,7 @@
 
 @section('pageContent')
     <div x-data="alpineComponent">
-        <div class="mb-6">
-            <x-page-title titleText="{{ __('business/market.show_title') }}"></x-page-title>
-            <x-page-desc>
-                {{ __('business/market.show_desc') }}
-            </x-page-desc>
-        </div>
+        <x-page-title titleText="{{ __('business/market.show_title') }}"></x-page-title>
         <x-sided-content>
             <x-slot:sideContent>
                 <x-entity.previews.product :productData="$productData"></x-entity.previews.product>
@@ -22,12 +17,12 @@
                     </div>
                 @endif
             </x-slot:sideContent>
-            
+
             <div class="mb-4">
-                <x-entity.header 
+                <x-entity.header
                     avatarUrl="{{ $productData->user->avatar_url }}"
                     name="{{ $productData->user->name }}"
-            caption="{{ $productData->user->caption }}">
+                    caption="{{ $productData->user->caption }}">
 
                     <x-slot:controlOptions>
                         <x-ui.dropdown.dropdown>

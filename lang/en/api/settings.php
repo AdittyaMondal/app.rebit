@@ -38,6 +38,10 @@ return [
 	'api_settings' => 'API Settings',
 	'settings_and_privacy_description' => 'Settings apply only to the current account. To change them for another account, switch to it.',
 	'forms' => [
+        'blocked' => [
+            'page_desc' => 'Here you can find all the people you have blocked. You can unblock them at any time.',
+            'no_blocked_users' => 'No blocked users found.',
+        ],
 		'authorship' => [
 			'about_authorship' => [
 				'title' => 'Switch to author account.',

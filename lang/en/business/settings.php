@@ -9,6 +9,7 @@ return [
     'last_submission' => 'Your have successfully submitted your business account information. Your last update was on :date.',
     'no_submission' => 'You have not submitted your business account information yet. In order to be reviewed and approved, please submit your information.',
     'form' => [
+        'country_placeholder' => 'Select country',
         'base_info' => 'Base Information',
         'name' => 'Name',
         'name_placeholder' => 'Business name',

@@ -10,47 +10,32 @@
                 </x-slot:caption>
             </x-auth.parts.form-header>
         </div>
-        
+
         <div class="block">
             <div class="mb-3">
                 @if($loginStep == 2)
-                    <div class="border px-4 rounded-md flex h-14 items-center overflow-hidden mb-3">
-                        <div class="size-small-avatar overflow-hidden rounded-full">
-                            <img src="{{ $userData->avatar_url }}" alt="Avatar Image">
-                        </div>
-                        <div class="ml-3 flex-1 truncate">
-                            <span class="text-lab-pr2 text-par-m font-medium">{{ $userData->name }} <span class="text-lab-sc">({{ $userData->username }})</span></span>
-                        </div>
-                    </div>
+                    <x-form.user-card :userData="$userData" />
                 @endif
-                <x-auth.form.input 
-                    name="authCreds.login" 
+                <x-form.text-input
+                    name="authCreds.login"
                     wire:model.trim="authCreds.login"
-                    defaultValue=""
-                placeholder="{{ __('auth.login_or_email') }}"></x-auth.form.input>
-                
+                placeholder="{{ __('auth.login_or_email') }}"></x-form.text-input>
+
                 @if($loginStep == 2)
-                    
                     <div class="mt-3">
-                        <x-auth.form.input
+                        <x-form.text-input
                             name="authCreds.password"
                             :isPassword="true"
                             wire:model.trim="authCreds.password"
-                        placeholder="{{ __('auth.enter_password') }}"></x-auth.form.input>
+                        placeholder="{{ __('auth.enter_password') }}"></x-form.text-input>
                     </div>
                 @endif
             </div>
 
-            <div class="mb-4">
-                <x-auth.buttons.primary wire:loading.remove type="submit">
-                    {{ __('auth.linker_login.button') }}
-                </x-auth.buttons.primary>
-                <x-auth.buttons.loading wire:loading>
-                </x-auth.buttons.loading>
-            </div>
             <div class="mb-6">
-                <a href="{{ route('user.desktop.index') }}" class="text-center block text-brand-900 text-par-m underline">
-                    {{ __('labels.back_to_home') }}
+                <x-ui.buttons.pill width="w-full" wire:loading.attr="disabled" type="submit" btnText="{{ __('auth.linker_login.button') }}"></x-ui.buttons.pill>
+                <a href="{{ route('user.desktop.index') }}" class="block">
+                    <x-ui.buttons.pill width="w-full" variant="link" btnText="{{ __('labels.back_to_home') }}"></x-ui.buttons.pill>
                 </a>
             </div>
 

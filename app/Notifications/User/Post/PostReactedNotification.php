@@ -20,10 +20,10 @@ class PostReactedNotification extends Notification implements ShouldQueue
         BaseNotification,
         HasUserActor;
 
-    private $notificationType = Notifications::POST_REACTED;
+    public $notificationType = Notifications::POST_REACTED;
 
     private Post $postData;
-    private array $actorData;
+    public array $actorData;
     private string $reactionUnifiedId;
 
     public function __construct(Post $postData, string $reactionUnifiedId)
@@ -76,7 +76,7 @@ class PostReactedNotification extends Notification implements ShouldQueue
     }
 
     public function toDatabase(): array
-    {        
+    {
         return $this->getData();
     }
 

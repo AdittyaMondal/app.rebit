@@ -8,7 +8,7 @@
 			</template>
 			<template v-else>
 				<div class="px-4 pt-4">
-					<div class="flex gap-2 items-center">
+					<div class="flex gap-2 items-center mb-2">
 						<div class="shrink-0">
 							<AvatarExtraSmall v-bind:avatarSrc="postData.relations.user.avatar_url"></AvatarExtraSmall>
 						</div>
@@ -31,32 +31,30 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<template v-if="postHasContent">
-						<div class="mt-3">
+						<div class="mb-4">
 							<QuotedPostText v-bind:postContent="postContent"></QuotedPostText>
 						</div>
 					</template>
 				</div>
 
 				<template v-if="postHasMedia || postHasPoll">
-					<div class="mt-3">
-						<template v-if="PostTypeUtils.isImage(postData.type) || PostTypeUtils.isGif(postData.type)">
-							<QuotedPostImage v-bind:postMedia="postMedia"></QuotedPostImage>
-						</template>
-						<template v-else-if="PostTypeUtils.isVideo(postData.type)">
-							<QuotedPostVideo v-bind:postMedia="postMedia"></QuotedPostVideo>
-						</template>
-						<template v-else-if="PostTypeUtils.isAudio(postData.type)">
-							<QuotedPostAudio v-bind:postMedia="postMedia"></QuotedPostAudio>
-						</template>
-						<template v-else-if="PostTypeUtils.isDocument(postData.type)">
-							<QuotedPostDocument v-bind:postMedia="postMedia"></QuotedPostDocument>
-						</template>
-						<template v-else-if="PostTypeUtils.isPoll(postData.type)">
-							<QuotedPostPoll></QuotedPostPoll>
-						</template>
-					</div>
+                    <template v-if="PostTypeUtils.isImage(postData.type) || PostTypeUtils.isGif(postData.type)">
+                        <QuotedPostImage v-bind:postMedia="postMedia"></QuotedPostImage>
+                    </template>
+                    <template v-else-if="PostTypeUtils.isVideo(postData.type)">
+                        <QuotedPostVideo v-bind:postMedia="postMedia"></QuotedPostVideo>
+                    </template>
+                    <template v-else-if="PostTypeUtils.isAudio(postData.type)">
+                        <QuotedPostAudio v-bind:postMedia="postMedia"></QuotedPostAudio>
+                    </template>
+                    <template v-else-if="PostTypeUtils.isDocument(postData.type)">
+                        <QuotedPostDocument v-bind:postMedia="postMedia"></QuotedPostDocument>
+                    </template>
+                    <template v-else-if="PostTypeUtils.isPoll(postData.type)">
+                        <QuotedPostPoll></QuotedPostPoll>
+                    </template>
 				</template>
 			</template>
 		</div>

@@ -1,6 +1,12 @@
 <?php
 
 return [
+	'cashout' => [
+		'mark_as_paid' => 'Mark as paid',
+		'reject' => 'Reject cashout',
+		'delete' => 'Delete cashout',
+		'reject_cashout' => 'Reject cashout',
+	],
 	'user' => [
 		'view_profile' => 'View profile',
 		'delete' => 'Delete user',
@@ -9,10 +15,13 @@ return [
 		'reject' => 'Reject',
 		'verify_user' => 'Verify user',
 		'unverify_user' => 'Unverify user',
+		'wallet' => 'Wallet',
 	],
 	'post' => [
 		'delete' => 'Delete post',
 		'view_publication' => 'View publication',
+		'pin' => 'Pin post',
+		'unpin' => 'Unpin post',
 	],
 	'ad' => [
 		'approve' => 'Approve Ad',

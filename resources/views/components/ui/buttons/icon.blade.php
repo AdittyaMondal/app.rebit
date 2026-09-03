@@ -11,7 +11,7 @@
     ]
 ])
 
-<button class="size-8 rounded-full inline-flex-center outline-hidden hover:bg-fill-tr cursor-pointer {{ $colors[$color] }}" {{ $attributes }}>
+<button type="button" class="size-8 rounded-full inline-flex-center outline-hidden hover:bg-fill-tr cursor-pointer {{ $colors[$color] }}" {{ $attributes }}>
     <span class="size-icon-normal">
         <x-ui-icon type="{{ $iconType }}" name="{{ $iconName }}"></x-ui-icon>
     </span>

@@ -1,6 +1,6 @@
 <?php
 
 return [
-	'sans' => 'resources/fonts/sf-pro/stylesheet.css',
-	'mono' => 'resources/fonts/sf-mono/stylesheet.css',
+	'sans' => 'resources/fonts/stylesheet.css',
+	'mono' => 'resources/fonts/stylesheet.css',
 ];

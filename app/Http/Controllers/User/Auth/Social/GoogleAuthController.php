@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\User\Auth\Social;
 
@@ -30,7 +42,7 @@ class GoogleAuthController extends Controller
 
     public function index()
     {
-        $socialite = Socialite::buildProvider(GoogleProvider::class , $this->driverCredentials);
+        $socialite = Socialite::buildProvider(GoogleProvider::class, $this->driverCredentials);
 
         return $socialite->scopes($this->defaultScopes)->redirect();
     }
@@ -41,23 +53,23 @@ class GoogleAuthController extends Controller
 
         $result = $this->socialAuthService->setDriver($this->driverName)->handle($socialiteUser);
 
-        if ($result['exists']) {
+        if($result['exists']) {
             return redirect()->route('user.desktop.index');
         }
 
-        else {
+        else{
             $newUser = $result['user'];
             $socialiteUser = $result['socialiteUser'];
 
             $username = $socialiteUser->nickname;
 
-            if (empty($username)) {
+            if(empty($username)) {
                 $username = join('_', [Str::before($socialiteUser->user['email'], '@'), $this->driverName]);
             }
 
             $userAvatarFilePath = config('user.avatar');
 
-            if (!empty($socialiteUser->user['picture'])) {
+            if(! empty($socialiteUser->user['picture'])) {
 
                 // TODO: optimize
                 // Move to image upload service.
@@ -69,17 +81,16 @@ class GoogleAuthController extends Controller
 
                     $fileUploaded = Storage::disk(static_storage_disk())->put($filepath, file_get_contents($socialiteUser->user['picture']));
 
-                    if ($fileUploaded) {
+                    if($fileUploaded) {
                         $userAvatarFilePath = $filepath;
                     }
-                }
-                catch (Throwable $th) {
-                // Pass
+                } catch (Throwable $th) {
+                    // Pass
                 }
             }
 
             $newUser->update([
-                'username' => $username,
+                'username' =>  $username,
                 'caption' => "@{$username}",
                 'first_name' => $socialiteUser->user['given_name'],
                 'last_name' => $socialiteUser->user['family_name'],
@@ -97,6 +108,6 @@ class GoogleAuthController extends Controller
 
     private function fetchUserData()
     {
-        return Socialite::buildProvider(GoogleProvider::class , $this->driverCredentials)->stateless()->user();
+        return Socialite::buildProvider(GoogleProvider::class, $this->driverCredentials)->stateless()->user();
     }
 }

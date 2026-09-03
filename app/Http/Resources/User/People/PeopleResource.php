@@ -1,11 +1,24 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Resources\User\People;
 
+use App\Constants\Relationship;
+use App\Services\Relations\FollowService;
 use App\Support\Num;
 use Illuminate\Http\Request;
-use App\Constants\Relationship;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PeopleResource extends JsonResource
@@ -32,9 +45,8 @@ class PeopleResource extends JsonResource
                 'is_owner' => $isOwner,
                 'relationship' => [
                     Relationship::FOLLOW_GROUP => [
-                        Relationship::FOLLOWING => me()->isFollowing($this->resource),
-                        Relationship::FOLLOWED_BY => $this->isFollowing(me()),
-                        Relationship::REQUESTED_BY => false,
+                        Relationship::FOLLOWING => (new FollowService(me(), $this->resource))->isFollowing(),
+                        Relationship::FOLLOWED_BY => (new FollowService($this->resource, me()))->isFollowing(),
                         Relationship::REQUESTED => false
                     ]
                 ]

@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Timeline;
 
@@ -8,7 +20,6 @@ use Illuminate\Http\Request;
 use App\Enums\Post\PostStatus;
 use App\Database\Configs\Table;
 use App\Http\Controllers\Controller;
-use App\Services\Feed\FeedRankingService;
 use App\Traits\Http\Api\SupportsApiResponses;
 use App\Http\Resources\User\Timeline\TimelineResource;
 use App\Http\Resources\User\Timeline\CommentCollection;
@@ -37,31 +48,27 @@ class FeedController extends Controller
         $processingPosts = $this->me->posts()->where('status', PostStatus::PROCESSING_VIDEO)->get();
 
         $feedORMQuery = Post::timelineFormatPosts()
-            ->when(!empty($this->filter['onset']), function ($query) {
-            $query->where('id', '>', $this->filter['onset']);
-        })->when((!$this->me->isAdmin()), function ($query) {
-            $query->where(function ($query) {
-                    $query->where('user_id', $this->me->id)->orWhereHas('user', function ($u) {
-                            $u->whereIn('user_id', function ($query) {
-                                    $query->select('following_id')->from(Table::FOLLOWS)->where('follower_id', $this->me->id);
-                                }
-                                )->author();
-                            }
-                            );
-                        }
-                        );
+            ->when(! empty($this->filter['onset']), function($query) {
+                $query->where('id', '>', $this->filter['onset']);
+            })->when((! $this->me->isRoot()), function($query) {
+                $query->where(function($query) {
+                    $query->where('user_id', $this->me->id)->orWhereHas('user', function($u) {
+                        $u->whereIn('user_id', function($query) {
+                            $query->select('following_id')->from(Table::FOLLOWS)->where('follower_id', $this->me->id);
+                        })->author();
                     });
-
-        // Apply smart feed ranking algorithm (engagement + recency + follow bonus + velocity)
-        FeedRankingService::applyHomeFeedRanking($feedORMQuery, $this->me->id);
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->orderBy('comments_count', 'desc')
+            ->orderBy('bookmarks_count', 'desc')
+            ->orderBy('views_count', 'desc')
+            ->orderBy('quotes_count', 'desc');
 
         $timelinePosts = $feedORMQuery->simplePaginateManual(config('post.paginate_per'), $this->filter['page']);
 
-        // Only prepend processing posts on the first page to avoid repeating them on scroll
-        if ($this->filter['page'] <= 1 && $processingPosts->count()) {
-            $timelinePosts = $processingPosts->merge($timelinePosts);
-        }
-
+        $timelinePosts = $processingPosts->merge($timelinePosts);
+        
         return $this->responseSuccess([
             'data' => TimelineCollection::make($timelinePosts)
         ]);
@@ -72,8 +79,8 @@ class FeedController extends Controller
         $postHashId = $request->route('hashId');
 
         $postData = Post::active()->whereHashId($postHashId)->timelineFormatPosts()->first();
-
-        if ($postData) {
+        
+        if($postData) {
             $postComments = $this->fetchPostItemComments($postData);
 
             return $this->responseSuccess([
@@ -88,7 +95,7 @@ class FeedController extends Controller
             ]);
         }
 
-        else {
+        else{
             return $this->responseResourceNotFoundError('Post', $postHashId);
         }
     }
@@ -100,7 +107,7 @@ class FeedController extends Controller
 
         $postData = Post::active()->whereHashId($postHashId)->first();
 
-        if (empty($postData)) {
+        if(empty($postData)) {
             return $this->responseResourceNotFoundError('Post', $postHashId);
         }
 
@@ -112,13 +119,13 @@ class FeedController extends Controller
     }
 
     private function fetchPostItemComments(Post $postData, int|string $cursorId = 0)
-    {
+    {   
         $postComments = $postData->comments()->with([
             'post:id,user_id',
             'user:id,first_name,last_name,avatar,username',
             'reactions',
             'parent.user:id,first_name,last_name,username'
-        ])->when($cursorId, function ($query) use ($cursorId) {
+        ])->when($cursorId, function($query) use ($cursorId) {
             $query->where('id', '<', $cursorId);
         })->latest('id');
 

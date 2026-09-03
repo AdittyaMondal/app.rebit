@@ -7,9 +7,7 @@
 			This feature is coming soon!
 		</h4>
 		<p class="text-lab-sc text-par-n">
-			We're hard at work enhancing Rebit to bring you an even better experience. <a
-				href="{{ config('app.news_resource_url') }}" class="underline text-brand-900" target="_blank">Stay tuned
-				for updates right here</a>!
+			We're hard at work enhancing ColibriPlus to bring you an even better experience. <a href="{{ config('app.news_resource_url') }}" class="underline text-brand-900" target="_blank">Stay tuned for updates right here</a>!
 		</p>
 	</div>
 </div>

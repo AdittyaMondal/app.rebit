@@ -12,12 +12,12 @@
 				{{ $groupData->name }}
 			</h4>
 
-			<p class="text-lab-sc text-par-s">
+			<p class="text-lab-sc text-par-m">
 				{{ __('labels.participants') }} ({{ $groupData->participants_count }})
 			</p>
 
 			@if($groupData->description)
-				<p class="text-lab-sc text-par-s mt-2 leading-snug">
+				<p class="text-lab-sc text-par-m mt-2 leading-snug">
 					{!! nl2br($groupData->description) !!}
 				</p>
 			@endif

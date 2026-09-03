@@ -1,7 +1,9 @@
 @props([
 	'name' => '',
+    'url' => null,
+    'size' => 'size-8',
 ])
 
-<div class="size-8 rounded-full overflow-hidden">
-	<img src="{{ asset("assets/icons/avatar/{$name}.png") }}" alt="Icon" class="size-full">
+<div class="{{ $size }} rounded-full overflow-hidden border border-bord-pr">
+	<img src="{{ empty($url) ? asset("assets/icons/avatar/{$name}.png") : $url }}" alt="Icon" class="size-full">
 </div>

@@ -3,8 +3,8 @@
         <div class="shrink-0 size-medium-avatar overflow-hidden rounded-sm border border-bord-pr">
             <img v-bind:src="publisher.avatar_url" alt="Job Image" class="w-full h-full object-cover">
         </div>
-        <div class="min-w-0 flex-1">
-            <div class="flex flex-wrap justify-between gap-1">
+        <div class="block">
+            <div class="flex justify-between gap-1">
                 <h4 class="text-title-3 font-semibold text-lab-pr2 leading-tight line-clamp-2 mb-1">
                     {{ jobData.title }}
                 </h4>

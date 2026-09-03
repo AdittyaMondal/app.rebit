@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Business\Market;
 
@@ -17,15 +29,15 @@ class MarketController extends Controller
     {
         $type = $request->string('type', 'all');
         $type = in_array($type, ['all', 'active', 'archived']) ? $type : 'all';
-
+        
         $productsList = me()->products()->with([
             'category',
             'media'
-        ])->active()->when($type, function ($query) use ($type) {
-            if ($type == 'active') {
+        ])->active()->when($type, function($query) use ($type) {
+            if($type == 'active') {
                 $query->where('status', ProductStatus::ACTIVE);
             }
-            else if ($type == 'archived') {
+            else if($type == 'archived') {
                 $query->where('status', ProductStatus::INACTIVE);
             }
         })->latest('id')->paginate(10);
@@ -68,8 +80,8 @@ class MarketController extends Controller
     private function fetchOrInitializeDraftProduct()
     {
         $productData = me()->products()->where('status', ProductStatus::DRAFT)->first();
-
-        if (empty($productData)) {
+    
+        if(empty($productData)) {
             me()->products()->create([
                 'status' => ProductStatus::DRAFT
             ]);
@@ -89,7 +101,7 @@ class MarketController extends Controller
         $productData->update([
             'status' => ProductStatus::INACTIVE
         ]);
-
+        
         return redirect()->route('business.market.show', $productId);
     }
 
@@ -100,7 +112,7 @@ class MarketController extends Controller
         $productData->update([
             'status' => ProductStatus::ACTIVE
         ]);
-
+        
         return redirect()->route('business.market.show', $productId);
     }
 

@@ -1,15 +1,27 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Resources\User\Chat;
 
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\User\User\UserPreviewResource;
+use App\Http\Resources\User\Media\MediaResource;
 use App\Http\Resources\User\Morph\LinkSnapshotResource;
 use App\Http\Resources\User\Timeline\ReactionCollection;
+use App\Http\Resources\User\User\UserPreviewResource;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 class MessageResource extends JsonResource
 {
@@ -20,6 +32,7 @@ class MessageResource extends JsonResource
             'user_id' => $this->user_id,
             'chat_uuid' => $this->chat_uuid,
             'content' => $this->content,
+            'type' => $this->type,
             'has_parent' => (empty($this->parent_id)) ? false : true,
             'relations' => [
                 'user' => UserPreviewResource::make($this->user),
@@ -27,7 +40,8 @@ class MessageResource extends JsonResource
                 'parent' => $this->getParentMessageData(),
                 'participant' => [
                     'color' => $this->participant->metadata['color']
-                ]
+                ],
+                'media' => []
             ],
             'date' => [
                 'iso' => $this->created_at->getIso(),
@@ -45,7 +59,11 @@ class MessageResource extends JsonResource
             ]
         ];
 
-        if ($this->linkSnapshot) {
+        if($this->media) {
+            $messageData['relations']['media'] = MediaResource::make($this->media);
+        }
+
+        if($this->linkSnapshot) {
             $messageData['relations']['link_snapshot'] = LinkSnapshotResource::make($this->linkSnapshot);
         }
 
@@ -54,9 +72,13 @@ class MessageResource extends JsonResource
 
     private function getParentMessageData()
     {
-        if ($this->parent) {
+        if($this->parent) {
             return [
                 'content' => Str::limit($this->parent->content, 120),
+                'type' => $this->parent->type,
+                'relations' => [
+                    'media' => MediaResource::make($this->parent->media)
+                ],
                 'user' => [
                     'name' => $this->parent->user->name,
                     'username' => $this->parent->user->username,

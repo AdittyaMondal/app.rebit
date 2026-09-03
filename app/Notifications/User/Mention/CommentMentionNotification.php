@@ -18,18 +18,18 @@ class CommentMentionNotification extends Notification implements ShouldQueue
         BaseNotification,
         HasUserActor;
 
-    private array $actorData;
+    public array $actorData;
     private Comment $commentData;
     private string $commentContent;
-    
+
+    public $notificationType = Notifications::COMMENT_MENTIONED;
+
     public function __construct(Comment $commentData, string $commentContent)
     {
         $this->actorData = $this->getUserActor();
         $this->commentData = $commentData;
         $this->commentContent = $commentContent;
     }
-
-    private $notificationType = Notifications::COMMENT_MENTIONED;
 
     public function via(object $notifiable): array
     {

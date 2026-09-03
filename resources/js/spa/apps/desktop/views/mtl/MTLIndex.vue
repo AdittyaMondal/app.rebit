@@ -10,7 +10,7 @@
             <div class="mb-6">
                 <div class="mb-4">
                     <h1 class="text-[72px] font-extrabold leading-none mb-2">Hello!</h1>
-                    <h3 class="text-par-l font-bold">I'm Team Rebit. Developer and Owner of Rebit script.</h3>
+                    <h3 class="text-par-l font-bold">I'm Mansur Terla. Developer and Owner of ColibriPlus script.</h3>
                 </div>
 
                 <div class="border-y border-lab-pr2 pb-4">
@@ -28,11 +28,11 @@
                         </div>
                         <div class="flex-1">
                             <h4 class="text-par-m font-bold text-lab-pr2 leading-tight truncate mb-1">
-                                Team Rebit
+                                Mansur Terla
                             </h4>
                             <span class="block text-par-s text-lab-sc truncate">
                                 Full-stack Web developer / UI/UX Designer.
-                                <a href="https://rebit.in" target="_blank" class="underline font-semibold">https://rebit.in</a>
+                                <a href="https://www.terla.me" target="_blank" class="underline font-semibold">https://www.terla.me</a>
                             </span>
                         </div>
                     </div>
@@ -62,28 +62,28 @@
             <div class="mb-6">
                 <h3 class="text-par-l font-bold mb-3">About Me</h3>
                 <p class="text-par-m text-lab-pr2 mb-2">
-                    I am a full stack web developer, skilled UI interface designer, and freelancer with over 8+ years of experience in web development. I am the creator of ColibriSM, a powerful social networking script, and its advanced successor, Rebit.
+                    I am a full stack web developer, skilled UI interface designer, and freelancer with over 8+ years of experience in web development. I am the creator of ColibriSM, a powerful social networking script, and its advanced successor, ColibriPlus.
                 </p>
                 <p class="text-par-m text-lab-pr2 mb-2">
                     I am working independently to provide modern solutions for web design and development.
                 </p>
                 <p class="text-par-m text-lab-pr2 mb-2">
-                    Before developing Rebit, I worked as a freelancer, collaborating with clients globally to build custom applications, design user interfaces, and solve complex development challenges.
+                    Before developing ColibriPlus, I worked as a freelancer, collaborating with clients globally to build custom applications, design user interfaces, and solve complex development challenges.
                 </p>
                 <p class="text-par-m text-lab-pr2 mb-2">
                     My expertise spans both frontend and backend technologies, and I am fluent in Russian and English, allowing me to connect with a wide range of clients and developers.
                 </p>
             </div>
             <div class="mb-6">
-                <h3 class="text-par-l font-bold mb-3">What is Rebit?</h3>
+                <h3 class="text-par-l font-bold mb-3">What is ColibriPlus?</h3>
                 <p class="text-par-m text-lab-pr2 mb-2">
-                    Rebit is the enhanced and improved version of ColibriSM, built from the ground up to address modern web development needs. 
+                    ColibriPlus is the enhanced and improved version of ColibriSM, built from the ground up to address modern web development needs. 
                 </p>
                 <p class="text-par-m text-lab-pr2 mb-4">
-                    While ColibriSM introduced a robust foundation for creating social networking platforms, Rebit takes it to the next level with significant advancements in performance, scalability, and features.
+                    While ColibriSM introduced a robust foundation for creating social networking platforms, ColibriPlus takes it to the next level with significant advancements in performance, scalability, and features.
                 </p>
                 <p class="text-par-m text-lab-pr2 mb-4 font-bold">
-                    Here’s what makes Rebit stand out:
+                    Here’s what makes ColibriPlus stand out:
                 </p>
 
                 <div class="text-par-s">
@@ -121,12 +121,12 @@
                 </div>
 
                 <p class="text-par-m text-lab-pr2 mb-4 font-bold">
-                    Rebit is offered under a lifetime license with free updates, ensuring your platform evolves with the latest technologies and features.
+                    ColibriPlus is offered under a lifetime license with free updates, ensuring your platform evolves with the latest technologies and features.
                 </p>
 
                 <div>
                     <a href="https://colibri.plus/" target="_blank" class="text-cap-l text-brand-900 underline font-medium">
-                        Read more about Rebit
+                        Read more about ColibriPlus
                     </a>
                 </div>
             </div>

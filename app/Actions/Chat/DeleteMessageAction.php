@@ -2,6 +2,7 @@
 
 namespace App\Actions\Chat;
 
+use App\Actions\Media\DeleteMediaAction;
 use App\Models\Message;
 
 class DeleteMessageAction
@@ -14,6 +15,10 @@ class DeleteMessageAction
 
 	public function execute() {
 		$this->messageData->linkSnapshot()->delete();
+
+        if($this->messageData->media) {
+            (new DeleteMediaAction($this->messageData->media))->execute();
+        }
 
 		$this->messageData->reactions()->delete();
 

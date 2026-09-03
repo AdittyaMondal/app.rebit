@@ -1,12 +1,7 @@
 @extends('adminLayout::index')
 
 @section('pageContent')
-<div class="mb-4">
-	<x-page-title titleText=" {{ __('admin/market.show_title') }}"></x-page-title>
-	<x-page-desc>
-		{{ __('admin/market.show_desc') }}
-	</x-page-desc>
-</div>
+<x-page-title titleText=" {{ __('admin/market.show_title') }}"></x-page-title>
 
 <div x-data="alpineComponent">
 	<x-sided-content>
@@ -14,8 +9,8 @@
 			<x-entity.previews.product :productData="$productData"></x-entity.previews.product>
 		</x-slot:sideContent>
 		<div class="mb-8">
-			<x-entity.header 
-				avatarUrl="{{ $productData->user->avatar_url }}" 
+			<x-entity.header
+				avatarUrl="{{ $productData->user->avatar_url }}"
 				name="{{ $productData->user->name }}"
 			caption="{{ $productData->user->caption }}">
 

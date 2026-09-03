@@ -1,14 +1,14 @@
 <template>
     <SidedContentLayout>
         <template v-slot:content>
-            <TimelineContainer> 
+            <TimelineContainer>
                 <BoardHeader></BoardHeader>
                 <Border></Border>
                 <div class="sticky top-0 popup-background-tr z-10">
                     <div class="p-4 pb-8">
                         <div class="mb-4">
                             <SearchBar v-model.trim="searchQuery" v-bind:placeholder="$t('labels.search')">
-                                
+
                             </SearchBar>
                         </div>
 
@@ -22,7 +22,7 @@
                                     <PrimaryTextButton buttonRole="danger" v-on:click="resetFilter" v-bind:buttonText="$t('market.reset_filters')"></PrimaryTextButton>
                                     <div class="w-px h-4 bg-bord-pr"></div>
                                 </template>
-    
+
                                 <div class="relative">
                                     <div class="relative">
                                         <PrimaryTextButton v-on:click.stop="state.filterMenu.toggle" buttonRole="marginal" v-bind:buttonText="$t('labels.filters')"></PrimaryTextButton>
@@ -30,8 +30,8 @@
                                             <BadgeCounter v-if="activeFiltersCount" v-bind:count="activeFiltersCount"></BadgeCounter>
                                         </span>
                                     </div>
-    
-                                    <div v-outside-click="state.filterMenu.close" v-on:click="state.filterMenu.close" v-if="state.filterMenu.status" class="absolute top-full -right-4 bottom-0 w-[min(100vw-2rem,var(--spacing-content,600px))]">
+
+                                    <div v-outside-click="state.filterMenu.close" v-on:click="state.filterMenu.close" v-if="state.filterMenu.status" class="absolute top-full -right-4 bottom-0 w-content">
                                         <div class="popup-card bg-bg-pr">
                                             <PopupPanel>
                                                 <div class="p-4 border-b border-b-bord-pr">
@@ -73,7 +73,7 @@
                                         <JobCard v-bind:key="jobItem.id" v-bind:jobData="jobItem"></JobCard>
                                     </RouterLink>
                                 </div>
-        
+
                                 <div v-if="state.isLoadingContent">
                                     <div class="flex justify-center my-4">
                                         <div class="colibri-primary-animation"></div>
@@ -118,7 +118,6 @@
     import PrimaryIconButton from '@D/components/inter-ui/buttons/PrimaryIconButton.vue';
     import PopupPanel from '@D/components/inter-ui/popups/PopupPanel.vue';
     import BadgeCounter from '@D/components/general/counters/BadgeCounter.vue';
-    import TimelineCallout from '@D/components/timeline/info/TimelineCallout.vue';
     import JobCardSkeleton from '@D/views/jobs/children/board/parts/JobCardSkeleton.vue';
     import PrimaryTextButton from '@D/components/inter-ui/buttons/PrimaryTextButton.vue';
 
@@ -248,7 +247,6 @@
             BadgeCounter: BadgeCounter,
             SearchBar: SearchBar,
             BoardHeader: BoardHeader,
-            TimelineCallout: TimelineCallout,
             PrimaryTextButton: PrimaryTextButton
         }
     });

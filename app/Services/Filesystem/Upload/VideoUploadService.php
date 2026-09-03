@@ -14,7 +14,7 @@ use App\Services\Filesystem\Abstract\AbstractUploadService;
 class VideoUploadService extends AbstractUploadService
 {
     use ThrowsUploadExceptions, ThrowsFFMpegExceptions;
-    
+
     protected $ffmpegService;
     public string $videoDefaultExtension = 'mp4';
     private string $videoTemporaryLocation = 'tmp/videos';
@@ -22,6 +22,13 @@ class VideoUploadService extends AbstractUploadService
     public function __construct(FFMpegService $ffmpegService)
     {
         $this->ffmpegService = $ffmpegService;
+    }
+
+    public function setDefaultExtension(string $extension)
+    {
+        $this->videoDefaultExtension = $extension;
+
+        return $this;
     }
 
     public function upload(string $videoFileLocalPath)
@@ -35,9 +42,11 @@ class VideoUploadService extends AbstractUploadService
                 $this->makeUploadException("Processed video uploading to disk ({$this->storageDisk}) failed.");
             }
 
+            unlink($videoFileLocalPath);
+
             return [
                 'disk' => $this->storageDisk,
-                'video_path' => $videoPath 
+                'video_path' => $videoPath
             ];
         }
 
@@ -92,15 +101,15 @@ class VideoUploadService extends AbstractUploadService
                 if (! file_exists($videoLocalAbsolutePath)) {
                     $this->makeFFMpegException("The video file does not exist at location: {$videoLocalAbsolutePath}");
                 }
-                
+
                 $durationInSeconds = $ffprobe->format($videoLocalAbsolutePath)->get('duration');
                 $durationInSeconds = (is_numeric($durationInSeconds)) ? $durationInSeconds : 0;
-                
+
                 return $durationInSeconds;
 
             }, 1000);
-        } 
-        
+        }
+
         catch (Exception $e) {
             $this->makeFFMpegException("FFprobe failed to get video duration after {$retries} attempts. {$e->getMessage()}");
         }
@@ -109,7 +118,7 @@ class VideoUploadService extends AbstractUploadService
     public function generateVideoTemporaryFilePath($videoExtension = null)
     {
         $uuid = Str::uuid();
-        
+
         return "$this->videoTemporaryLocation/{$uuid}.{$videoExtension}";
     }
 }

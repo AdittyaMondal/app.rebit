@@ -37,9 +37,7 @@ class AdController extends Controller
         // If no any kind of ad is found, return not found error.
 
         if(! $adData) {
-            return $this->responseSuccess([
-                'data' => null
-            ]);
+            return $this->responseNotFoundError();
         }
         
         defer(function () use ($adData) {

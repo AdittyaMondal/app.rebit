@@ -1,12 +1,7 @@
 @extends('adminLayout::index')
 
 @section('pageContent')
-	<div class="mb-8">
-        <x-page-title titleText=" {{ __('admin/users.index_title') }}"></x-page-title>
-        <x-page-desc>
-            {{ __('admin/users.index_desc') }}
-        </x-page-desc>
-    </div>
+    <x-page-title titleText=" {{ __('admin/users.index_title') }}"></x-page-title>
 	<div class="mb-4">
 		<x-tabs.tabs>
 			<x-tabs.tab-item :active="$filters['type'] == 'all'" href="{{ route('admin.users.index') }}" textLabel="{{ __('admin/filter.filters.users.tabs.all') }}"></x-tabs.tab-item>
@@ -44,7 +39,7 @@
 					])
 				@endforeach
 			@else
-				<x-table.empty colspan="7"></x-table.empty>
+				<x-table.empty colspan="8"></x-table.empty>
 			@endif
 		</x-table.tbody>
 	</x-table.table>

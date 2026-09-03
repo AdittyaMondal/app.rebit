@@ -19,6 +19,7 @@
 		},
 		routes: {
 			business_dashboard_index: "{{ route('business.dashboard.index') }}",
+			business_wallet_cashouts: "{{ route('business.wallet.cashouts') }}",
 			user_auth_index: "{{ route('user.auth.index') }}",
 			terms_of_use: "{{ route('document.terms.index') }}",
 			privacy_policy: "{{ route('document.privacy.index') }}",

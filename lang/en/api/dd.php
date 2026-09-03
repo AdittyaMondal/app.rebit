@@ -33,11 +33,13 @@ return [
 		'block' => 'Block {\'@\'}{username}',
 		'report' => 'Report {\'@\'}{username}',
 		'mute' => 'Mute {\'@\'}{username}',
+		'unmute' => 'Unmute {\'@\'}{username}',
 		'mention' => 'Mention {\'@\'}{username}',
 		'about' => 'About account',
 		'send_message' => 'Send message',
 		'copy_link' => 'Copy profile link',
 		'apply_sanctions' => 'Apply sanctions',
+        'unblock' => 'Unblock {\'@\'}{username}',
 	],
 	'message' => [
 		'delete_message' => 'Delete message',

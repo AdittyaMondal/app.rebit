@@ -11,11 +11,11 @@
 }
 
 .sidenav-inactive span{
-    @apply first:text-lab-pr last:text-lab-pr font-light;
+    @apply text-lab-pr font-light;
 }
 
 .sidenav-inactive svg{
-    @apply text-lab-pr2;
+    @apply text-lab-sc;
 }
 
 select {

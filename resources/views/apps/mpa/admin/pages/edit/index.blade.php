@@ -1,12 +1,7 @@
 @extends('adminLayout::index')
 
 @section('pageContent')
-	<div class="mb-4">
-		<x-page-title titleText=" {{ __('admin/page.edit_title') }} ({{ __('admin/page.static_pages.' . $pageName . '.title') }})"></x-page-title>
-		<x-page-desc>
-			{{ __('admin/page.edit_desc') }}
-		</x-page-desc>
-	</div>
+	<x-page-title titleText=" {{ __('admin/page.edit_title') }} ({{ __('admin/page.static_pages.' . $pageName . '.title') }})"></x-page-title>
 
 	<div class="mb-4">
 		<x-tabs.tabs>
@@ -38,7 +33,7 @@
 				</div>
 			</div>
 
-			<x-ui.buttons.pill width="w-full" type="submit" btnText="{{ __('admin/page.form.submit_button') }}"></x-ui.buttons.pill>
+			<x-ui.buttons.pill width="w-full" size="sm" type="submit" btnText="{{ __('admin/page.form.submit_button') }}"></x-ui.buttons.pill>
 		</form>
 		<x-slot:sideContent>
 			<x-entity.previews.page></x-entity.previews.page>

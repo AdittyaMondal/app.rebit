@@ -8,20 +8,20 @@
 			<h4 class="text-lab-sc text-par-n font-medium mb-1 line-clamp-2 leading-tight">
 				{{ $productData->title }}
 			</h4>
-			<p class="text-lab-sc text-par-s">
+			<p class="text-lab-sc text-par-m">
 				{{ $productData->category_name }}
 			</p>
 			<div class="block">
 				@if($productData->hasDiscount())
 					<span class="text-lab-pr2 text-par-l font-semibold">
-						{{ $productData->formatted_sale_price }} 
+						{{ $productData->formatted_sale_price }}
 					</span>
-					<span class="text-lab-sc text-par-s line-through">
+					<span class="text-lab-sc text-par-m line-through">
 						{{ $productData->formatted_price }}
 					</span>
 				@else
 					<span class="text-lab-pr2 text-par-l font-semibold">
-						{{ $productData->formatted_price }} 
+						{{ $productData->formatted_price }}
 					</span>
 				@endif
 			</div>

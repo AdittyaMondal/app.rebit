@@ -15,16 +15,16 @@
 				<h4 class="text-lab-pr2 text-par-l font-semibold">
 					{{ $userData->name }}
 				</h4>
-				<p class="text-lab-sc text-par-s">
+				<p class="text-lab-sc text-par-m">
 					{{ $userData->caption }}
 				</p>
 
-				<p class="text-lab-sc text-par-s">
+				<p class="text-lab-sc text-par-m">
 					{{ '@' . $userData->username }}
 				</p>
 
 				@if($userData->bio)
-					<p class="text-lab-sc text-par-s mt-2 leading-snug">
+					<p class="text-lab-sc text-par-m mt-2 leading-snug">
 						{!! nl2br($userData->bio) !!}
 					</p>
 				@endif

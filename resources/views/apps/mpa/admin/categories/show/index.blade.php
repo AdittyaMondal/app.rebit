@@ -1,12 +1,7 @@
 @extends('adminLayout::index')
 
 @section('pageContent')
-	<div class="mb-4">
-		<x-page-title titleText=" {{ __('admin/categories.show_title') }}"></x-page-title>
-		<x-page-desc>
-			{{ __('admin/categories.show_desc') }}
-		</x-page-desc>
-	</div>
+	<x-page-title titleText=" {{ __('admin/categories.show_title') }}"></x-page-title>
 
 	<div x-data="alpineComponent">
 		<x-sided-content>
@@ -15,8 +10,8 @@
 			</x-slot:sideContent>
 
 			<div class="mb-8">
-				<x-entity.header 
-					avatarUrl="{{ asset('assets/icons/avatar/tag-01.png') }}" 
+				<x-entity.header
+					avatarUrl="{{ asset('assets/icons/avatar/tag-01.png') }}"
 					name="{{ $categoryData->category_name }}">
 
 					<x-slot:controlOptions>

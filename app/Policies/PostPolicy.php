@@ -8,10 +8,10 @@ use App\Models\User;
 class PostPolicy
 {
     public function update(User $user, Post $postData) {
-        return $postData->user_id === $user->id || $user->isAdmin();
+        return $postData->user_id === $user->id || $user->isRoot();
     }
 
     public function delete(User $user, Post $postData) {
-        return $postData->user_id === $user->id || $user->isAdmin();
+        return $postData->user_id === $user->id || $user->isRoot();
     }
 }

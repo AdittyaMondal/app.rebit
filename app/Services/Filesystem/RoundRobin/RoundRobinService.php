@@ -7,9 +7,7 @@ use Illuminate\Support\Facades\Cache;
 
 class RoundRobinService
 {
-    // Smart logic will be added later.
-
-    private $disks = ['public'];
+    private array $disks;
 
     private $diskCacheKey = 'current_file_storage_disk_index';
 
@@ -18,7 +16,7 @@ class RoundRobinService
         $this->disks = array_keys($this->getRoundRobinDisks());
     }
 
-    public function getNextDisk() 
+    public function getNextDisk()
     {
         $currentIndex = Cache::get($this->diskCacheKey, 0);
 
@@ -35,6 +33,6 @@ class RoundRobinService
 
     public function getRoundRobinDisks()
     {
-        return Arr::except(config('filesystems.disks'), 'local');
+        return Arr::except(config('filesystems.disks'), array_keys(config('filesystems.system_disks')));
     }
 }

@@ -115,11 +115,12 @@
             </div>
             <div class="block">
                 <div class="flex mb-6 gap-2">
-                    <x-ui.buttons.pill wire:attr.loading="disabled" type="submit" btnText="{{ route_is('business.ads.create') ? __('business/ads.form.create_button') : __('business/ads.form.save_button') }}"></x-ui.buttons.pill>
+                    <x-ui.buttons.pill size="sm" wire:attr.loading="disabled" type="submit" btnText="{{ route_is('business.ads.create') ? __('business/ads.form.create_button') : __('business/ads.form.save_button') }}"></x-ui.buttons.pill>
 
                     <a href="{{ route('business.market.index') }}">
                         <x-ui.buttons.pill
                             variant="danger"
+                            size="sm"
                         btnText="{{ __('business/market.form.cancel_button') }}"></x-ui.buttons.pill>
                     </a>
                 </div>

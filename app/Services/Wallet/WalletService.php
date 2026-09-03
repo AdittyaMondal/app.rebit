@@ -3,10 +3,8 @@
 namespace App\Services\Wallet;
 
 use App\Models\User;
-use App\Models\Payment;
 use Illuminate\Support\Str;
 use App\Enums\Payment\PaymentType;
-use App\Enums\Payment\PaymentStatus;
 use App\Services\Payment\DTO\PaymentIntent;
 use App\Services\Payment\PaymentIntentService;
 use App\Services\Payment\DTO\PaymentIntentResult;
@@ -63,6 +61,15 @@ class WalletService
 
 		return $this;
 	}
+
+    public function setWalletBalance(float $amount)
+    {
+        $this->userData->wallet->update([
+            'balance' => $this->userData->wallet->balance->set($amount)
+        ]);
+
+        return $this;
+    }
 
 	public function subtractWalletBalance(float $amount)
 	{

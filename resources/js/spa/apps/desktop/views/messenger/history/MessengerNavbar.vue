@@ -11,7 +11,7 @@
         </template>
 
         <template v-slot:sidebarBody>
-            <div class="border-b border-b-bord-pr mb-4">
+            <div class="border-b border-b-bord-card mb-4">
                 <ContentTabs>
                     <TabsButton v-on:click="state.activeTab = 'chats'" v-bind:isActive="state.activeTab === 'chats'">
                         {{ $t('chat.tabs.chats') }}

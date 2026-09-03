@@ -20,16 +20,17 @@ class PostMentionNotification extends Notification implements ShouldQueue
         BaseNotification,
         HasUserActor;
 
-    private array $actorData;
+    public array $actorData;
+
+    public $notificationType = Notifications::POST_MENTIONED;
+
     private Post $postData;
-    
+
     public function __construct(Post $postData)
     {
         $this->actorData = $this->getUserActor();
         $this->postData = $postData;
     }
-
-    private $notificationType = Notifications::POST_MENTIONED;
 
     public function via(object $notifiable): array
     {

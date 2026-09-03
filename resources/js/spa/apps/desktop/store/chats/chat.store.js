@@ -9,7 +9,12 @@ const useChatStore = defineStore('chats_chat', {
 			chatData: {},
 			chatMessages: [],
 			chatParticipants: [],
-			inboxStore: useInboxStore()
+			inboxStore: useInboxStore(),
+            messageForm: {
+                videoRecorder: {
+                    elapsed: 0,
+                }
+            }
 		};
 	},
 	getters: {
@@ -17,7 +22,12 @@ const useChatStore = defineStore('chats_chat', {
 			return this.chatData.type == 'direct';
 		},
 		hasDescription: function() {
-			return this.chatData.chat_info.description.length > 0;
+            if(! this.chatData.chat_info.description) {
+                return false;
+            }
+            else {
+                return this.chatData.chat_info.description.length > 0;
+            }
 		},
 		otherParticipants: function() {
 			return this.chatData.relations.participants;
@@ -78,6 +88,28 @@ const useChatStore = defineStore('chats_chat', {
 				}
 			});
 		},
+        sendMediaMessage: async function(mediaData) {
+            const formData = new FormData();
+            const dateTime = new Date().toISOString();
+
+            formData.append('chat_id', this.chatId);
+            formData.append('media_type', mediaData.type);
+
+            // In case if it's audio or video, we need to add the duration.
+            if(mediaData.duration) {
+                formData.append('media_duration', mediaData.duration);
+            }
+
+            formData.append('media', mediaData.file, `Media-${dateTime}.${mediaData.extension}`);
+
+            await colibriAPI().messenger().with(formData).withHeaders({
+				'Content-Type': 'multipart/form-data'
+			}).sendTo('send').catch(function(error) {
+                if(error.response) {
+                    throw new Error(error.response.data.message);
+                }
+            });
+        },
 		deleteMessage: async function(messageId, deleteForAll = false) {
 			let state = this;
 
@@ -91,7 +123,7 @@ const useChatStore = defineStore('chats_chat', {
 					let messageIndex = state.chatMessages.findIndex((item) => {
 						return item.id == messageId;
 					});
-		
+
 					if(messageIndex !== -1) {
 						state.chatMessages.splice(messageIndex, 1);
 					}
@@ -133,7 +165,7 @@ const useChatStore = defineStore('chats_chat', {
 		},
 		deleteChat: async function() {
 			let state = this;
-			
+
 			await colibriAPI().messenger().delete(`chat/${state.chatId}/delete`).then(function(response) {
 				state.chatMessages = [];
 
@@ -155,7 +187,7 @@ const useChatStore = defineStore('chats_chat', {
 		},
 		addReaction: function(reactionId, messageId) {
 			let state = this;
-			
+
 			colibriAPI().messenger().with({
 				unified_id: reactionId,
 				message_id: messageId
@@ -167,7 +199,7 @@ const useChatStore = defineStore('chats_chat', {
 				if (reactableMessage) {
 					reactableMessage.relations.reactions = response.data.data;
 				}
-				
+
 			}).catch((error) => {
 				if (error.response) {
 					alert(error.response.data.message);

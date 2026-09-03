@@ -2,16 +2,15 @@
 
 @section('pageContent')
 <div x-data="alpineComponent">
-	<div class="mb-4">
-        <x-page-title titleText=" {{ __('admin/users.show_title') }}"></x-page-title>
-    </div>
+    <x-page-title titleText=" {{ __('admin/users.show_title') }}"></x-page-title>
+
 	<x-sided-content>
 		<x-slot:sideContent>
 			<x-entity.previews.user :userData="$userData"></x-entity.previews.user>
 		</x-slot:sideContent>
 		<div class="mb-8">
-			<x-entity.header 
-				avatarUrl="{{ $userData->avatar_url }}" 
+			<x-entity.header
+				avatarUrl="{{ $userData->avatar_url }}"
 				name="{{ $userData->name }}"
 			caption="{{ $userData->caption }}">
 
@@ -56,6 +55,13 @@
 								<x-ui-icon type="line" name="arrow-up-right"></x-ui-icon>
 							</x-slot:itemIcon>
 						</x-ui.dropdown.item>
+						<x-div></x-div>
+						<x-ui.dropdown.item tag="a" href="{{ route('admin.users.wallet', $userData->id) }}" itemText="{{ __('admin/dd.user.wallet') }}">
+							<x-slot:itemIcon>
+								<x-ui-icon type="line" name="credit-card-02"></x-ui-icon>
+							</x-slot:itemIcon>
+						</x-ui.dropdown.item>
+                        <x-div></x-div>
 						<x-ui.dropdown.item tag="a" :danger="true" x-on:click="deleteUser" itemText="{{ __('admin/dd.user.delete') }}">
 							<x-slot:itemIcon>
 								<x-ui-icon type="line" name="trash-04"></x-ui-icon>
@@ -131,7 +137,7 @@
 						{{ __('table.labels.email') }}
 					</x-slot:labelText>
 					<x-slot:labelValue>
-						{{ $userData->email }}
+						{{ hide_email_address($userData->email) }}
 					</x-slot:labelValue>
 				</x-line-table.row>
 				<x-line-table.row>

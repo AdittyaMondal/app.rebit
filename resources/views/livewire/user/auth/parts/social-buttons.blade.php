@@ -5,9 +5,9 @@
         @endphp
 
         @foreach($primaryOptions as $driver)
-            <x-auth.social.button href="{{ $driver['meta']['url'] }}">
+            <x-auth.social.button href="{{ route($driver['meta']['url']) }}">
                 <x-slot:iconSlot>
-                    <img class="w-full" src="{{ $driver['meta']['logo'] }}" alt="Logo">
+                    <img class="w-full" src="{{ asset($driver['meta']['logo']) }}" alt="Logo">
                 </x-slot:iconSlot>
                 {{ __('auth.login_with', ['provider_name' => $driver['meta']['name'] ]) }}
             </x-auth.social.button>

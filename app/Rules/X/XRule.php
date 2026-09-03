@@ -17,7 +17,7 @@ class XRule
      * Note: This class does not perform validation; it is solely intended for 
      * creating descriptive text related to rules.
      * 
-     * (C) Team Rebit
+     * (C) Mansur Terla
      */
 
     public static function join(string|int $key, string|int|float|decimal $value): string

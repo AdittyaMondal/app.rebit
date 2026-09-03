@@ -3,7 +3,6 @@
 namespace App\Services\Filesystem\Upload;
 
 use Exception;
-use Throwable;
 use App\Constants\Filesystem;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Storage;
@@ -42,6 +41,21 @@ class ImageUploadService extends AbstractUploadService
         }
 
         return $this;
+    }
+
+    public function watermark(): self
+    {
+        try {
+            if(config('brand.images_watermark_enabled')) {
+                $this->image = $this->image->place(public_path(config('assets.watermark.local_path')), config('assets.watermark.image.position'), config('assets.watermark.image.padding'), config('assets.watermark.image.padding'));
+            }
+
+            return $this;
+        }
+
+        catch(Exception $e) {
+            return $this;
+        }
     }
 
     public function compress(int $rate = 70): self
@@ -98,7 +112,7 @@ class ImageUploadService extends AbstractUploadService
             }
 
             $imageUploadStatus = Storage::disk($this->storageDisk)->put($uploadData['image_path'], (string) $this->image);
-            
+
             if (empty($imageUploadStatus)) {
                 $this->makeUploadException("Image upload on disk ({$this->storageDisk}) failed.");
             }
@@ -122,7 +136,7 @@ class ImageUploadService extends AbstractUploadService
             if (function_exists('mb_strlen')) {
                 $size = mb_strlen($this->image, '8bit');
             }
-            
+
             else {
                 $size = strlen($this->image);
             }

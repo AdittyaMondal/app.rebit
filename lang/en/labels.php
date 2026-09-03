@@ -54,6 +54,7 @@ return [
     'not_public_info' => 'This information will not be made publicly available.',
     'hi_user' => 'Hello, :name! 👋',
     'continue' => 'Continue',
+    'logout' => 'Logout',
     'approval' => 'Approval',
     'whats_name' => 'What is your name?',
     'whats_city' => 'Your city name',
@@ -64,7 +65,7 @@ return [
     'unknown' => 'Unknown',
     'signup_almost_done' => [
         'title' => 'You\'re almost there!',
-        'caption' => 'Your account is almost ready, all that\'s left is to tell us a little about yourself' 
+        'caption' => 'Your account is almost ready, all that\'s left is to tell us a little about yourself'
     ],
     'document' => 'Document',
     'image' => 'Image',
@@ -82,11 +83,14 @@ return [
     ],
     'status_labels' => [
         'active' => 'Active',
+        'paid' => 'Paid',
         'inactive' => 'Inactive',
         'draft' => 'Draft',
         'deleted' => 'Deleted',
         'pending' => 'Pending',
         'paused' => 'Paused',
+        'rejected' => 'Rejected',
+        'cancelled' => 'Cancelled',
         'completed' => 'Completed',
         'active' => 'Active',
         'published' => 'Published',

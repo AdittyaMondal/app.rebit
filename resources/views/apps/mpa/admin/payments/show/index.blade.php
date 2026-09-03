@@ -1,12 +1,7 @@
 @extends('adminLayout::index')
 
 @section('pageContent')
-	<div class="mb-4">
-        <x-page-title titleText=" {{ __('admin/payments.show_title') }}"></x-page-title>
-        <x-page-desc>
-            {{ __('admin/payments.show_desc') }}
-        </x-page-desc>
-    </div>
+    <x-page-title titleText=" {{ __('admin/payments.show_title') }}"></x-page-title>
 
 	<div x-data="alpineComponent">
 		<x-sided-content>
@@ -15,8 +10,8 @@
 			</x-slot:sideContent>
 
 			<div class="mb-8">
-				<x-entity.header 
-					avatarUrl="{{ $paymentData->user->avatar_url }}" 
+				<x-entity.header
+					avatarUrl="{{ $paymentData->user->avatar_url }}"
 					name="{{ $paymentData->user->name }}"
 				caption="{{ $paymentData->user->caption }}">
 					<x-slot:controlOptions>

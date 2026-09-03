@@ -1,59 +1,69 @@
 <template>
-    <div class="h-screen overflow-hidden flex">
-        <div class="flex flex-1 h-full flex-col">
-            <div class="border-b border-bord-pr shrink-0">
-                <ChatHeaderSkeleton v-if="state.isLoading"></ChatHeaderSkeleton>
-                <ChatHeader v-else v-on:info="toggleMainMenu" v-bind:typingUser="state.typing"></ChatHeader>
-            </div>
-            <div ref="chatContainerBlock" class="flex-1 overflow-x-hidden overflow-y-auto py-4">
-                <div class="border-b border-bord-pr py-8">
-                    <ChatOverviewSkeleton v-if="state.isLoading"></ChatOverviewSkeleton>
-                    <ChatOverview v-else></ChatOverview>
+    <div class="relative">
+        <div class="flex h-screen">
+            <div class="flex flex-1 h-full flex-col overflow-hidden">
+                <div class="border-b border-bord-card shrink-0">
+                    <ChatHeaderSkeleton v-if="state.isLoading"></ChatHeaderSkeleton>
+                    <ChatHeader v-else v-on:info="toggleMainMenu" v-bind:typingUser="state.typing"></ChatHeader>
                 </div>
-                <div class="pb-24 pt-2">
-                    <div v-if="state.isLoading" class="flex flex-col gap-4 opacity-70">
-                        <ChatMessageSkeleton v-for="i in 3"></ChatMessageSkeleton>
+                <div ref="chatContainerBlock" class="flex-1 overflow-x-hidden overflow-y-auto py-4">
+                    <div class="border-b border-bord-card py-8">
+                        <ChatOverviewSkeleton v-if="state.isLoading"></ChatOverviewSkeleton>
+                        <ChatOverview v-else></ChatOverview>
                     </div>
-                    <div v-else>
-                        <template v-if="chatMessages.length">
-                            <div v-for="(messageData, messageIndex) in chatMessages" class="block">
-                                <div v-if="showDateSeparator(messageIndex)" class="py-4">
-                                    <p class="text-par-n font-semibold text-lab-pr3 text-center">
-                                        {{ messageData.date.date }}
+                    <div class="pb-24 pt-2">
+                        <div v-if="state.isLoading" class="flex flex-col gap-4 opacity-70">
+                            <ChatMessageSkeleton v-for="i in 3"></ChatMessageSkeleton>
+                        </div>
+                        <div v-else>
+                            <template v-if="chatMessages.length">
+                                <div v-for="(messageData, messageIndex) in chatMessages" class="block">
+                                    <div v-if="showDateSeparator(messageIndex)" class="py-4">
+                                        <p class="text-par-n font-semibold text-lab-pr3 text-center">
+                                            {{ messageData.date.date }}
+                                        </p>
+                                    </div>
+
+                                    <ChatMessage
+                                        v-on:delete="handleMessageDelete"
+                                        v-on:reply="handleMessageReply"
+                                        v-on:copy="handleMessageCopy"
+                                        v-bind:isCompacted="isCompacted(messageIndex)"
+                                    v-bind:messageData="messageData"
+                                    v-bind:key="messageData.id"></ChatMessage>
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div class="py-12 text-center">
+                                    <p class="text-par-s text-lab-sc">
+                                        {{  $t('chat.no_messages_found') }}
                                     </p>
                                 </div>
+                            </template>
 
-                                <ChatMessage
-                                    v-on:delete="handleMessageDelete"
-                                    v-on:reply="handleMessageReply"
-                                    v-on:copy="handleMessageCopy"
-                                v-bind:messageData="messageData"
-                                v-bind:key="messageData.id"></ChatMessage>
-                            </div>
-                        </template>
-                        <template v-else>
-                            <div class="py-12 text-center">
-                                <p class="text-par-s text-lab-sc">
-                                    {{  $t('chat.no_messages_found') }}
-                                </p>
-                            </div>
-                        </template>
-
-                        <ChatMessageTyping v-if="isTyping" v-bind:typingUser="state.typing"></ChatMessageTyping>
+                            <ChatMessageTyping v-if="isTyping" v-bind:typingUser="state.typing"></ChatMessageTyping>
+                        </div>
                     </div>
                 </div>
+                <div class="shrink-0">
+                    <ChatFormSkeleton v-if="state.isLoading"></ChatFormSkeleton>
+                    <template v-else>
+                        <template v-if="! isGroup && chatData.chat_info.meta.relationship.block.blocking">
+                            <ChatFormLock></ChatFormLock>
+                        </template>
+                        <template v-else>
+                            <ChatForm v-on:typing="handleMessageTyping"></ChatForm>
+                        </template>
+                    </template>
+                </div>
             </div>
-            <div class="shrink-0">
-                <ChatFormSkeleton v-if="state.isLoading"></ChatFormSkeleton>
-                <ChatForm v-else v-on:typing="handleMessageTyping"></ChatForm>
-            </div>
-        </div>
 
-        <template v-if="! isGroup">
-            <div v-if="state.mainMenu.status" class="w-messenger-sidebar h-full overflow-y-auto border-l border-l-bord-pr">
-                <ChatInfo v-on:close="state.mainMenu.close"></ChatInfo>
-            </div>
-        </template>
+            <template v-if="! isGroup">
+                <div v-if="state.mainMenu.status" class="w-messenger-sidebar shrink-0 h-full overflow-y-auto border-l border-l-bord-pr">
+                    <ChatInfo v-on:close="state.mainMenu.close"></ChatInfo>
+                </div>
+            </template>
+        </div>
     </div>
 </template>
 
@@ -65,7 +75,7 @@
     import { useChatStore } from '@D/store/chats/chat.store.js';
     import { useAuthStore } from '@D/store/auth/auth.store.js';
     import { colibriEventBus } from '@/kernel/events/bus/index.js';
-    
+
     import ChatHeader from '@D/views/messenger/children/chat/parts/ChatHeader.vue';
     import ChatHeaderSkeleton from '@D/views/messenger/children/chat/parts/skeletons/ChatHeaderSkeleton.vue';
     import ChatFormSkeleton from '@D/views/messenger/children/chat/parts/skeletons/ChatFormSkeleton.vue';
@@ -75,8 +85,10 @@
     import ChatMessage from '@D/views/messenger/children/chat/parts/ChatMessage.vue';
     import ChatMessageTyping from '@D/views/messenger/children/chat/parts/ChatMessageTyping.vue';
     import ChatForm from '@D/views/messenger/children/chat/parts/ChatForm.vue';
+    import ChatFormLock from '@D/views/messenger/children/chat/parts/ChatFormLock.vue';
+
     import BRD from '@/kernel/websockets/brd/index.js';
-    
+
     export default defineComponent({
         setup: function(props, context) {
             const state = reactive({
@@ -134,7 +146,7 @@
                             scrollHistoryDown();
                         }, 500);
                     }
-                    
+
                     state.isLoading = false;
 
                     if(window.ColibriBRConnected) {
@@ -144,7 +156,7 @@
                             chatStore.appendMessage(messageData);
 
                             scrollHistoryDown();
-                            
+
                             let isSender = (userData.value.id == messageData.user_id);
 
                             if(! isSender) {
@@ -266,6 +278,13 @@
                     }
 
                     return false;
+                },
+                isCompacted: (messageIndex) => {
+                    if(messageIndex > 0 && chatMessages.value[messageIndex - 1].user_id === chatMessages.value[messageIndex].user_id) {
+                        return true;
+                    }
+
+                    return false;
                 }
             }
         },
@@ -279,6 +298,7 @@
             ChatFormSkeleton: ChatFormSkeleton,
             ChatOverviewSkeleton: ChatOverviewSkeleton,
             ChatMessageSkeleton: ChatMessageSkeleton,
+            ChatFormLock: ChatFormLock,
             ChatInfo: defineAsyncComponent(() => {
                 return import('@D/views/messenger/children/chat/parts/ChatInfo.vue');
             }),

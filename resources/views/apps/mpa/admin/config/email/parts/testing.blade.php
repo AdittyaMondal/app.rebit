@@ -14,6 +14,6 @@
 				</x-slot:feedbackInfo>
 			</x-form.text-input>
 		</div>
-		<x-ui.buttons.pill type="submit" btnText="{{ __('admin/config.email_testing.form.send_button') }}"></x-ui.buttons.pill>
+		<x-ui.buttons.pill size="sm" type="submit" btnText="{{ __('admin/config.email_testing.form.send_button') }}"></x-ui.buttons.pill>
     </x-accordion.form>
 </form>

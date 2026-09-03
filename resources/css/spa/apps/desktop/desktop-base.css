@@ -29,7 +29,7 @@ body.sticky-bar-open .sticky-bar-bottom-fix{
 }
 
 .sidenav-inactive span{
-    @apply first:text-lab-pr2 last:text-lab-pr2;
+    @apply first:text-lab-pr2 text-lab-pr2;
 }
 
 .active-settings-tab .link-item-container{
@@ -57,9 +57,9 @@ body.sticky-bar-open .sticky-bar-bottom-fix{
     @apply relative overflow-hidden block bg-fill-tr rounded-full leading-none;
 }
 
-.skeleton::after, .skeleton-circle::after, .skeleton-square::after, .skeleton-rounded::after{
+.skeleton::after, .skeleton-circle::after, .skeleton-square::after{
     content: "";
-    animation: skeleton-animation 1.6s ease-in-out infinite;
+    animation: skeleton-animation 1.2s infinite;
     height: 100%;
     left: 0;
     position: absolute;
@@ -67,7 +67,7 @@ body.sticky-bar-open .sticky-bar-bottom-fix{
     top: 0;
     transform: translateX(-100%);
     z-index: 1;
-    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255, 255, 255, 0.15), rgba(255,255,255,0));
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255, 255, 255, 0.4), rgba(255,255,255,0));
 }
 
 .colibri-primary-animation{

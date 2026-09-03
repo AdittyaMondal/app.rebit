@@ -4,6 +4,7 @@ namespace App\Enums\Media;
 
 enum MediaType: string
 {
+    case TEXT = 'text';
     case IMAGE = 'image';
     case VIDEO = 'video';
     case AUDIO = 'audio';
@@ -18,6 +19,11 @@ enum MediaType: string
     public function isVideo():bool
     {
         return $this == self::VIDEO;
+    }
+
+    public function isVideoCircle():bool
+    {
+        return $this == self::VIDEO_CIRCLE;
     }
 
     public function isAudio():bool

@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Timeline;
 
@@ -17,19 +29,19 @@ use App\Traits\Http\Controllers\Api\User\Timeline\InteractsWithDraftPost;
 class PostPollController extends Controller
 {
     use InteractsWithDraftPost,
-    ValidatesPollData,
-    SupportsApiResponses;
+        ValidatesPollData,
+        SupportsApiResponses;
 
     public function createPoll()
     {
         $this->fetchOrInitializeDraftPost();
 
-        if ($this->draftPost->type->isTextified()) {
-            if (!$this->draftPost->exists) {
+        if($this->draftPost->type->isTextified()) {
+            if(! $this->draftPost->exists) {
                 $this->draftPost->save();
             }
 
-            if ($this->draftPost->type->isTextified()) {
+            if($this->draftPost->type->isTextified()) {
                 $this->draftPost->type = PostType::POLL;
                 $this->draftPost->save();
             }
@@ -43,7 +55,7 @@ class PostPollController extends Controller
             return $this->responseSuccess();
         }
 
-        else {
+        else{
             return $this->responseValidationError([
                 'message' => 'Can not attach poll to this type of post.',
                 'errors' => [
@@ -67,18 +79,18 @@ class PostPollController extends Controller
 
         $pollData = PostPoll::where('id', $pollId)->first();
 
-        if (isset($pollData->choices[$choiceIndex])) {
+        if(isset($pollData->choices[$choiceIndex])) {
 
             $pollData->choices[$choiceIndex];
-            $myId = me('id');
+            $myId = me()->id;
 
             $pollVotes = $pollData->votes;
 
-            $myVote = Arr::first($pollVotes, function ($item) use ($myId) {
+            $myVote = Arr::first($pollVotes, function($item) use ($myId) {
                 return $item['user_id'] === $myId;
             });
 
-            if (empty($myVote)) {
+            if(empty($myVote)) {
                 array_push($pollVotes, [
                     'user_id' => $myId,
                     'choice_id' => $choiceIndex,
@@ -88,28 +100,27 @@ class PostPollController extends Controller
                 ]);
             }
 
-            else {
-                $pollVotes = Arr::where($pollVotes, function ($item) use ($myId, $choiceIndex) {
-                    return !($item['user_id'] === $myId && $item['choice_id'] === $choiceIndex);
+            else{
+                $pollVotes = Arr::where($pollVotes, function($item) use ($myId, $choiceIndex) {
+                    return ! ($item['user_id'] === $myId && $item['choice_id'] === $choiceIndex);
                 });
             }
 
             $totalVotes = count($pollVotes);
 
             $pollChoices = collect($pollData->choices)->map(function ($item, $choiceIndex) use ($totalVotes, $pollVotes) {
-                $votesCount = count(Arr::where($pollVotes, function ($item) use ($choiceIndex) {
-                        return $item['choice_id'] === $choiceIndex;
-                    }
-                    ));
+                $votesCount = count(Arr::where($pollVotes, function($item) use ($choiceIndex) {
+                    return $item['choice_id'] === $choiceIndex;
+                }));
 
-                    $votePercentage = ($totalVotes > 0) ? (($votesCount / $totalVotes) * 100) : 0;
+                $votePercentage = ($totalVotes > 0) ? (($votesCount / $totalVotes) * 100) : 0;
 
-                    $item['percentage'] = round($votePercentage, 2);
-                    $item['vote_count'] = $votesCount;
+                $item['percentage'] = round($votePercentage, 2);
+                $item['vote_count'] = $votesCount;
 
-                    return $item;
+                return $item;
 
-                })->toArray();
+            })->toArray();
 
             $pollData->votes = $pollVotes;
             $pollData->choices = $pollChoices;
@@ -119,7 +130,7 @@ class PostPollController extends Controller
                 'data' => PollResource::make($pollData->refresh())
             ]);
         }
-        else {
+        else{
             return $this->responseError([
                 'message' => 'Can not find poll choice with such Id.',
                 'errors' => [

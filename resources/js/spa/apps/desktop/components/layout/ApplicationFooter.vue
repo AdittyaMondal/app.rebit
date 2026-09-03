@@ -3,7 +3,7 @@
 		<a v-if="$config('features.business_accounts.enabled')" v-bind:href="$getRoute('business_dashboard_index')" class="hover:underline text-cap-s text-lab-sc mr-2">
 			{{ $t('labels.business_account') }}
 		</a>
-		<RouterLink v-bind:to="{ name: 'settings_theme' }" class="hover:underline text-cap-s text-lab-sc mr-2">
+		<RouterLink v-if="$config('features.dark_theme.enabled')" v-bind:to="{ name: 'settings_theme' }" class="hover:underline text-cap-s text-lab-sc mr-2">
 			{{ $t('labels.theme') }}
 		</RouterLink>
 		<RouterLink v-if="$config('features.jobs.enabled')" v-bind:to="{ name: 'jobs_index' }" class="hover:underline text-cap-s text-lab-sc mr-2">
@@ -31,7 +31,9 @@
 	<div class="leading-5">
 		<span class="text-cap-s text-lab-sc">
 			{{ $config('app.name') }} &copy; {{ currentYear }}
-			<span v-if="! hideAuthorAttribution" class="block whitespace-nowrap">Created by Team Rebit</span>
+			<RouterLink v-if="! hideAuthorAttribution" v-bind:to="{ name: 'mtl_index' }">
+				<span class="block whitespace-nowrap hover:underline hover:text-brand-900">Created by Mansur Terla</span>
+			</RouterLink>
 		</span>
 	</div>
 </template>

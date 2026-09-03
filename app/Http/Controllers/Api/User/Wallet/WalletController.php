@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\user\Wallet;
+namespace App\Http\Controllers\Api\User\Wallet;
 
 use Exception;
 use App\Support\Num;
@@ -30,7 +30,7 @@ class WalletController extends Controller
     {
         $this->activeProviders = $this->getActiveProviders();
     }
-    
+
     public function getData(Request $request)
     {
         $wallet = me()->wallet;
@@ -92,7 +92,7 @@ class WalletController extends Controller
 					'checkout_url' => $paymentIntentResult->url
 				];
 			}
-            
+
             return $this->responseSuccess([
                 'data' => $responseData
             ]);
@@ -114,19 +114,19 @@ class WalletController extends Controller
             ->latest('id')
             ->whereDate('created_at', now()->today())
             ->get();
-        
+
         $thisWeekTransactions = $wallet->transactions()
             ->latest('id')
             ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
             ->whereDate('created_at', '!=', now()->today())
             ->get();
-        
+
         $thisMonthTransactions = $wallet->transactions()
             ->latest('id')
             ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->whereDate('created_at', '<', now()->startOfWeek())
             ->get();
-        
+
         $otherTransactions = $wallet->transactions()
             ->latest('id')
             ->where('created_at', '<', now()->startOfMonth())

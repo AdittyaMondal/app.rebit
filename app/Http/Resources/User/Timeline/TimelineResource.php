@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Resources\User\Timeline;
 
@@ -15,7 +27,7 @@ use App\Http\Resources\User\Timeline\ReactionCollection;
 
 class TimelineResource extends JsonResource
 {
-    public function toArray(Request $request): array
+    public function toArray(Request $request):array
     {
         $isOwner = me()->id === $this->user_id;
 
@@ -47,7 +59,6 @@ class TimelineResource extends JsonResource
                 'permissions' => [
                     'can_like' => true,
                     'can_comment' => true,
-                    'is_admin' => auth_check() ? me()->isAdmin() : false,
                     'can_edit' => auth_check() ? me()->can('update', $this->resource) : false,
                     'can_delete' => auth_check() ? me()->can('delete', $this->resource) : false,
                     'can_report' => auth_check() ? empty($isOwner) : false
@@ -62,36 +73,36 @@ class TimelineResource extends JsonResource
             ],
         ];
 
-        if ($this->type->isMedia()) {
-            $apiData['relations']['media'] = $this->media->map(function ($item) {
+        if($this->type->isMedia()) {
+            $apiData['relations']['media'] = $this->media->map(function($item) {
                 return MediaResource::make($item);
             });
         }
 
-        else if ($this->type->isPoll()) {
+        else if($this->type->isPoll()) {
             $apiData['relations']['poll'] = PollResource::make($this->poll);
         }
 
-        if ($this->quotedPost) {
+        if($this->quotedPost) {
             $apiData['relations']['quoted_post'] = QuoteResource::make($this->quotedPost);
         }
 
-        if ($this->linkSnapshot) {
+        if($this->linkSnapshot) {
             $apiData['relations']['link_snapshot'] = LinkSnapshotResource::make($this->linkSnapshot);
         }
-
+        
         return $apiData;
     }
 
     private function getPreviewComments(): array
     {
-        return $this->comments->unique('user.id')->map(function ($item) {
+        return $this->comments->unique('user.id')->map(function($item) {
             return [
                 'id' => $item->id,
                 'user' => [
                     'avatar_url' => $item->user->avatar_url
                 ]
-            ];
+            ];  
         })->toArray();
     }
 }

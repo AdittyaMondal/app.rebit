@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Timeline;
 
@@ -22,8 +34,8 @@ use App\Traits\Http\Controllers\Api\User\Timeline\InteractsWithDraftPost;
 class PostImageController extends Controller
 {
     use InteractsWithDraftPost,
-    SupportsApiResponses,
-    ValidatesPostImage;
+        SupportsApiResponses,
+        ValidatesPostImage;
 
     private $imageUploadService;
     private $roundRobinService;
@@ -46,27 +58,28 @@ class PostImageController extends Controller
 
         $this->fetchOrInitializeDraftPost();
 
-        if ($this->draftPost->type->isTextified() || $this->draftPost->type->isImage()) {
+        if($this->draftPost->type->isTextified() || $this->draftPost->type->isImage()) {
 
-            if (!$this->draftPost->exists) {
+            if(! $this->draftPost->exists) {
                 $this->draftPost->save();
             }
 
-            if ($this->draftPost->type->isTextified()) {
+            if($this->draftPost->type->isTextified()) {
                 $this->draftPost->type = PostType::IMAGE;
                 $this->draftPost->save();
             }
 
             try {
-                if ($this->draftPost->media->count() < config('post.max_images_count')) {
+                if($this->draftPost->media->count() < config('post.max_images_count')) {
                     $imageStorageDisk = $this->roundRobinService->getNextDisk();
-                    $imageNamespace = Filesystem::getPostImageNamespace();
+                    $imageNamespace = Filesystem::mediaNamespace('post/images');
 
                     $imageData = $this->imageUploadService
                         ->load($postImageFile->getRealPath())
-                        ->compress(config('post.processing.image.compress_rate'))
-                        ->setStorageDisk($imageStorageDisk)
                         ->setNamespace($imageNamespace)
+                        ->setStorageDisk($imageStorageDisk)
+                        ->watermark()
+                        ->compress(config('post.processing.image.compress_rate'))
                         ->upload();
 
                     $LQIPBase64 = $this->base64ImageService->load($postImageFile->getRealPath())->getBase64();
@@ -94,14 +107,13 @@ class PostImageController extends Controller
                         ]
                     ]);
                 }
-                else {
+                else{
                     throw new MaxImageUploadExceededException(__('post.validation.image_limit_reach', [
                         'max_images_count' => config('post.max_images_count')
                     ]));
                 }
 
-            }
-            catch (MaxImageUploadExceededException $e) {
+            } catch (MaxImageUploadExceededException $e) {
                 return $this->responseValidationError([
                     'message' => $e->getMessage(),
                     'errors' => [
@@ -110,8 +122,7 @@ class PostImageController extends Controller
                         ]
                     ]
                 ]);
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 return $this->responseError([
                     'message' => $e->getMessage(),
                     'errors' => [
@@ -123,7 +134,7 @@ class PostImageController extends Controller
             }
         }
 
-        else {
+        else{
             $errorMessage = __('post.validation.wrong_type_attachment', ['file_type' => __('labels.image')]);
 
             return $this->responseValidationError([

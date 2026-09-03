@@ -20,14 +20,16 @@
                 {{ __('links.developers') }}
             </a>
 
-            @if(theme_name() == 'dark')
-                <a href="{{ route('user.theme.switch', ['theme' => 'light']) }}" class="text-par-s text-lab-pr2 hover:text-brand-900 smoothing">
-                    {{ __('labels.light_theme') }}
-                </a>
-            @else
-                <a href="{{ route('user.theme.switch', ['theme' => 'dark']) }}" class="text-par-s text-lab-pr2 hover:text-brand-900 smoothing">
-                    {{ __('labels.dark_theme') }}
-                </a>
+            @if(config('features.dark_theme.enabled'))
+                @if(theme_name() == 'dark')
+                    <a href="{{ route('user.theme.switch', ['theme' => 'light']) }}" class="text-par-s text-lab-pr2 hover:text-brand-900 smoothing">
+                        {{ __('labels.light_theme') }}
+                    </a>
+                @else
+                    <a href="{{ route('user.theme.switch', ['theme' => 'dark']) }}" class="text-par-s text-lab-pr2 hover:text-brand-900 smoothing">
+                        {{ __('labels.dark_theme') }}
+                    </a>
+                @endif
             @endif
         </nav>
         <div class="h-px bg-fill-pr my-4"></div>
@@ -36,14 +38,20 @@
                 Copyright © {{ date('Y') }} {{ config('app.name') }}
             </span>
 
-            <div class="flex md:inline-flex items-center gap-2 ml-auto mt-3 md:mt-0">
-                <a href="{{ config('app.mobile_app_links.ios') }}" class="h-7">
-                    <x-get-apps.cards.app-store></x-get-apps.cards.app-store>
-                </a>
-                <a href="{{ config('app.mobile_app_links.android') }}" class="h-7">
-                    <x-get-apps.cards.google-play></x-get-apps.cards.google-play>
-                </a>
-            </div>
+            @if(config('app.mobile_app_ios_link') || config('app.mobile_app_android_link'))
+                <div class="flex md:inline-flex items-center gap-2 ml-auto mt-3 md:mt-0">
+                    @if(config('app.mobile_app_ios_link'))
+                        <a href="{{ config('app.mobile_app_ios_link') }}" class="h-7">
+                            <x-get-apps.cards.app-store></x-get-apps.cards.app-store>
+                        </a>
+                    @endif
+                    @if(config('app.mobile_app_android_link'))
+                        <a href="{{ config('app.mobile_app_android_link') }}" class="h-7">
+                            <x-get-apps.cards.google-play></x-get-apps.cards.google-play>
+                        </a>
+                    @endif
+                </div>
+            @endif
         </div>
     </div>
 </footer>

@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Constants;
 
@@ -30,9 +42,7 @@ class Relationship
 	public const BLOCKING = 'blocking';
 	public const BLOCKED_BY = 'blocked_by';
 	public const MUTING = 'muting';
-	public const MUTING_NOTIFICATIONS = 'muting_notifications';
 	public const REQUESTED = 'requested';
-	public const REQUESTED_BY = 'requested_by';
 
 	public const FOLLOW_GROUP = 'follow';
 	public const BLOCK_GROUP = 'block';

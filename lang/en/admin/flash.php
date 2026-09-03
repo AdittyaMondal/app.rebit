@@ -12,9 +12,12 @@ return [
 		'authorize_reject' => 'Request is rejected successfully!',
 		'verify_success' => 'User verified successfully!',
 		'unverify_success' => 'User unverified successfully!',
+		'wallet_balance_success' => 'Wallet balance updated to :amount successfully!',
 	],
 	'post' => [
 		'delete_success' => 'Post deleted successfully!',
+		'pin_success' => 'Post pinned successfully!',
+		'unpin_success' => 'Post unpinned successfully!',
 	],
 	'ad' => [
 		'delete_success' => 'Ad deleted successfully!',
@@ -65,5 +68,13 @@ return [
 	],
 	'chat' => [
 		'delete_success' => 'Chat deleted successfully!',
+	],
+	'config' => [
+        'settings_success' => 'Settings updated successfully!',
+	],
+	'cashout' => [
+		'deleted_success' => 'Cashout request deleted successfully!',
+		'marked_as_paid_success' => 'Cashout request marked as paid successfully!',
+		'rejected_success' => 'Cashout request rejected successfully!',
 	],
 ];

@@ -3,10 +3,8 @@
 return [
 	'create_title' => 'Create new job',
 	'index_title' => 'Jobs',
-	'index_desc' => 'Here you can create, edit and delete your job listings.',
 	'edit_title' => 'Edit job',
 	'show_title' => 'Job overview',
-	'show_desc' => 'You can view job details, metrics and manage it here.',
 	'about_job' => 'About job',
 	'tabs' => [
 		'all' => 'All jobs',
@@ -19,6 +17,8 @@ return [
 	'applications' => 'Applications',
 	'job_is_inactive' => 'This job is currently inactive and not visible to the public.',
 	'form' => [
+		'category_placeholder' => 'Select category',
+		'currency_placeholder' => 'Select currency',
 		'base_info' => 'Base Information',
 		'title' => 'Title',
 		'title_placeholder' => 'Enter title',

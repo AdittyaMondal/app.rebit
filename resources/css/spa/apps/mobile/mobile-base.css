@@ -1,4 +1,4 @@
-/* Mobile specific styles */
+/* Desktop specific styles */
 
 html {
     touch-action: manipulation;
@@ -6,15 +6,6 @@ html {
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
     font-kerning: normal;
-}
-
-/* Safe area insets for fullscreen WebView / TWA apps */
-.rebit-safe-header {
-    padding-top: env(safe-area-inset-top, 0px);
-}
-
-body {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .svg-icon{
@@ -53,9 +44,9 @@ body {
     @apply relative overflow-hidden block bg-fill-qt rounded-full leading-none;
 }
 
-.skeleton::after, .skeleton-circle::after, .skeleton-square::after, .skeleton-rounded::after{
+.skeleton::after, .skeleton-circle::after, .skeleton-square::after{
     content: "";
-    animation: skeleton-animation 1.6s ease-in-out infinite;
+    animation: skeleton-animation 1.2s infinite;
     height: 100%;
     left: 0;
     position: absolute;
@@ -63,7 +54,7 @@ body {
     top: 0;
     transform: translateX(-100%);
     z-index: 1;
-    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255, 255, 255, 0.15), rgba(255,255,255,0));
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255, 255, 255, 0.4), rgba(255,255,255,0));
 }
 
 .hidden-scroll{

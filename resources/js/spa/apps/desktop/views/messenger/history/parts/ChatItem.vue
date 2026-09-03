@@ -1,5 +1,5 @@
 <template>
-	<RouterLink v-on:click="markAsRead" v-bind:to="{ name: 'messenger_chat', params: {chat_id: chatData.chat_id } }" class="flex gap-3 items-center pl-4 h-20" v-bind:class="[isSelectedChat ? 'bg-brand-900/5' : '']">
+	<RouterLink v-on:click="markAsRead" v-bind:to="{ name: 'messenger_chat', params: {chat_id: chatData.chat_id } }" class="flex gap-3 items-center pl-4 h-18" v-bind:class="[isSelectedChat ? 'bg-brand-900/5' : '']">
 		<div class="shrink-0">
 			<AvatarNormal v-bind:avatarSrc="chatData.chat_info.avatar_url"></AvatarNormal>
 		</div>
@@ -31,7 +31,7 @@
 							<span class="flex items-end gap-2.5 overflow-hidden max-w-full">
 								<span class="line-clamp-2" v-html="chatData.last_message"></span>
 								<span class="text-par-s text-lab-sc whitespace-nowrap">
-									{{ chatData.last_activity.time_ago }}
+									&#183; {{ chatData.last_activity.time_ago }}
 								</span>
 							</span>
 						</template>

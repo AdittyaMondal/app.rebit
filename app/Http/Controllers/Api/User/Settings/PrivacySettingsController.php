@@ -1,5 +1,17 @@
 <?php
-
+/*
+|--------------------------------------------------------------------------
+| ColibriPlus - The Social Network Web Application.
+|--------------------------------------------------------------------------
+| Author: Mansur Terla. Full-Stack Web Developer, UI/UX Designer.
+| Website: www.terla.me
+| E-mail: mansurtl.contact@gmail.com
+| Instagram: @mansur_terla
+| Telegram: @mansurtl_contact
+|--------------------------------------------------------------------------
+| Copyright (c)  ColibriPlus. All rights reserved.
+|--------------------------------------------------------------------------
+*/
 
 namespace App\Http\Controllers\Api\User\Settings;
 
@@ -12,11 +24,10 @@ use App\Traits\Http\Api\SupportsApiResponses;
 class PrivacySettingsController extends Controller
 {
     use SupportsApiResponses;
-
+    
     private $me;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->me = me();
     }
 
@@ -53,7 +64,7 @@ class PrivacySettingsController extends Controller
             'group_invites' => $request->group_invites,
             'payment_transfers' => $request->payment_transfers,
         ]);
-
+        
         return $this->responseSuccess([
             'data' => null
         ]);

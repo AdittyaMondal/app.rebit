@@ -1,6 +1,6 @@
 <template>
 	<Toolbar v-on:close="$router.back" v-bind:title="$t('labels.wallet')">
-		
+
 	</Toolbar>
 	<template v-if="state.isLoading">
 		<OverviewSkeleton></OverviewSkeleton>
@@ -22,7 +22,7 @@
 								v-else
 								v-on:click="hideBalance"
 							iconName="eye-off" iconType="line"></PrimaryIconButton>
-	
+
 							<PrimaryIconButton
 								v-on:click="state.infoMenu.open"
 								iconName="info-circle"
@@ -34,36 +34,6 @@
 					</span>
 				</div>
 				<p class="text-par-s text-lab-sc" v-html="$t('wallet.about_wallet_text', { wallet_name: $embedder('config.wallet.name'), about_link: $embedder('config.wallet.about_link') })"></p>
-			</div>
-			<div v-on:click="state.controlMenu.open" class="flex gap-4 hidden-scroll mb-4">
-				<div class="h-40 bg-bg-pr opacity-70 rounded-xl px-4 py-3 relative w-5/12 shrink-0">
-					<h4 class="text-par-n block text-lab-pr2 font-bold mb-1">
-						{{ $t('labels.deposit') }}
-					</h4>
-					<p class="text-par-s block leading-tight text-lab-sc" v-html="$t('wallet.add_money_to_wallet')"></p>
-	
-					<span class="size-10 rounded-xl bg-brand-900 inline-flex-center absolute bottom-4 right-4">
-						<SvgIcon name="plus" classes="size-icon-small text-white"></SvgIcon>
-					</span>
-				</div>
-				<div class="h-40 bg-bg-pr opacity-70 rounded-xl px-4 py-3 relative w-5/12 shrink-0">
-					<h4 class="text-par-n block text-lab-pr2 font-bold mb-1">
-						{{ $t('labels.transfer') }}
-					</h4>
-					<p class="text-par-s leading-tight inline-block text-lab-sc" v-html="$t('wallet.send_to_another')"></p>
-					<span class="size-10 rounded-xl bg-white inline-flex-center absolute bottom-4 right-4">
-						<SvgIcon name="arrow-narrow-right" classes="size-icon-small text-brand-900"></SvgIcon>
-					</span>
-				</div>
-				<div class="h-40 bg-bg-pr opacity-70 rounded-xl px-4 py-3 relative w-5/12 shrink-0">
-					<h4 class="text-par-n block text-lab-pr2 font-bold mb-1">
-						{{ $t('labels.withdrawal') }}
-					</h4>
-					<p class="text-par-s inline-block text-lab-sc leading-tight" v-html="$t('wallet.request_withdrawal')"></p>
-					<span class="size-10 rounded-xl bg-white inline-flex-center absolute bottom-4 right-4">
-						<SvgIcon name="credit-card-up" classes="size-icon-small text-brand-900"></SvgIcon>
-					</span>
-				</div>
 			</div>
 
 			<div class="p-4 bg-bg-pr rounded-2xl">
@@ -85,23 +55,19 @@
 			<ActionSheetGroup>
 				<div class="pb-2">
 					<InfoList v-bind:hasTitle="false">
-						<InfoListItem 
+						<InfoListItem
 							iconName="wallet-02"
 							v-bind:labelText="$t('wallet.wallet_address')"
 							v-bind:isCopyable="true"
 						v-bind:contentText="walletData.wallet_number"></InfoListItem>
 						<Border></Border>
-						<InfoListItem 
+						<InfoListItem
 							iconName="currency-euro"
 							v-bind:labelText="$t('labels.currency')"
 						v-bind:contentText="`${walletData.currency.name} (${walletData.currency.symbol})`"></InfoListItem>
 					</InfoList>
 				</div>
 			</ActionSheetGroup>
-		</ActionSheet>
-
-		<ActionSheet v-if="state.controlMenu.status" v-on:close="state.controlMenu.close">
-			<SheetInfo v-on:close="state.controlMenu.close" v-bind:sheetTitle="$t('info.only_desktop.title')" v-bind:sheetDesc="$t('info.only_desktop.wallet_control')"></SheetInfo>
 		</ActionSheet>
 	</Teleport>
 </template>
@@ -118,7 +84,6 @@
 	import ActionSheet from '@M/components/general/sheets/ActionSheet.vue';
 	import SheetTitle from '@M/components/general/sheets/SheetTitle.vue';
 	import ActionSheetGroup from '@M/components/general/sheets/ActionSheetGroup.vue';
-	import SheetInfo from '@M/components/general/sheets/SheetInfo.vue';
 	import InfoList from '@M/components/general/info/InfoList.vue';
 	import InfoListItem from '@M/components/general/info/InfoListItem.vue';
 
@@ -127,8 +92,7 @@
 			const state = reactive({
 				isLoading: true,
 				balanceStatus: true,
-				infoMenu: useMenu(),
-				controlMenu: useMenu()
+				infoMenu: useMenu()
 			});
 
 			const walletStore = useWalletStore();
@@ -177,7 +141,6 @@
 			Toolbar: Toolbar,
 			ActionSheet: ActionSheet,
 			ActionSheetGroup: ActionSheetGroup,
-			SheetInfo: SheetInfo,
 			SheetTitle: SheetTitle,
 			InfoList: InfoList,
 			InfoListItem: InfoListItem
