@@ -15,7 +15,7 @@
         </x-tabs.tabs>
     </div>
     @if($jobsList->isNotEmpty())
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @foreach ($jobsList as $jobData)
                 @include('business::jobs.parts.index.job-card', [
                     'jobData' => $jobData

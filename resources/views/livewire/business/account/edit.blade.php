@@ -57,7 +57,7 @@
 
         <x-accordion.form title="{{ __('business/settings.form.business_address') }}">
             <div class="mb-6">
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <x-form.select 
                         :options="$countries" 
                         name="formData.country" 
@@ -77,7 +77,7 @@
                 </div>
             </div>
             <div class="mb-6">
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <x-form.text-input
                         labelText="{{ __('business/settings.form.postal_code') }} *"
                         wire:model="formData.postal_code"

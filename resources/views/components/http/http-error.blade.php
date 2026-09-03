@@ -6,7 +6,7 @@
 ])
 
 <div class="flex justify-center">
-	<div class="w-content text-center">
+	<div class="w-full max-w-[var(--spacing-content)] text-center">
 		<div class="block">
 			<span class="text-lab-pr2 text-title-1 font-bold opacity-80">
 				{{ $code }}

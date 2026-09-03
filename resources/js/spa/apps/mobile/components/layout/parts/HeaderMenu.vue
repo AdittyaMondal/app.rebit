@@ -3,12 +3,6 @@
 		<div v-on:click.stop="$emit('close')">
 			<div class="mb-4">
 				<ActionSheetGroup>
-					<RouterLink v-bind:to="{ name: 'marketplace_index' }" v-if="$config('features.marketplace.enabled')">
-						<ActionSheetItem v-bind:notLast="true" iconName="shopping-bag-03" v-bind:textLabel="$t('labels.marketplace')"></ActionSheetItem>
-					</RouterLink>
-					<RouterLink v-bind:to="{ name: 'jobs_index' }" v-if="$config('features.jobs.enabled')">
-						<ActionSheetItem v-bind:notLast="true" iconName="briefcase-01" v-bind:textLabel="$t('labels.jobs')"></ActionSheetItem>
-					</RouterLink>
 					<RouterLink v-bind:to="{ name: 'bookmarks_index' }">
 						<ActionSheetItem v-bind:notLast="true" iconName="bookmark" v-bind:textLabel="$t('labels.bookmarks')"></ActionSheetItem>
 					</RouterLink>

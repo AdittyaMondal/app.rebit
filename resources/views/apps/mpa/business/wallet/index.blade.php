@@ -5,16 +5,16 @@
 		<x-page-title titleText="{{ __('business/wallet.index_title') }}"></x-page-title>
 	</div>
 	<div class="block bg-bg-pr rounded-2xl p-6">
-		<div class="mb-4 flex">
+		<div class="mb-4 flex flex-col md:flex-row gap-4">
 			<div class="flex-1">
-				<h2 class="text-5xl 2xl:text-7xl leading-none tracking-tighter font-bold text-lab-pr2">
+				<h2 class="text-3xl md:text-5xl 2xl:text-7xl leading-none tracking-tighter font-bold text-lab-pr2">
 					{{ $walletData->balance->getFormattedAmount() }}
 				</h2>
 				<p class="text-par-n text-lab-sc">
 					{{ __('business/wallet.balance_desc') }}
 				</p>
 			</div>
-			<div class="shrink-0 text-right">
+			<div class="shrink-0 md:text-right">
 				<p class="text-par-n font-semibold text-lab-pr2">{{ $walletData->wallet_number }}</p>
 				<p class="text-par-s text-lab-sc">
 					{{ __('business/wallet.wallet_number') }}

@@ -83,7 +83,7 @@
                         {{ $feedbackIcon }}
                     </span>
                 @endif
-                <span class="text-cap-l text-lab-sc font-normal tracking-normal w-9/12">
+                <span class="text-cap-l text-lab-sc font-normal tracking-normal w-full">
                     {{ $feedbackInfo }}
                 </span>
             </div>

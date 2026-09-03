@@ -16,7 +16,7 @@
     </div>
 
     @if($adsList->isNotEmpty())
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach ($adsList as $adData)
                 @include('business::ads.parts.index.ad-card', [
                     'adData' => $adData

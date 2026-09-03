@@ -59,3 +59,15 @@ Thumbs.db
 
 # Quarantined malware (incident response) — never commit
 /.quarantine
+
+# Working copy of the dev host + DB dumps (PII, password hashes, live tokens,
+# and deserialization payloads in failed_jobs). Never commit.
+/dev
+*.sql
+*.sql.gz
+*.dump
+t->media()->delete();
+*.bak
+*.old
+*.orig
+*.save

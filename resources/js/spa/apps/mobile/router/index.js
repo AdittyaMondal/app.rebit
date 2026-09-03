@@ -117,11 +117,6 @@ const Router = createRouter({
             name: 'home_index'
 		},
         {
-            // Catch /switcher/device/mobile URLs that might land on the SPA
-            path: '/switcher/device/:type',
-            redirect: { name: 'home_index' }
-        },
-        {
 			path: '/messenger',
 			component: function() {
                 return import('@M/views/messenger/MessengerIndex.vue');

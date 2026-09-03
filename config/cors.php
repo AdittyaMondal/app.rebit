@@ -15,12 +15,16 @@ return [
     |
     */
 
-    // 'paths' => ['api/*', 'sanctum/csrf-cookie'],
-    'paths' => ['*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'broadcasting/auth'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 
-    'allowed_origins' => ['*'],
+    // With supports_credentials => true, a '*' here is not sent literally --
+    // the request Origin is reflected back, so any site could make credentialed
+    // cross-origin calls and read the response. Keep this an explicit list.
+    'allowed_origins' => array_values(array_filter(
+        explode(',', (string) env('CORS_ALLOWED_ORIGINS', (string) env('APP_URL', '')))
+    )),
 
     'allowed_origins_patterns' => [],
 

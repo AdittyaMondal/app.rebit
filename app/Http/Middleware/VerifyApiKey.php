@@ -13,7 +13,11 @@ class VerifyApiKey
 
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->header('X-API-KEY') !== config('app.api_key')) {
+        $provided = (string) $request->header('X-API-KEY');
+        $expected = (string) config('app.api_key');
+
+        // hash_equals: constant-time, so a wrong key can't be recovered by timing.
+        if ($expected === '' || ! hash_equals($expected, $provided)) {
             return $this->responseUnauthorizedError([
                 'message' => 'API key is invalid or not provided.'
             ]);

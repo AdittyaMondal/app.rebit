@@ -8,7 +8,7 @@
                 </span>
             </a>
         </div>
-        <x-sidebar.navlist>
+        <x-sidebar.navlist x-on:click="sidebarOpen = false">
             <x-sidebar.navlist-item href="{{ route('user.desktop.index') }}" iconName="home-smile" iconType="line"
                 :trailingIcon="true" trailingIconName="arrow-up-right" trailingIconType="line" target="_blank"
                 text="{{ __('admin/sidebar.home') }}" />

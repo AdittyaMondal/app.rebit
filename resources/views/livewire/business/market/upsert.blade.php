@@ -129,7 +129,7 @@
                 {{ __('business/market.form.photos') }} *
             </label>
             <div class="mb-2">
-                <div class="grid grid-cols-4 gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                     <div class="aspect-square" x-data>
                         <button x-on:click="$refs.input.click()" type="button" class="border-2 cursor-pointer border-fill-pr border-dashed size-full rounded-md px-4 text-brand-900 transition-all ease-linear hover:border-brand-900">
                             <span class="flex flex-col items-center justify-center size-full">

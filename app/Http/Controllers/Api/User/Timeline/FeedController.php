@@ -57,10 +57,7 @@ class FeedController extends Controller
 
         $timelinePosts = $feedORMQuery->simplePaginateManual(config('post.paginate_per'), $this->filter['page']);
 
-        // Only prepend processing posts on the first page to avoid repeating them on scroll
-        if ($this->filter['page'] <= 1 && $processingPosts->count()) {
-            $timelinePosts = $processingPosts->merge($timelinePosts);
-        }
+        $timelinePosts = $processingPosts->merge($timelinePosts);
 
         return $this->responseSuccess([
             'data' => TimelineCollection::make($timelinePosts)

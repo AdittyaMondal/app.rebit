@@ -46,7 +46,7 @@
                 {{ __('business/ads.form.creative') }} *
             </label>
             <div class="mb-2">
-                <div class="grid grid-cols-4 gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                     @if($adMedia->isEmpty())
                         <div class="aspect-square" x-data>
                             <button x-on:click="$refs.input.click()" type="button" class="border-2 border-fill-pr border-dashed size-full rounded-md px-4 text-brand-900 transition-all ease-linear hover:border-brand-900">

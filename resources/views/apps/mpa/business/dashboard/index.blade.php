@@ -1,7 +1,7 @@
 @extends('businessLayout::index')
 
 @section('pageContent')
-    <div class="w-content">
+    <div class="w-full max-w-[var(--spacing-content)]">
         <div class="rounded-2xl overflow-hidden">
             <div class="bg-lab-pr text-bg-pr p-6">
                 <div class="mb-2">

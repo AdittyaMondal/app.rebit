@@ -1,4 +1,4 @@
-/* Mobile specific styles */
+/* Desktop specific styles */
 
 html {
     touch-action: manipulation;
@@ -6,15 +6,6 @@ html {
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
     font-kerning: normal;
-}
-
-/* Safe area insets for fullscreen WebView / TWA apps */
-.rebit-safe-header {
-    padding-top: env(safe-area-inset-top, 0px);
-}
-
-body {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .svg-icon{

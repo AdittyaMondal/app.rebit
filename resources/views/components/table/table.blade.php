@@ -8,7 +8,9 @@
         </div>
     @endif
 
-    <table class="w-full">
-        {{ $slot }}
-    </table>
+    <div class="overflow-x-auto">
+        <table class="w-full min-w-[640px]">
+            {{ $slot }}
+        </table>
+    </div>
 </div>

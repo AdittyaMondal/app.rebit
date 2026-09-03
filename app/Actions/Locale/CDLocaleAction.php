@@ -23,6 +23,14 @@ class CDLocaleAction
 
 	public function __construct(string $localeCode)
 	{
+		// Guarded here rather than at the callers: localeCode is interpolated
+		// straight into copyDirectory()/deleteDirectory() paths below, so a
+		// value like '..' would resolve to the project root. 'size:2' on the
+		// request does not reject that.
+		if (! preg_match('/^[a-z]{2}$/', $localeCode)) {
+			throw new Exception("Invalid locale code: {$localeCode}");
+		}
+
 		$this->localeCode = $localeCode;
 
 		$this->translationPaths = [
