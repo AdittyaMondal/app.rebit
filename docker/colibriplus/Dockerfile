@@ -46,7 +46,13 @@ RUN composer install \
       --ignore-platform-reqs --no-scripts --no-autoloader
 
 COPY . .
-RUN composer dump-autoload --no-dev --optimize --classmap-authoritative
+
+# bootstrap/cache is gitignored upstream and holds no placeholder file, so it
+# does not exist in a git clone. dump-autoload fires post-autoload-dump ->
+# artisan package:discover, which aborts with "The /app/bootstrap/cache
+# directory must be present and writable." Create it first.
+RUN mkdir -p bootstrap/cache storage/framework/views storage/logs plugins \
+ && composer dump-autoload --no-dev --optimize --classmap-authoritative
 
 
 # ------------------------------------------------------------------ base ----
@@ -95,7 +101,7 @@ RUN set -eux; \
       storage/app/tmp/images storage/app/tmp/videos \
       storage/framework/cache/data storage/framework/sessions \
       storage/framework/views storage/logs storage/frontend \
-      bootstrap/cache; \
+      bootstrap/cache plugins; \
     echo 1 > storage/frontend/build.num; \
     chown -R www-data:www-data storage bootstrap/cache; \
     chmod -R ug+rwx storage bootstrap/cache; \
