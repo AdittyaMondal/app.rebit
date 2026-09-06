@@ -41,6 +41,9 @@ services:
       RUN_MIGRATIONS: "true"    # exactly one service may migrate
     expose:
       - "80"                    # Traefik connects here; no host port published
+    # Dokploy's Traefik lives on the external dokploy-network. Without joining
+    # it, Traefik cannot reach this container and the domain 502s.
+    networks: [rebit, dokploy-network]
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://127.0.0.1/up"]
       interval: 30s
@@ -110,3 +113,7 @@ volumes:
 networks:
   rebit:
     driver: bridge
+  # Created by Dokploy on the host; Traefik is attached to it. Declared
+  # external so compose joins the existing network instead of making its own.
+  dokploy-network:
+    external: true
