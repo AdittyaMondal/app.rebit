@@ -25,6 +25,11 @@ COPY vite.config.js ./
 COPY resources ./resources
 COPY public ./public
 
+# vite.config.js has a build-number plugin whose buildStart() writes
+# ./storage/frontend/build.num. storage/ is not copied into this stage, so the
+# directory must exist first or the build dies with ENOENT before it starts.
+RUN mkdir -p storage/frontend
+
 # `npm run build` = vite build + all five dark-theme Tailwind CLI passes.
 # Running only `vite build` would ship stale dark CSS.
 RUN npm run build
@@ -98,6 +103,11 @@ RUN set -eux; \
     # It is read from the DB, not .env, so the path must exist in the image.
     mkdir -p /var/ffmpeg-tmp; \
     chown www-data:www-data /var/ffmpeg-tmp
+
+# Take the build number Vite actually generated. Blade cache-busts the
+# dark-theme CSS with ?v={{ $buildNumber }}; shipping a constant would let
+# browsers serve stale dark CSS after a redeploy.
+COPY --from=assets --chown=www-data:www-data /app/storage/frontend/build.num ./storage/frontend/build.num
 
 COPY --chmod=0755 docker/colibriplus/entrypoint.sh /usr/local/bin/entrypoint
 ENTRYPOINT ["entrypoint"]
