@@ -119,12 +119,18 @@ RUN set -eux; \
 # browsers serve stale dark CSS after a redeploy.
 COPY --from=assets --chown=www-data:www-data /app/storage/frontend/build.num ./storage/frontend/build.num
 
-# Package discovery, deferred from the vendor stage. This image has bcmath, so
-# AppServiceProvider::boot()'s bcscale() resolves. No database is needed:
-# SettingsServiceProvider::boot() wraps its DB reads in try/catch, so settings
-# silently fall back to config/env until migrations have run.
-RUN php artisan package:discover --ansi \
- && chown -R www-data:www-data bootstrap/cache
+# Package discovery is deliberately NOT run at build time. It boots the whole
+# framework, and there is no .env in the image, so providers that need real
+# config blow up - first bcscale() without bcmath, then:
+#
+#   BroadcastManager: Failed to create broadcaster for connection "reverb":
+#   Pusher::__construct(): Argument #1 ($auth_key) must be of type string,
+#   null given
+#
+# Laravel's PackageManifest writes bootstrap/cache/packages.php on first boot
+# when it is missing and the directory is writable, which it is (chowned
+# www-data above). That first boot happens in the entrypoint, with the real
+# environment present.
 
 COPY --chmod=0755 docker/colibriplus/entrypoint.sh /usr/local/bin/entrypoint
 ENTRYPOINT ["entrypoint"]
