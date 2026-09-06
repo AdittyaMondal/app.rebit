@@ -93,7 +93,11 @@ RUN set -eux; \
       bootstrap/cache; \
     echo 1 > storage/frontend/build.num; \
     chown -R www-data:www-data storage bootstrap/cache; \
-    chmod -R ug+rwx storage bootstrap/cache
+    chmod -R ug+rwx storage bootstrap/cache; \
+    # database/settings seeds ffmpeg.temporary_directory = /var/ffmpeg-tmp.
+    # It is read from the DB, not .env, so the path must exist in the image.
+    mkdir -p /var/ffmpeg-tmp; \
+    chown www-data:www-data /var/ffmpeg-tmp
 
 COPY --chmod=0755 docker/colibriplus/entrypoint.sh /usr/local/bin/entrypoint
 ENTRYPOINT ["entrypoint"]
