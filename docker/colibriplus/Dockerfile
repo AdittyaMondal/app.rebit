@@ -47,12 +47,16 @@ RUN composer install \
 
 COPY . .
 
-# bootstrap/cache is gitignored upstream and holds no placeholder file, so it
-# does not exist in a git clone. dump-autoload fires post-autoload-dump ->
-# artisan package:discover, which aborts with "The /app/bootstrap/cache
-# directory must be present and writable." Create it first.
-RUN mkdir -p bootstrap/cache storage/framework/views storage/logs plugins \
- && composer dump-autoload --no-dev --optimize --classmap-authoritative
+# plugins/ is a PSR-4 root that is gitignored, so it is absent in a clone and
+# composer warns on every dump without it.
+#
+# --no-scripts is required: post-autoload-dump runs `artisan package:discover`,
+# which boots Laravel, and AppServiceProvider::boot() calls bcscale(). This
+# stage is the Alpine composer image, whose PHP has no bcmath, so discovery
+# dies with "Call to undefined function App\Providers\bcscale()". Discovery is
+# deferred to the base stage, which has the full extension set.
+RUN mkdir -p plugins \
+ && composer dump-autoload --no-dev --optimize --classmap-authoritative --no-scripts
 
 
 # ------------------------------------------------------------------ base ----
@@ -114,6 +118,13 @@ RUN set -eux; \
 # dark-theme CSS with ?v={{ $buildNumber }}; shipping a constant would let
 # browsers serve stale dark CSS after a redeploy.
 COPY --from=assets --chown=www-data:www-data /app/storage/frontend/build.num ./storage/frontend/build.num
+
+# Package discovery, deferred from the vendor stage. This image has bcmath, so
+# AppServiceProvider::boot()'s bcscale() resolves. No database is needed:
+# SettingsServiceProvider::boot() wraps its DB reads in try/catch, so settings
+# silently fall back to config/env until migrations have run.
+RUN php artisan package:discover --ansi \
+ && chown -R www-data:www-data bootstrap/cache
 
 COPY --chmod=0755 docker/colibriplus/entrypoint.sh /usr/local/bin/entrypoint
 ENTRYPOINT ["entrypoint"]
