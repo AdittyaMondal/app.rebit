@@ -116,10 +116,14 @@ COPY docker/nginx/default.conf            /etc/nginx/conf.d/default.conf
 COPY docker/colibriplus/supervisord.conf  /etc/supervisor/conf.d/colibriplus.conf
 
 # Traefik (Dokploy) terminates TLS and forwards plain HTTP here.
-EXPOSE 80
+# Override APP_PORT at runtime; entrypoint rewrites the nginx listen directive.
+ARG APP_PORT=80
+ENV APP_PORT=${APP_PORT}
+EXPOSE ${APP_PORT}
 
+# Shell form so ${APP_PORT} resolves from the container env at check time.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-  CMD curl -fsS http://127.0.0.1/up || exit 1
+  CMD curl -fsS "http://127.0.0.1:${APP_PORT}/up" || exit 1
 
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/colibriplus.conf", "-n"]
 

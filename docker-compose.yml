@@ -40,12 +40,19 @@ services:
       WAIT_FOR_DB: "true"
       RUN_MIGRATIONS: "true"    # exactly one service may migrate
     expose:
-      - "80"                    # Traefik connects here; no host port published
+      - "${APP_PORT:-80}"       # Traefik connects here. Set Dokploy's
+                                # Domains -> Container Port to the same value.
+    # Optional: reach the app directly at http://<vps-ip>:${APP_PORT},
+    # bypassing Traefik. This serves PLAIN HTTP with no certificate, so the
+    # domain (via Traefik, port 443) stays the correct way in. Uncomment only
+    # if you specifically need raw IP access, and open the port in the firewall.
+    # ports:
+    #   - "${APP_PORT:-80}:${APP_PORT:-80}"
     # Dokploy's Traefik lives on the external dokploy-network. Without joining
     # it, Traefik cannot reach this container and the domain 502s.
     networks: [rebit, dokploy-network]
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://127.0.0.1/up"]
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:${APP_PORT:-80}/up || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3

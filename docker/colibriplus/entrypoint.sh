@@ -8,6 +8,20 @@ cd /var/www/html
 
 log() { echo "[entrypoint] $*"; }
 
+# --- listen port ------------------------------------------------------------
+# nginx cannot read env vars in its config, so rewrite the listen directive at
+# start. Lets APP_PORT change without rebuilding the image.
+APP_PORT="${APP_PORT:-80}"
+if [ -f /etc/nginx/conf.d/default.conf ] && [ "$APP_PORT" != "80" ]; then
+    # Literal swap, no backreferences - portable and leaves the committed
+    # config valid nginx on its own.
+    sed -i "s|listen 80 default_server;|listen ${APP_PORT} default_server;|" \
+        /etc/nginx/conf.d/default.conf
+fi
+if [ -f /etc/nginx/conf.d/default.conf ]; then
+    log "nginx listening on ${APP_PORT}"
+fi
+
 # --- storage layout ---------------------------------------------------------
 # Recreated each start because Dokploy may mount an empty volume over storage/.
 mkdir -p \
