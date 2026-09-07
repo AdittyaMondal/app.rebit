@@ -43,7 +43,6 @@ x-app: &app
     - storage:/var/www/html/storage/app
     - logs:/var/www/html/storage/logs
   depends_on:
-    mysql:   { condition: service_healthy }
     redis:   { condition: service_started }
   networks: [rebit]
 
@@ -101,26 +100,10 @@ services:
     command: ["php", "colibri", "schedule:work"]
 
   # ---- Data ---------------------------------------------------------------
-  mysql:
-    image: mysql:8.0
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-rebit}
-      MYSQL_USER: ${DB_USERNAME:-rebit}
-      MYSQL_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in Dokploy}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?set DB_ROOT_PASSWORD in Dokploy}
-    command:
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
-    volumes:
-      - mysql:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${DB_ROOT_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 30s
-    networks: [rebit]
+  # No mysql service here on purpose. This project uses a standalone Dokploy
+  # database service, so defining one here would run a second, empty MySQL
+  # and the app would silently talk to the wrong one. Point DB_HOST at the
+  # Dokploy service's internal host (e.g. rebit-media-dfkjgw) instead.
 
   redis:
     image: redis:7-alpine
@@ -136,7 +119,6 @@ services:
     networks: [rebit]
 
 volumes:
-  mysql:
   redis:
   storage:   # user uploads — persists across deploys
   logs:
