@@ -1,0 +1,73 @@
+# Local testing overlay. NOT used by Dokploy.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+#
+# Differences from the Dokploy setup:
+#   - publishes the app port to the host (no Traefik locally)
+#   - runs a MySQL container. The base compose deliberately has none, because
+#     production points DB_HOST at a standalone Dokploy database service.
+#   - dokploy-network is created locally instead of being external
+
+services:
+  app:
+    ports:
+      - "${APP_PORT:-7892}:${APP_PORT:-7892}"
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_started }
+
+  reverb:
+    depends_on:
+      mysql: { condition: service_healthy }
+      redis: { condition: service_started }
+
+  horizon:
+    depends_on:
+      mysql:  { condition: service_healthy }
+      redis:  { condition: service_started }
+      reverb: { condition: service_started }
+
+  scheduler:
+    depends_on:
+      mysql:  { condition: service_healthy }
+      redis:  { condition: service_started }
+      reverb: { condition: service_started }
+
+  # Local stand-in for the Dokploy database service. Set DB_HOST=mysql in the
+  # local .env; on the VPS it must be the Dokploy database's Internal Host.
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-rebit_media}
+      MYSQL_USER: ${DB_USERNAME:-rebit_media}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?set DB_ROOT_PASSWORD in .env}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql:/var/lib/mysql
+    ports:
+      - "13306:3306"      # mysql -h 127.0.0.1 -P 13306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks: [rebit]
+
+  redis:
+    ports:
+      - "16379:6379"      # redis-cli -p 16379
+
+volumes:
+  mysql:
+
+networks:
+  # Locally there is no Dokploy Traefik, so create it as an ordinary bridge
+  # rather than requiring a pre-existing external network.
+  dokploy-network:
+    external: false
+    driver: bridge

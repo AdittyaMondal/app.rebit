@@ -82,4 +82,3 @@ t->media()->delete();
 /.graphifyignore
 /graphify-out
 prod.env
-docker-compose.local.yml

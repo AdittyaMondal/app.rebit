@@ -25,11 +25,6 @@ x-vite-args: &vite-args
   PUSHER_DEBUG_CONSOLE: "${PUSHER_DEBUG_CONSOLE:-false}"
 
 x-app: &app
-  build:
-    context: .
-    dockerfile: docker/colibriplus/Dockerfile
-    target: worker
-    args: *vite-args
   # Distinct tag from the web image. Sharing one tag makes the two build
   # targets overwrite each other, and whichever built last wins - the app
   # container then has no nginx and nothing listens.
@@ -83,6 +78,16 @@ services:
 
   # ---- Reverb: WebSockets. Reached only via app nginx at /app --------------
   reverb:
+    # The only service that builds the worker image. horizon and scheduler
+    # reuse the resulting tag. Giving all three a build block made four
+    # services load the same build context concurrently, and BuildKit handed
+    # back inconsistent snapshots - one build saw 35MB, another 24MB, and a
+    # COPY failed with "vite.config.js: not found" on a file that is present.
+    build:
+      context: .
+      dockerfile: docker/colibriplus/Dockerfile
+      target: worker
+      args: *vite-args
     <<: *app
     command: ["php", "colibri", "reverb:start", "--host=0.0.0.0", "--port=13000"]
     expose:
@@ -91,12 +96,18 @@ services:
   # ---- Horizon: Redis queue workers ---------------------------------------
   horizon:
     <<: *app
+    depends_on:
+      redis:  { condition: service_started }
+      reverb: { condition: service_started }   # builds rebit-worker
     command: ["php", "colibri", "horizon"]
     stop_grace_period: 60s
 
   # ---- Scheduler: replaces the host crontab -------------------------------
   scheduler:
     <<: *app
+    depends_on:
+      redis:  { condition: service_started }
+      reverb: { condition: service_started }   # builds rebit-worker
     command: ["php", "colibri", "schedule:work"]
 
   # ---- Data ---------------------------------------------------------------
