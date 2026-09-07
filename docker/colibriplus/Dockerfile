@@ -30,6 +30,36 @@ COPY public ./public
 # directory must exist first or the build dies with ENOENT before it starts.
 RUN mkdir -p storage/frontend
 
+# Vite inlines import.meta.env.VITE_* at build time from .env. That file is
+# excluded by .dockerignore (it holds secrets), so without this the bundle
+# compiles every one of them to undefined - no WebSocket connection, no API
+# base URL, no Giphy. Passed as build args and written to a throwaway .env
+# that never leaves this stage.
+ARG VITE_API_BASE_URL=
+ARG VITE_APP_API_PREFIX=api
+ARG VITE_REVERB_APP_KEY=
+ARG VITE_REVERB_HOST=
+ARG VITE_REVERB_PORT=443
+ARG VITE_REVERB_SCHEME=https
+ARG VITE_REVERB_CONNECTION_STATUS=on
+ARG VITE_GIPHY_API_KEY=
+ARG VITE_APP_NEWS_RESOURCE_URL=
+ARG VITE_HIDE_AUTHOR_ATTRIBUTION=false
+ARG PUSHER_DEBUG_CONSOLE=false
+RUN printf '%s\n' \
+      "VITE_API_BASE_URL=${VITE_API_BASE_URL}" \
+      "VITE_APP_API_PREFIX=${VITE_APP_API_PREFIX}" \
+      "VITE_REVERB_APP_KEY=${VITE_REVERB_APP_KEY}" \
+      "VITE_REVERB_HOST=${VITE_REVERB_HOST}" \
+      "VITE_REVERB_PORT=${VITE_REVERB_PORT}" \
+      "VITE_REVERB_SCHEME=${VITE_REVERB_SCHEME}" \
+      "VITE_REVERB_CONNECTION_STATUS=${VITE_REVERB_CONNECTION_STATUS}" \
+      "VITE_GIPHY_API_KEY=${VITE_GIPHY_API_KEY}" \
+      "VITE_APP_NEWS_RESOURCE_URL=${VITE_APP_NEWS_RESOURCE_URL}" \
+      "VITE_HIDE_AUTHOR_ATTRIBUTION=${VITE_HIDE_AUTHOR_ATTRIBUTION}" \
+      "PUSHER_DEBUG_CONSOLE=${PUSHER_DEBUG_CONSOLE}" \
+      > .env
+
 # `npm run build` = vite build + all five dark-theme Tailwind CLI passes.
 # Running only `vite build` would ship stale dark CSS.
 RUN npm run build
@@ -76,6 +106,12 @@ RUN set -eux; \
       default-mysql-client \
       $PHPIZE_DEPS; \
     docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
+    # NOTE on opcache: --disable-opcache-jit lowers the build's memory ceiling
+    # (zend_jit.c is one huge translation unit that OOM-kills small builders),
+    # but on PHP 8.3 it produces an opcache.so that fails to load at runtime
+    # with "undefined symbol: jit_globals". So build it normally and give the
+    # builder enough RAM instead - roughly 4 GB. A 2 GB builder will die with
+    # "cc: fatal error: Killed signal terminated program cc1".
     docker-php-ext-install -j"$(nproc)" \
       gd intl mbstring pdo_mysql mysqli bcmath pcntl zip opcache exif; \
     pecl install redis; \
@@ -132,7 +168,10 @@ COPY --from=assets --chown=www-data:www-data /app/storage/frontend/build.num ./s
 # www-data above). That first boot happens in the entrypoint, with the real
 # environment present.
 
-COPY --chmod=0755 docker/colibriplus/entrypoint.sh /usr/local/bin/entrypoint
+# Plain COPY + chmod rather than COPY --chmod=, which requires BuildKit and
+# fails on the legacy builder with "the --chmod option requires BuildKit".
+COPY docker/colibriplus/entrypoint.sh /usr/local/bin/entrypoint
+RUN chmod 0755 /usr/local/bin/entrypoint
 ENTRYPOINT ["entrypoint"]
 
 

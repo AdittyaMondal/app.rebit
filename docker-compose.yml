@@ -9,12 +9,31 @@
 #
 # Set every value under "Environment" in the Dokploy UI. Do not commit a .env.
 
+# Vite inlines these into the JS bundle at build time, so they are build args,
+# not runtime env. Changing any of them needs a rebuild, not a restart.
+x-vite-args: &vite-args
+  VITE_API_BASE_URL: "${APP_URL}"
+  VITE_APP_API_PREFIX: "${APP_API_PREFIX:-api}"
+  VITE_REVERB_APP_KEY: "${REVERB_APP_KEY}"
+  VITE_REVERB_HOST: "${REVERB_HOST}"
+  VITE_REVERB_PORT: "${REVERB_PORT:-443}"
+  VITE_REVERB_SCHEME: "${REVERB_SCHEME:-https}"
+  VITE_REVERB_CONNECTION_STATUS: "${VITE_REVERB_CONNECTION_STATUS:-on}"
+  VITE_GIPHY_API_KEY: "${GIPHY_API_KEY}"
+  VITE_APP_NEWS_RESOURCE_URL: "${APP_NEWS_RESOURCE_URL}"
+  VITE_HIDE_AUTHOR_ATTRIBUTION: "${VITE_HIDE_AUTHOR_ATTRIBUTION:-false}"
+  PUSHER_DEBUG_CONSOLE: "${PUSHER_DEBUG_CONSOLE:-false}"
+
 x-app: &app
   build:
     context: .
     dockerfile: docker/colibriplus/Dockerfile
     target: worker
-  image: rebit-app:${APP_VERSION:-latest}
+    args: *vite-args
+  # Distinct tag from the web image. Sharing one tag makes the two build
+  # targets overwrite each other, and whichever built last wins - the app
+  # container then has no nginx and nothing listens.
+  image: rebit-worker:${APP_VERSION:-latest}
   restart: unless-stopped
   env_file: [.env]
   environment:
@@ -36,9 +55,14 @@ services:
       context: .
       dockerfile: docker/colibriplus/Dockerfile
       target: web
+      args: *vite-args
+    image: rebit-web:${APP_VERSION:-latest}
     environment:
       WAIT_FOR_DB: "true"
-      RUN_MIGRATIONS: "true"    # exactly one service may migrate
+      # Only this service migrates, so parallel workers cannot race the same
+      # migration. Set RUN_MIGRATIONS=false in the environment to skip it
+      # (needed when restoring a dump before the schema is upgraded).
+      RUN_MIGRATIONS: "${RUN_MIGRATIONS:-true}"
     expose:
       - "${APP_PORT:-80}"       # Traefik connects here. Set Dokploy's
                                 # Domains -> Container Port to the same value.
