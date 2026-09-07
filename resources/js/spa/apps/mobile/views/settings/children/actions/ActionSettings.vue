@@ -93,6 +93,12 @@
 							toastSuccess(response.data.message);
 
 							setTimeout(() => {
+								if (window.__NATIVE__) {
+									window.nativeSignOut();
+
+									return;
+								}
+
 								window.location.href = embedder('routes.user_auth_index');
 							}, 3000);
 						}).catch((error) => {

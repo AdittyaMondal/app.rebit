@@ -10,5 +10,6 @@ return [
 		['name' => 'developers'],
 		['name' => 'verification'],
 		['name' => 'author'],
+		['name' => 'guidelines'],
 	],
 ];

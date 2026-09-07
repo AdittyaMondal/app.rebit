@@ -24,6 +24,8 @@
 <script>
 	import { defineComponent, ref, onMounted, onUnmounted } from 'vue';
 
+	import { colibriEventBus } from '@/kernel/events/bus/index.js';
+
 	export default defineComponent({
 		emits: ['close', 'click'],
 		props: {
@@ -55,12 +57,18 @@
 			onMounted(function() {
 				freezeScroll();
 
+				// Android's hardware back button should dismiss the sheet, not
+				// navigate away from the page behind it.
+				colibriEventBus.on('native:back', close);
+
 				setTimeout(function() {
 					renderActionSheet.value = true;
 				}, 200);
 			});
 
 			onUnmounted(function() {
+				colibriEventBus.off('native:back', close);
+
 				unfreezeScroll();
 			});
 

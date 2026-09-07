@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use App\Data\DataCapsule;
+use App\Models\Censor;
+use App\Services\Censor\CensorService;
+use Illuminate\Support\Facades\Cache;
 use App\Services\Filesystem\RoundRobin\RoundRobinService;
 use App\Support\Languages;
 use Illuminate\Support\Facades\View;
@@ -32,6 +35,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         bcscale(2);
+
+        /*
+         * The banned-word list was cached with rememberForever and nothing ever
+         * forgot it, so an admin editing the list had no effect until the cache
+         * was cleared by hand.
+         */
+        Censor::saved(fn () => Cache::forget(CensorService::CACHE_KEY));
+        Censor::deleted(fn () => Cache::forget(CensorService::CACHE_KEY));
+
 
         View::composer('*', function($view) {
             $view->with('localeName', (new Languages())->getLocaleName());

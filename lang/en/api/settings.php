@@ -26,6 +26,7 @@ return [
 	'active_sessions' => 'Active sessions',
 	'notification_settings' => 'Notification settings',
 	'push_notifications' => 'Push notifications',
+	'app_lock' => 'App lock',
 	'email_notifications' => 'Email notifications',
 	'language_settings' => 'Language settings',
 	'social_media_settings' => 'Social links',
@@ -116,6 +117,12 @@ return [
 			'country_helper' => 'Country not specified',
 			'birth_date_helper' => 'Providing your date of birth helps {app_name} tailor services to your age.',
 			'page_desc' => 'Select your country, city and date of birth. You can hide or display this information on your profile page.',
+		],
+		'app_lock' => [
+			'page_desc' => 'Require your fingerprint or face to reopen REBIT after it has been in the background.',
+			'enable' => 'Require biometric unlock',
+			'enable_helper' => 'Asked once per session, not every time you switch apps.',
+			'unavailable' => 'This device has no fingerprint or face unlock set up.',
 		],
 		'theme' => [
 			'page_desc' => 'Enter theme mode. These settings only affect the current account.',

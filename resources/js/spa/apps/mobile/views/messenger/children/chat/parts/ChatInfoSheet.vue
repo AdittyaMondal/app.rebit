@@ -29,6 +29,17 @@
 				v-bind:textLabel="$t('labels.report_this_user', { user_name: chatData.chat_info.name })"
 			iconName="annotation-alert"></ActionSheetItem>
 
+			<!--
+				Blocking was reachable from a profile but not from a chat, which
+				is where someone actually is when they need it. Store UGC policy
+				expects blocking to be available alongside reporting.
+			-->
+			<ActionSheetItem
+				v-on:click="blockUser"
+				itemColor="text-red-900"
+				v-bind:textLabel="$t('dd.user.block', { username: chatData.chat_info.username })"
+			iconName="slash-circle-01"></ActionSheetItem>
+
 			<ActionSheetItem
 				itemColor="text-red-900"
 				v-on:click="deleteChat"
@@ -47,6 +58,7 @@
 <script>
 	import { defineComponent, computed, ref } from 'vue';
 	import { colibriEventBus } from '@/kernel/events/bus/index.js';
+	import { useRelationsStore } from '@M/store/relations/relations.store.js';
 	import { useChatStore } from '@M/store/chats/chat.store.js';
 	import { useRouter } from 'vue-router';
 
@@ -67,6 +79,7 @@
 		setup: function(props) {
 			const chatData = ref(props.chatData);
 			const chatStore = useChatStore();
+			const relationsStore = useRelationsStore();
 			const router = useRouter();
 			return {
 				clearChat: () => {
@@ -111,6 +124,24 @@
                         type: 'user',
                         reportableId: chatData.value.chat_info.id
                     });
+				},
+				blockUser: () => {
+					colibriEventBus.emit('confirmation-modal:open', {
+						title: __t('prompt.block_user.title'),
+						description: __t('prompt.block_user.description'),
+						confirmButtonText: __t('prompt.block_user.confirm'),
+						onConfirm: async () => {
+							const blocked = await relationsStore.blockUser(chatData.value.chat_info.id);
+
+							if (! blocked) {
+								return;
+							}
+
+							toastSuccess(__t('toast.user_blocked'), 3000);
+
+							router.push({ name: 'messenger_index' });
+						}
+					});
 				}
 			};
 		},

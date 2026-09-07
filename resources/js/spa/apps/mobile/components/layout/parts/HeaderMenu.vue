@@ -4,9 +4,9 @@
 			<div class="mb-4">
 				<ActionSheetGroup>
 					<RouterLink v-bind:to="{ name: 'bookmarks_index' }">
-						<ActionSheetItem v-bind:notLast="true" iconName="bookmark" v-bind:textLabel="$t('labels.bookmarks')"></ActionSheetItem>
+						<ActionSheetItem v-bind:notLast="$config('features.wallet.enabled')" iconName="bookmark" v-bind:textLabel="$t('labels.bookmarks')"></ActionSheetItem>
 					</RouterLink>
-					<RouterLink v-bind:to="{ name: 'wallet_index' }">
+					<RouterLink v-if="$config('features.wallet.enabled')" v-bind:to="{ name: 'wallet_index' }">
 						<ActionSheetItem iconName="wallet-02" v-bind:textLabel="$t('labels.wallet')"></ActionSheetItem>
 					</RouterLink>
 				</ActionSheetGroup>

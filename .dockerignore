@@ -8,6 +8,10 @@
 graphify-out
 
 # Rebuilt inside the image
+# Native build output and the Capacitor Android project: neither belongs in
+# the PHP image, and with Gradle caches android/ is hundreds of MB.
+public/native
+android
 vendor
 node_modules
 public/build

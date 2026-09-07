@@ -432,7 +432,7 @@ class ChatController extends Controller
                     event(new MessageReceivedEvent($messageData));
 
                     $otherParticipants->each(function ($participantData) {
-                        $participantData->user->notify(new MessageReceivedNotification());
+                        $participantData->user->notify(new MessageReceivedNotification($messageData));
                     });
                 } catch (Throwable $th) {
                     // Pass

@@ -73,6 +73,8 @@
 				await notificationsStore.fetchNotifications(state.tab);
 			};
             
+			const closeOnBack = () => notificationsStore.closeNotifications();
+
             onMounted(async () => {
                 await notificationsStore.fetchNotifications(state.tab);
 
@@ -81,12 +83,14 @@
                 notificationsStore.fetchUnreadCount();
 
 				colibriEventBus.on('notifications:received', handleNotificationReceived);
+				colibriEventBus.on('native:back', closeOnBack);
 
 				freezeScroll();
             });
 
 			onUnmounted(() => {
 				colibriEventBus.off('notifications:received', handleNotificationReceived);
+				colibriEventBus.off('native:back', closeOnBack);
 
 				unfreezeScroll();
 			});

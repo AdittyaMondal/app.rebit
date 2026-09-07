@@ -76,9 +76,24 @@ Thumbs.db
 *.sql
 *.sql.gz
 *.dump
-t->media()->delete();
 
 # Tooling
 /.graphifyignore
 /graphify-out
 prod.env
+
+# Capacitor / native.
+#
+# android/ itself IS tracked -- the manifest and Gradle files are hand-edited --
+# and Capacitor ships its own android/.gitignore covering build output, .gradle,
+# local.properties and the assets copied by `cap sync`. Only the entries their
+# template leaves commented out are repeated here, because losing a keystore
+# means losing the ability to update a published app.
+/public/native
+/android/keystore.properties
+/android/app/google-services.json
+/android/app/*.jks
+/android/app/*.keystore
+*.p8
+*.mobileprovision
+/storage/app/private/*.json

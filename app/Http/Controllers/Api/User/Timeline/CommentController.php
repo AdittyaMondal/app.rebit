@@ -32,6 +32,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Notifications\User\Post\PostCommentedNotification;
 use App\Notifications\User\Post\CommentReactedNotification;
 use App\Notifications\User\Mention\CommentMentionNotification;
+use App\Services\Censor\CensorService;
 
 class CommentController extends Controller
 {
@@ -73,6 +74,10 @@ class CommentController extends Controller
 
         $comment->text_language = $postData->getContentLanguage();
         $comment->save();
+
+        // The censor was hooked into post creation only, leaving comments --
+        // the higher-volume surface -- entirely unfiltered.
+        app(CensorService::class)->setUser(me())->censor($commentContent);
 
         $postData->comments_count = $postData->comments()->count();
         $postData->save();

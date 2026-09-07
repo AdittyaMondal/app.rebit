@@ -3,6 +3,8 @@
 return [
     'unauthorized' => 'You are not authorized to perform this action.',
     'confirmation_code_incorrect' => 'The confirmation code is incorrect.',
+    'account_unavailable' => 'This account is no longer available.',
+    'onboarding_incomplete' => 'Please finish setting up your account before continuing.',
     'http' => [
         '401' => [
             'title' => 'Unauthorized!',

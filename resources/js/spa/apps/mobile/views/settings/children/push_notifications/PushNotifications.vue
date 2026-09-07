@@ -100,10 +100,36 @@
 
                 state.isLoading = false;
 
-                watch(formData, (newValue) => {
+                watch(formData, (newValue, oldValue) => {
                     submitForm();
+
+                    // Android 13+ needs a runtime grant. Asking here, the moment
+                    // the user switches something ON, is a prompt that explains
+                    // itself -- unlike one fired at launch, which is the fastest
+                    // way to a permanent denial.
+                    if (window.__NATIVE__ && anyToggleTurnedOn(newValue, oldValue)) {
+                        requestPermissionIfNeeded();
+                    }
                 }, { deep: true });
             });
+
+            const anyToggleTurnedOn = (next, previous) => {
+                if (! previous) {
+                    return false;
+                }
+
+                return Object.keys(next).some((key) => next[key] === true && previous[key] === false);
+            };
+
+            const requestPermissionIfNeeded = async () => {
+                try {
+                    const { requestPushPermission } = await import('@M/core/services/native/push.js');
+
+                    await requestPushPermission();
+                } catch (error) {
+                    console.warn('Push permission request failed.', error);
+                }
+            };
 
             const submitForm = async () => {
                 if (state.isSubmitting === false) {

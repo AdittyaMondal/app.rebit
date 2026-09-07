@@ -79,7 +79,7 @@
                 }
                 else if(['story.mentioned'].includes(props.notificationData.type)) {
                     return {
-                        name: 'stories_index_page',
+                        name: 'stories_index',
                         params: {
                             story_uuid: props.notificationData.entity.story_uuid
                         }
@@ -95,7 +95,7 @@
                 }
                 else if(['important.wallet-deposit'].includes(props.notificationData.type)) {
                     return {
-                        name: 'wallet_page'
+                        name: 'wallet_index'
                     }
                 }
 

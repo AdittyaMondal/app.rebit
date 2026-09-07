@@ -228,7 +228,22 @@
 				onVideoSelect: function(event) {
 					uploadMedia(event.target.files[0], 'video');
 				},
-				selectImage: function() {
+				selectImage: async function() {
+					if (window.__NATIVE__) {
+						const { pickImage } = await import('@M/core/services/native/camera.js');
+						const file = await pickImage();
+
+						if (file) {
+							uploadMedia(file, 'image');
+
+							return;
+						}
+
+						// Cancelled or unavailable: fall through to the file
+						// input, which works in the WebView regardless. A denied
+						// camera permission must never block posting.
+					}
+
 					imageFileInput.value.click();
 				},
 				selectAudio: function() {

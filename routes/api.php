@@ -13,29 +13,21 @@
 |--------------------------------------------------------------------------
 */
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Validation\ValidationException;
 
-Route::post('/sanctum/token', function (Request $request) {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-        'device_name' => 'required',
-    ]);
+// Exchanges the one-time handoff code for a bearer token. Unauthenticated by
+// design: the code plus the PKCE verifier are the credential.
+Route::post('/auth/native/exchange', [App\Http\Controllers\User\Auth\NativeAuthController::class, 'exchange'])
+    ->middleware('throttle:10,1');
 
-    $user = User::where('email', $request->email)->first();
-
-    if (! $user || ! Hash::check($request->password, $user->password)) {
-        throw ValidationException::withMessages([
-            'email' => ['The provided credentials are incorrect.'],
-        ]);
-    }
-
-    return $user->createToken($request->device_name)->plainTextToken;
-});
+// Additive twin of the framework's /broadcasting/auth, which lives in the web
+// group and therefore only understands session + CSRF. Native clients hold a
+// bearer token instead. Changing the original route's middleware would alter
+// web behaviour; this leaves it untouched.
+Route::post('/broadcasting/auth', fn (Request $request) => Broadcast::auth($request))
+    ->middleware(['auth:sanctum', 'throttle:120,1']);
 
 Route::prefix('translations')->middleware(['throttle:60,1'])->group(base_path('routes/api/translations.php'));
 
@@ -79,7 +71,12 @@ Route::prefix('feedback')->middleware(['auth:sanctum', 'throttle:60,1'])->group(
 
 Route::prefix('bookmarks')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/user/bookmarks.php'));
 
-Route::prefix('wallet')->middleware(['auth:sanctum', 'throttle:60,1'])->group(base_path('routes/api/user/wallet.php'));
+// features.status:wallet makes the whole wallet API 404 when the flag is off.
+// NativeClientMiddleware turns it off for the app, so /api/wallet/deposit --
+// which returns a hosted Stripe/PayPal checkout URL -- is unreachable there.
+// This also closes a gap on the web, where switching the wallet off in
+// WalletSettings previously left the API wide open.
+Route::prefix('wallet')->middleware(['auth:sanctum', 'features.status:wallet', 'throttle:60,1'])->group(base_path('routes/api/user/wallet.php'));
 
 Route::prefix('system')->middleware(['throttle:60,1'])->group(base_path('routes/api/system/master.php'));
 

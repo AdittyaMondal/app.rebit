@@ -20,6 +20,7 @@ export default defineConfig({
             input: [
                 'resources/js/spa/apps/desktop/bootstrap/application.js',
                 'resources/js/spa/apps/mobile/bootstrap/application.js',
+                'resources/js/spa/apps/mobile/bootstrap/native.js',
 
                 // Business CSS/JS files
                 'resources/css/business/main.css',

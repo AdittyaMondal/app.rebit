@@ -54,13 +54,19 @@ return Application::configure(basePath: dirname(__DIR__))->withRouting(
             ]);
 
             $middleware->web(append: [
+                App\Http\Middleware\NativeClientMiddleware::class,
                 App\Http\Middleware\UserLanguageMiddleware::class,
-                App\Http\Middleware\UserOnlineMiddleware::class
+                App\Http\Middleware\UserOnlineMiddleware::class,
+                App\Http\Middleware\NativeAuthHandoffMiddleware::class
             ]);
 
             $middleware->api(append: [
+                // First: the feature-flag override must land before any route
+                // middleware reads config('features.*').
+                App\Http\Middleware\NativeClientMiddleware::class,
                 App\Http\Middleware\UserLanguageMiddleware::class,
-                App\Http\Middleware\UserOnlineMiddleware::class
+                App\Http\Middleware\UserOnlineMiddleware::class,
+                App\Http\Middleware\EnsureUserIsActive::class
             ]);
 
             $middleware->statefulApi();

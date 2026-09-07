@@ -7,7 +7,8 @@
       "namespace": "android_app",
       "package_name": "com.rebit.app",
       "sha256_cert_fingerprints": [
-        "99:79:86:97:61:B2:4B:CC:DD:69:4D:71:96:4B:4A:BA:61:EE:95:4A:AB:5C:46:2C:20:69:B1:9F:60:6A:78:78"
+        "99:79:86:97:61:B2:4B:CC:DD:69:4D:71:96:4B:4A:BA:61:EE:95:4A:AB:5C:46:2C:20:69:B1:9F:60:6A:78:78",
+        "94:B0:41:5E:24:8F:EE:62:79:42:59:87:5C:F9:DA:AA:8B:E8:91:8A:05:DE:88:2B:64:EF:AC:D7:93:AE:61:8B"
       ]
     }
   }

@@ -18,7 +18,25 @@ try {
             wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
             forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
             enabledTransports: ['ws', 'wss'],
-            cluster: false
+            cluster: false,
+
+            /*
+             * laravel-echo defaults authEndpoint to a relative
+             * '/broadcasting/auth', which under Capacitor resolves against the
+             * local server. Point it at the absolute API twin of that route,
+             * which accepts a bearer token instead of a session cookie.
+             *
+             * Safe to read the token here: native.js only imports the app once
+             * it has one, and this module is reached through that import.
+             */
+            ...(window.__NATIVE__ ? {
+                authEndpoint: `${import.meta.env.VITE_API_BASE_URL}/${import.meta.env.VITE_APP_API_PREFIX}/broadcasting/auth`,
+                auth: {
+                    headers: {
+                        Authorization: `Bearer ${window.__NATIVE_TOKEN}`
+                    }
+                }
+            } : {})
         });
 
         window.ColibriBRD.connector.pusher.connection.bind('connected', function() {

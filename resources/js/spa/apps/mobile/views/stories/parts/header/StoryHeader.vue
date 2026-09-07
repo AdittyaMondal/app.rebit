@@ -30,8 +30,8 @@
 				<ActionSheetGroup>
 					<ActionSheetItem v-if="canDelete" v-on:click="deleteStory" itemColor="text-red-900" iconName="trash-04" v-bind:textLabel="$t('dd.story.delete_story')"></ActionSheetItem>
 					<ActionSheetItem v-if="canSeeViews" v-on:click="showViews" iconName="eye" v-bind:textLabel="$t('dd.story.show_views')"></ActionSheetItem>
-					<ActionSheetItem v-if="canHide" v-on:click="$comingSoon" iconName="eye-off" v-bind:textLabel="$t('dd.story.hide_stories', { name: storyAuthor.name })"></ActionSheetItem>
-					<ActionSheetItem v-if="canReport" v-on:click="$comingSoon" itemColor="text-red-900" iconName="annotation-alert" v-bind:textLabel="$t('dd.story.report_story')"></ActionSheetItem>
+					<ActionSheetItem v-if="canHide" v-on:click="hideStories" iconName="eye-off" v-bind:textLabel="$t('dd.story.hide_stories', { name: storyAuthor.name })"></ActionSheetItem>
+					<ActionSheetItem v-if="canReport" v-on:click="reportStory" itemColor="text-red-900" iconName="annotation-alert" v-bind:textLabel="$t('dd.story.report_story')"></ActionSheetItem>
 				</ActionSheetGroup>
 			</div>
 		</ActionSheet>
@@ -42,6 +42,7 @@
 	import { defineComponent, computed, reactive, onMounted, inject } from 'vue';
 	import { colibriEventBus } from '@/kernel/events/bus/index.js';
 	import { useMenu } from '@/kernel/vue/composables/menu/index.js';
+	import { useRelationsStore } from '@M/store/relations/relations.store.js';
 
 	import PrimaryIconButton from '@M/components/inter-ui/buttons/PrimaryIconButton.vue';
 	import AvatarSmall from '@M/components/general/avatars/AvatarSmall.vue';
@@ -58,6 +59,7 @@
 			});
 
 			const playerState = inject('playerState');
+			const relationsStore = useRelationsStore();
 
 			onMounted(() => {
 				if (localStorage.getItem('stories_videos_muted')) {
@@ -104,6 +106,27 @@
                 },
 				deleteStory: () => {
 					colibriEventBus.emit('story:delete', playerState.frameData.id);
+				},
+				/*
+				 * Both of these called $comingSoon() until now, which popped an
+				 * alert pointing at a third-party Telegram channel. A report
+				 * control that does nothing is a store-policy problem in its own
+				 * right, and the server side for both already existed.
+				 */
+				reportStory: () => {
+					colibriEventBus.emit('report:open', {
+						type: 'story',
+						reportableId: playerState.storyId
+					});
+
+					state.mainMenu.close();
+				},
+				hideStories: () => {
+					// Muting is exactly "stop showing me this person's stories".
+					relationsStore.muteUser(playerState.storyAuthor.id);
+
+					state.mainMenu.close();
+					colibriEventBus.emit('story:hidden', playerState.storyAuthor.id);
 				},
 				showViews: () => {
                     colibriEventBus.emit('story:show-views');

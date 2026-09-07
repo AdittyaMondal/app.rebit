@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api\User\Feedback;
 use Exception;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Comment;
 use App\Models\Group;
+use App\Models\Story;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Enums\Report\ReportType;
@@ -98,6 +100,23 @@ class ReportController extends Controller
                 break;
             case 'group':
                 $reportableData = Group::active()->where('id', $reportableId)->first();
+                break;
+            /*
+             * ReportType has always had COMMENT and STORY, and validation
+             * accepted them -- but with no case here every such report threw
+             * "Reportable resource by given id not found". Store policy expects
+             * reporting of user-generated content generally, not just posts.
+             */
+            case 'comment':
+                $reportableData = Comment::where('id', $reportableId)
+                    ->where('user_id', '!=', me()->id)
+                    ->first();
+                break;
+            case 'story':
+                $reportableData = Story::active()
+                    ->where('id', $reportableId)
+                    ->where('user_id', '!=', me()->id)
+                    ->first();
                 break;
         }
 

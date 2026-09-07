@@ -58,5 +58,29 @@ return [
         'logo' => env('TRANSLATION_SERVICE_LOGO'),
         'name' => env('TRANSLATION_SERVICE_NAME'),
         'url' => env('TRANSLATION_SERVICE_URL'),
-    ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Firebase Cloud Messaging
+    |--------------------------------------------------------------------------
+    | Deliberately here rather than in the database with an admin editor, which
+    | is this codebase's convention for Stripe, PayPal and Google login. Three
+    | reasons:
+    |
+    |   1. It is a multi-line RSA private key, not two short strings, and
+    |      Admin/Config/PWA.php already shows this app corrupting a JSON blob it
+    |      round-trips through an admin form.
+    |   2. Admin\Page\PageController writes form input into a .blade.php, so an
+    |      admin-reachable service-account key widens that blast radius from
+    |      "this site" to "this Firebase project".
+    |   3. It is consumed by the Horizon worker, not by any admin request path.
+    |
+    | Deployment note: the credentials file must be mounted into BOTH the `app`
+    | and `horizon` containers, or push fails silently in production only.
+    */
+    'fcm' => [
+        'project_id' => env('FCM_PROJECT_ID'),
+        'credentials' => env('FCM_CREDENTIALS', storage_path('app/private/fcm-service-account.json')),
+    ],
 ];

@@ -46,7 +46,15 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                // PHP 8.5 deprecated PDO::MYSQL_ATTR_SSL_CA in favour of
+                // Pdo\Mysql::ATTR_SSL_CA. This file is evaluated during
+                // bootstrap, BEFORE Laravel installs its error handler, so on
+                // 8.5 the deprecation notice is written straight into the HTTP
+                // response body -- corrupting JSON API responses. Only the taken
+                // branch of the ternary is evaluated, so this stays valid on 8.3.
+                (PHP_VERSION_ID >= 80400 && class_exists('\Pdo\Mysql')
+                    ? \Pdo\Mysql::ATTR_SSL_CA
+                    : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 
@@ -66,7 +74,15 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                // PHP 8.5 deprecated PDO::MYSQL_ATTR_SSL_CA in favour of
+                // Pdo\Mysql::ATTR_SSL_CA. This file is evaluated during
+                // bootstrap, BEFORE Laravel installs its error handler, so on
+                // 8.5 the deprecation notice is written straight into the HTTP
+                // response body -- corrupting JSON API responses. Only the taken
+                // branch of the ternary is evaluated, so this stays valid on 8.3.
+                (PHP_VERSION_ID >= 80400 && class_exists('\Pdo\Mysql')
+                    ? \Pdo\Mysql::ATTR_SSL_CA
+                    : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 

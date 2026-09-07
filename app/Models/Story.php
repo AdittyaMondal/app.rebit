@@ -33,6 +33,11 @@ class Story extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    public function reports()
+    {
+        return $this->morphMany(Report::class, 'reportable', 'reportable_type', 'reportable_id', 'id');
+    }
+
     public function frames()
     {
         return $this->hasMany(StoryFrame::class, 'story_id', 'id');

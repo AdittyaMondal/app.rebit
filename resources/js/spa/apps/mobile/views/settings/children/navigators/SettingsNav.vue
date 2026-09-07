@@ -26,6 +26,13 @@
 			v-bind:textLabel="$t('labels.theme')"
 		v-bind:routeData="{ name: 'settings_theme' }"></LinkItem>
 
+		<!-- Native only: there is no web equivalent of a biometric app lock. -->
+		<LinkItem
+			v-if="isNative"
+			iconName="face-id"
+			v-bind:textLabel="$t('settings.app_lock')"
+		v-bind:routeData="{ name: 'settings_app_lock' }"></LinkItem>
+
 		<div class="mb-4 mt-2">
 			<Border height="h-2" opacity="opacity-50"></Border>
 		</div>
@@ -61,6 +68,9 @@
 			<a v-bind:href="$getRoute('privacy_policy')" class="block">
 				{{ $t('labels.privacy_policy') }}
 			</a>
+			<a v-bind:href="$getRoute('community_guidelines')" class="block">
+				{{ $t('labels.community_guidelines') }}
+			</a>
 			<a v-bind:href="$getRoute('terms_of_use')" class="block">
 				{{ $t('labels.terms') }}
 			</a>
@@ -93,6 +103,7 @@
 	export default defineComponent({
 		setup: function() {
 			return {
+				isNative: window.__NATIVE__ === true,
 				currentYear: new Date().getFullYear(),
 				hideAuthorAttribution: window.HIDE_AUTHOR_ATTRIBUTION,
 				logoutUser: () => {

@@ -12,8 +12,11 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
+        // Upstream's stock assertion was assertStatus(200), which has never been
+        // true here: routes/web.php puts / behind auth:sanctum and
+        // redirectGuestsTo() sends guests to the login page.
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertRedirect(route('user.auth.index'));
     }
 }

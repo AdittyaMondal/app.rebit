@@ -58,11 +58,6 @@ class PostCommentedNotification extends Notification implements ShouldQueue
 		return $channels;
     }
 
-    public function toPush(object $notifiable): array
-    {
-        return [
-        ];
-    }
 
     public function toMail(object $notifiable): MailMessage
     {

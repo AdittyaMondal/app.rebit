@@ -1,5 +1,5 @@
 <template>
-	<header class="sticky top-0 z-50 bg-bg-pr transition-all duration-300"
+	<header class="sticky top-0 z-50 bg-bg-pr transition-all duration-300 pt-safe-top"
 	v-bind:class="[state.hideHeader ? '-translate-y-full' : '']">
 		
 		<div class="relative h-14">
