@@ -45,14 +45,28 @@ if [ -z "${APP_KEY:-}" ]; then
 fi
 
 # --- wait for the database --------------------------------------------------
+# There is no compose-local mysql service; DB_HOST must name the standalone
+# Dokploy database (its "Internal Host", e.g. rebit-media-dfkjgw). Fail fast and
+# say so, rather than blocking 120s on a host that was never going to resolve.
+if [ -z "${DB_HOST:-}" ]; then
+    log "FATAL: DB_HOST is empty. Set it to the Dokploy database's Internal Host"
+    log "       (Dokploy -> your database -> General -> Internal Host)."
+    exit 1
+fi
+
 if [ "${WAIT_FOR_DB:-true}" = "true" ]; then
-    log "waiting for ${DB_HOST:-mysql}:${DB_PORT:-3306} ..."
+    log "waiting for ${DB_HOST}:${DB_PORT:-3306} ..."
     for i in $(seq 1 60); do
         if php -r '
-            $h=getenv("DB_HOST")?:"mysql"; $p=getenv("DB_PORT")?:3306;
+            $h=getenv("DB_HOST"); $p=getenv("DB_PORT")?:3306;
             exit(@fsockopen($h,(int)$p,$e,$s,2) ? 0 : 1);
         '; then log "database reachable"; break; fi
-        [ "$i" = "60" ] && { log "FATAL: database unreachable after 120s"; exit 1; }
+        [ "$i" = "60" ] && {
+            log "FATAL: ${DB_HOST}:${DB_PORT:-3306} unreachable after 120s."
+            log "       If it is a Dokploy database service, this stack must share"
+            log "       its network - check the dokploy-network attachment."
+            exit 1
+        }
         sleep 2
     done
 fi
