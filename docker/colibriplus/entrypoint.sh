@@ -75,6 +75,20 @@ fi
 # public/storage is gitignored, so it never exists in a fresh image.
 [ -L public/storage ] || php colibri storage:link --force >/dev/null 2>&1 || true
 
+# --- vendor assets ----------------------------------------------------------
+# public/vendor/ is gitignored, so Livewire and Log Viewer ship no published
+# assets in a git-based build. Livewire then serves its script from a route
+# instead of a file; publishing here restores the faster file path and matches
+# the documented install steps. Done at runtime, not build time, because these
+# commands boot the framework and the image has no environment.
+if [ ! -f public/vendor/livewire/livewire.min.js ]; then
+    php colibri livewire:publish --assets >/dev/null 2>&1 || log "warn: livewire:publish failed"
+fi
+if [ ! -d public/vendor/log-viewer ]; then
+    php colibri vendor:publish --tag=log-viewer-assets --force >/dev/null 2>&1 \
+        || log "warn: log-viewer asset publish failed"
+fi
+
 # --- migrations -------------------------------------------------------------
 # Opt-in. Enable on exactly one service (the web one) so parallel workers do not
 # race the same migration.

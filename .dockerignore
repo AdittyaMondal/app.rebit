@@ -13,6 +13,10 @@ node_modules
 public/build
 public/hot
 public/storage
+# gitignored upstream, so absent in a git clone. Excluded here too so
+# local builds match production instead of silently baking in whatever
+# happens to be in the working tree.
+public/vendor
 storage/frontend/build.num
 
 # Secrets / data — never bake into an image
