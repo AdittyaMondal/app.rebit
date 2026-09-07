@@ -66,11 +66,6 @@ class StoryMentionNotification extends Notification implements ShouldQueue
         ]);
     }
 
-    public function toPush(object $notifiable): array
-    {
-        return [
-        ];
-    }
 
     public function toDatabase(): array
     {

@@ -43,6 +43,11 @@ class Comment extends Model
         return $this->hasMany(Comment::class, 'parent_id', 'id');
     }
 
+    public function reports()
+    {
+        return $this->morphMany(Report::class, 'reportable', 'reportable_type', 'reportable_id', 'id');
+    }
+
     public function reactions()
     {
         return $this->morphMany(Reaction::class, 'reactable', 'reactable_type', 'reactable_id', 'id');

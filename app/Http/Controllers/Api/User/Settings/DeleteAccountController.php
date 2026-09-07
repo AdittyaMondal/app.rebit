@@ -35,6 +35,8 @@ class DeleteAccountController extends Controller
         $this->me = me();
     }
 
+    private const REDACTED = '[redacted on deletion]';
+
     public function deleteAccount(Request $request) {
 
         $validator = Validator::make(data: [
@@ -56,23 +58,43 @@ class DeleteAccountController extends Controller
                 $deleteReasonMessage = $request->get('message', '');
 
                 if($deleteReasonMessage) {
+                    /*
+                     * The point of this row is "why did people leave", and that
+                     * is the message plus the aggregate counts. Retaining name,
+                     * email, phone, IP and user agent after someone asks to be
+                     * deleted keeps exactly the identifiers the deletion was
+                     * meant to remove -- bad under both stores' policies and
+                     * India's DPDP Act.
+                     *
+                     * The email is kept only as a one-way hash, which still
+                     * lets repeated sign-up-and-delete cycles be spotted without
+                     * holding the address. The columns are NOT NULL, so the rest
+                     * are redacted rather than nulled.
+                     */
                     AccountDeletionFeedback::create([
                        'feedback_message' => $deleteReasonMessage,
-                       'username' => $this->me->username,
-                       'full_name' => $this->me->name,
-                       'email' => $this->me->email,
-                       'phone' => $this->me->phone,
+                       'username' => self::REDACTED,
+                       'full_name' => self::REDACTED,
+                       'email' => hash('sha256', (string) $this->me->email),
+                       'phone' => self::REDACTED,
                        'registered_at' => $this->me->getCreatedAt()->getTimestamp(),
                        'publications_count' => $this->me->publications_count,
                        'followers_count' => $this->me->followers_count,
                        'following_count' => $this->me->following_count,
-                       'ip_address' => $this->me->ip_address,
-                       'user_agent' => $request->header('User-Agent'),
+                       'ip_address' => self::REDACTED,
+                       'user_agent' => self::REDACTED,
                        'deleted_at' => now()
                     ]);
                 }
-    
-                (new DeleteUserAction($this->me))->execute();
+
+                // A partial teardown used to be logged and then reported as
+                // success, leaving the user believing an account still on the
+                // platform was gone.
+                if ((new DeleteUserAction($this->me))->execute() !== true) {
+                    return $this->responseError([
+                        'message' => __('user.account_deletion_failed')
+                    ]);
+                }
 
                 Auth::guard('web')->logout();
     

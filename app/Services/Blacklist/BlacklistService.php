@@ -67,9 +67,12 @@ class BlacklistService
 		return $this->isBlacklisted(BlacklistType::EMAIL, $email);
 	}
 
-	public function isIpBlacklisted(string $email)
+	public function isIpBlacklisted(string $ipAddress)
 	{
-		return $this->isBlacklisted(BlacklistType::EMAIL, $email);
+		// Was BlacklistType::EMAIL, so every IP check queried the email list and
+		// an IP ban never actually blocked anyone. The parameter was named
+		// $email too, which is presumably how the copy-paste survived.
+		return $this->isBlacklisted(BlacklistType::IP, $ipAddress);
 	}
 
 	private function isBlacklisted(BlacklistType $type, string $blacklistable)

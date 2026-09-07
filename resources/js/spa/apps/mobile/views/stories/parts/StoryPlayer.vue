@@ -56,6 +56,7 @@
                 frameData: null,
                 isPaused: false,
                 startTime: null,
+                storyId: storyData.value.id,
                 storyAuthor: storyData.value.relations.user,
                 permissions: storyData.value.permissions,
                 isOwner: storyData.value.meta.is_owner,

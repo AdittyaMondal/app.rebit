@@ -32,6 +32,19 @@ Route::name('user.')->prefix('auth')->middleware(['guest'])->group(function() {
     Route::get('/signup-success/{hashId}', [App\Http\Controllers\User\Auth\AuthController::class, 'signupSuccess'])->name('auth.signup-success');
 });
 
+// Native app auth handoff. Outside both `guest` and `auth` on purpose: an
+// already-signed-in browser short-circuits to complete(), and a guest is sent to
+// login by redirectGuestsTo(). Registered before the catch-all below.
+Route::name('user.')->prefix('auth/native')->group(function() {
+    Route::get('/start', [App\Http\Controllers\User\Auth\NativeAuthController::class, 'start'])
+        ->middleware('throttle:30,1')
+        ->name('auth.native.start');
+
+    Route::get('/complete', [App\Http\Controllers\User\Auth\NativeAuthController::class, 'complete'])
+        ->middleware(['auth', 'throttle:30,1'])
+        ->name('auth.native.complete');
+});
+
 Route::name('admin.')->prefix(config('app.admin_prefix'))->middleware(['guest'])->group(function() {
     Route::get('/login', [App\Http\Controllers\Admin\Auth\AuthController::class, 'login'])->name('auth.login');
 });

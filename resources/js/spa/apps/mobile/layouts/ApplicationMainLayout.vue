@@ -52,6 +52,10 @@
 				});
 			};
 
+			const refreshOnResume = () => {
+				notificationsStore.fetchUnreadCount();
+			};
+
 			onMounted(() => {
 				if(window.ColibriBRD) {
                     ColibriBRD.private(BRD.getChannel('AUTH_USER', [authStore.userData.id])).notification(function (event) {
@@ -68,6 +72,11 @@
                 }
 
 				colibriEventBus.on('post-editor:open', openEditor);
+
+				// Websockets do not survive a long backgrounding, so the unread
+				// badge goes stale while the app is away. Re-checking on resume
+				// is one cheap request.
+				colibriEventBus.on('native:resumed', refreshOnResume);
 			});
 
 			onUnmounted(() => {
@@ -76,6 +85,7 @@
                 }
 
 				colibriEventBus.off('post-editor:open', openEditor);
+				colibriEventBus.off('native:resumed', refreshOnResume);
             });
 
 			return {

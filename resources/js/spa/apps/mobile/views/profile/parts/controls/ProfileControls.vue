@@ -163,6 +163,18 @@
                         blockRelationship.value = blockResponse.relationship.block;
                     }
 
+                    /*
+                     * Profile URLs are /@username, and usernames may contain
+                     * dots. Capacitor only falls back to index.html for paths
+                     * whose last segment has no dot, so reload() on /@john.doe
+                     * would 404 the shell instead of reloading the app.
+                     */
+                    if (window.__NATIVE__) {
+                        window.location.replace('/');
+
+                        return;
+                    }
+
                     window.location.reload();
                 }
 			}

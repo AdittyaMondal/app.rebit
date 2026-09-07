@@ -10,9 +10,23 @@
         "dev": "vite",
         "build:vite": "vite build",
         "build": "npm-run-all build:vite build:dark-desktop build:dark-mobile build:dark-auth build:dark-business build:dark-admin",
+        "build:native": "npm run build && node node/capacitor/pack.mjs && node node/capacitor/check.mjs",
+        "build:android-release": "npm run build:native && cd android && ./gradlew bundleRelease",
         "build:dark": "npm-run-all build:dark-desktop build:dark-mobile build:dark-auth build:dark-business build:dark-admin"
     },
     "dependencies": {
+        "@aparajita/capacitor-biometric-auth": "^10.0.0",
+        "@aparajita/capacitor-secure-storage": "^8.0.0",
+        "@capacitor/app": "^8.1.1",
+        "@capacitor/browser": "^8.0.4",
+        "@capacitor/camera": "^8.2.4",
+        "@capacitor/core": "^8.5.1",
+        "@capacitor/keyboard": "^8.0.5",
+        "@capacitor/network": "^8.0.1",
+        "@capacitor/push-notifications": "^8.1.2",
+        "@capacitor/share": "^8.0.1",
+        "@capacitor/splash-screen": "^8.0.2",
+        "@capacitor/status-bar": "^8.0.3",
         "@fontsource/outfit": "^5.2.8",
         "@foobar404/wave": "^2.0.5",
         "@giphy/js-fetch-api": "^5.6.0",
@@ -48,6 +62,8 @@
         "vue-router": "^5.0"
     },
     "devDependencies": {
+        "@capacitor/android": "^8.5.1",
+        "@capacitor/cli": "^8.5.1",
         "npm-run-all": "^4.1.5"
     }
 }

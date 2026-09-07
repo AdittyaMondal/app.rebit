@@ -38,6 +38,11 @@ Route::get('/notifications/push/settings', [App\Http\Controllers\Api\User\Settin
 Route::get('/notifications/email/settings', [App\Http\Controllers\Api\User\Settings\NotificationSettingsController::class, 'getEmailSettings']);
 Route::put('/notifications/login/update', [App\Http\Controllers\Api\User\Settings\NotificationSettingsController::class, 'updateLoginNotification']);
 Route::put('/notification/push/update', [App\Http\Controllers\Api\User\Settings\NotificationSettingsController::class, 'updatePushSettings']);
+// Native device registration. Deliberately on the existing settings group
+// and controller -- the userSettings() client namespace already exists, so
+// this needs no new controller, namespace or route file.
+Route::post('/notifications/push/token', [App\Http\Controllers\Api\User\Settings\NotificationSettingsController::class, 'storePushToken']);
+Route::delete('/notifications/push/token', [App\Http\Controllers\Api\User\Settings\NotificationSettingsController::class, 'deletePushToken']);
 Route::put('/notification/email/update', [App\Http\Controllers\Api\User\Settings\NotificationSettingsController::class, 'updateEmailSettings']);
 
 Route::get('/personal/settings', [App\Http\Controllers\Api\User\Settings\PersonalInfoSettingsController::class, 'getPersonalInfoSettings']);

@@ -19,7 +19,8 @@ const Router = createRouter({
             meta: {
                 layout: Layouts.MAIN,
                 auth: true,
-                hideHeader: true
+                hideHeader: true,
+                feature: 'wallet'
             },
             name: 'wallet_index',
         },
@@ -153,6 +154,13 @@ const Router = createRouter({
                         return import('@M/views/settings/children/language/LanguageSettings.vue');
                     },
                     name: 'settings_language'
+                },
+                {
+                    path: 'app-lock',
+                    component: function() {
+                        return import('@M/views/settings/children/app_lock/AppLockSettings.vue');
+                    },
+                    name: 'settings_app_lock'
                 },
                 {
                     path: 'theme',
@@ -319,6 +327,22 @@ const Router = createRouter({
             }
         },
 	]
+});
+
+/*
+ * Feature-flag guard, ported verbatim from the desktop router (which has had it
+ * all along -- the mobile router had no beforeEach at all). Routes carrying
+ * meta.feature resolve to 404 when that feature is off, which is how the wallet
+ * disappears in native builds.
+ */
+Router.beforeEach((to, from) => {
+    let feature = to.meta.feature || null;
+
+    if(feature) {
+        if(! config(`features.${feature}.enabled`)) {
+            return { name: 'error_404' };
+        }
+    }
 });
 
 export default Router;

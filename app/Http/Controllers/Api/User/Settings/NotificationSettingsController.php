@@ -63,6 +63,53 @@ class NotificationSettingsController extends Controller
         ]);
     }
 
+    /**
+     * Registers a device for native push.
+     *
+     * updateOrCreate keys on the token, not on the user: a phone handed to
+     * someone else re-registers the same FCM token, and it must move to its new
+     * owner rather than keep delivering the previous owner's notifications.
+     */
+    public function storePushToken(Request $request)
+    {
+        $input = $request->validate([
+            'token' => ['required', 'string', 'max:512'],
+            'platform' => ['required', 'string', 'in:android,ios'],
+            'app_version' => ['nullable', 'string', 'max:32'],
+        ]);
+
+        \App\Models\PushToken::updateOrCreate(
+            ['token' => $input['token']],
+            [
+                'user_id' => $this->me->id,
+                'platform' => $input['platform'],
+                'app_version' => $input['app_version'] ?? null,
+                'last_used_at' => now(),
+            ]
+        );
+
+        return $this->responseSuccess([
+            'data' => null
+        ]);
+    }
+
+    /**
+     * Called on sign-out. Without it the next person to use the device would
+     * receive the previous account's notifications.
+     */
+    public function deletePushToken(Request $request)
+    {
+        $input = $request->validate([
+            'token' => ['required', 'string', 'max:512'],
+        ]);
+
+        $this->me->pushTokens()->where('token', $input['token'])->delete();
+
+        return $this->responseSuccess([
+            'data' => null
+        ]);
+    }
+
     public function updatePushSettings(Request $request)
     {
         $this->me->pushNotificationSettings()->update($this->fetchNotificationSettingsFromRequest($request));

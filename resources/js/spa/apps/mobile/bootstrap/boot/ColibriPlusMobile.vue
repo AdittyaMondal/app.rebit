@@ -7,6 +7,8 @@
         </div>
 	</template>
 	<template v-else>
+		<NetworkBanner></NetworkBanner>
+
 		<ApplicationMainLayout v-if="isMainLayout"></ApplicationMainLayout>
 
 		<FlatLayout v-if="isFlatLayout"></FlatLayout>
@@ -21,7 +23,7 @@
 	import { defineComponent, computed, ref, onMounted } from 'vue';
 	import { useAppStore } from '@M/store/app/app.store.js';
 	import { useAuthStore } from '@M/store/auth/auth.store.js';
-	import { useRoute } from 'vue-router';
+	import { useRoute, useRouter } from 'vue-router';
 	import { Layouts } from '@M/core/constants/layouts.js';
 	import { colibriEventBus } from '@/kernel/events/bus/index.js';
 
@@ -29,10 +31,12 @@
 	import PostEditorLayout from '@M/layouts/PostEditorLayout.vue';
 	import MessengerLayout from '@M/layouts/MessengerLayout.vue';
 	import FlatLayout from '@M/layouts/FlatLayout.vue';
+	import NetworkBanner from '@M/components/general/NetworkBanner.vue';
 
 	export default defineComponent({
 		setup: function() {
 			const route = useRoute();
+			const router = useRouter();
 			const appLoading = ref(true);
 			const appStore = useAppStore();
 			const authStore = useAuthStore();
@@ -43,6 +47,15 @@
 				appLoading.value = false;
 
 				colibriEventBus.on('auth:logout', logoutUser);
+
+				// Dynamic import so none of the Capacitor plugin code is pulled
+				// into the web bundle's execution path. Hides the native splash
+				// only now, once there is something to show behind it.
+				if (window.__NATIVE__) {
+					const { initNativePlatform } = await import('@M/core/services/native/index.js');
+
+					await initNativePlatform(router);
+				}
 			});
 
 			const logoutUser = () => {
@@ -52,6 +65,17 @@
 					confirmButtonText: __t('prompt.logout.confirm'),
 					onConfirm: () => {
 						authStore.logoutUser();
+
+						// On native this URL is on another origin: following it
+						// would navigate the WebView out of the bundle with no
+						// way back. nativeSignOut() clears the stored token and
+						// returns to the sign-in gate instead.
+						if (window.__NATIVE__) {
+							window.nativeSignOut();
+
+							return;
+						}
+
 						window.location.href = embedder('routes.user_auth_index');
 					}
 				});
@@ -78,6 +102,7 @@
 			};
 		},
 		components: {
+			NetworkBanner: NetworkBanner,
 			ApplicationMainLayout: ApplicationMainLayout,
 			PostEditorLayout: PostEditorLayout,
 			MessengerLayout: MessengerLayout,

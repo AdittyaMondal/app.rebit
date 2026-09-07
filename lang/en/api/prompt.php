@@ -49,6 +49,11 @@ return [
 		'description' => 'Logging out will end your current session. Do you want to proceed?',
 		'confirm' => 'Yes, logout',
 	],
+    'block_user' => [
+        'title' => 'Block user?',
+        'description' => 'They will not be able to message you, follow you or see your posts. They will not be told you blocked them.',
+        'confirm' => 'Block user',
+    ],
     'unblock_user' => [
         'title' => 'Unblock user?',
         'description' => 'This user will now be able to see your posts, follow and message you. They won’t be notified you unblocked them.',

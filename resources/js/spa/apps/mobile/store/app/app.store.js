@@ -17,10 +17,14 @@ const useAppStore = defineStore('mobile_app_store', {
 
             const router = useRouter();
 
-            await fetch('sanctum/csrf-cookie', {
-                method: 'GET',
-                credentials: 'include'
-            });
+            // Origin-relative, so under Capacitor this resolves against the
+            // local server and 404s. Pointless under bearer auth anyway.
+            if (! window.__NATIVE__) {
+                await fetch('sanctum/csrf-cookie', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+            }
 
             await colibriAPI().bootstrap().getFrom('bootstrap').then(function(response) {
                 state.appData = response.data.data;

@@ -33,7 +33,12 @@ class SettingsServiceProvider extends ServiceProvider
             $this->mergeCodeSettings();
             $this->mergeBrandSettings();
         } catch (\Throwable $th) {
-            //
+            // Swallowed on purpose: the app must still boot if the settings
+            // table is unreachable. But every one of these merges feeds
+            // config() -- features.login.enabled, the wallet, branding, mail and
+            // all four payment gateways -- so failing silently here disables
+            // login for everyone with no trace. Report it.
+            report($th);
         }
     }
 

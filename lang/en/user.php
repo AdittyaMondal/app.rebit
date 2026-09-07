@@ -58,4 +58,5 @@ return [
         ]
     ],
     'account_deleted' => 'Your account has been deleted successfully. We hope to see you again soon.',
+    'account_deletion_failed' => 'We could not finish deleting your account. Nothing has been removed. Please try again or contact support.',
 ];

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <activity
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBarLaunch"
+            android:launchMode="singleTask"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!--
+                Auth handoff callback. The system browser redirects to
+                rebit://auth?code=...&state=... at the end of the web sign-in
+                flow, and @capacitor/app surfaces it as an appUrlOpen event.
+
+                Only a single-use PKCE code crosses this scheme; the token
+                itself is fetched over HTTPS afterwards, so a hostile app
+                registering the same scheme gains nothing.
+
+                Keep the scheme in step with config/native.php's `scheme`.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="rebit" android:host="auth" />
+            </intent-filter>
+
+            <!--
+                Verified App Links.
+
+                Only the five shareable patterns are claimed, and deliberately
+                NOT "/" — claiming the bare host would hijack /auth/* (breaking
+                the Google OAuth redirect that the sign-in flow depends on),
+                /document/* (the legal pages the Play listing links to),
+                /business/* and the admin prefix.
+
+                Android has no exclusion syntax, so this is an allowlist of
+                pathPrefix entries. Never a bare pathPattern=".*".
+
+                Every pattern here is already declared in the mobile Vue router,
+                which is what routeUrl() resolves against — there is no separate
+                URL-to-route mapping to keep in step.
+
+                autoVerify requires /.well-known/assetlinks.json to be served
+                from app.rebit.in AND to list the SHA-256 of the signing key.
+                With Play App Signing that means TWO fingerprints: the upload key
+                and the Play-managed key. If it does not match, verification
+                fails silently and links open in the browser instead.
+            -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" android:host="app.rebit.in" />
+
+                <data android:pathPrefix="/publication/" />
+                <data android:pathPrefix="/stories/" />
+                <data android:pathPrefix="/messenger/c/" />
+                <data android:pathPrefix="/@" />
+                <data android:pathPrefix="/explore" />
+            </intent-filter>
+
+        </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
+    </application>
+
+    <!-- Permissions -->
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+        Android 13+ runtime permission for notifications. Requested contextually
+        from the push settings screen, never at launch.
+
+        Data Safety mapping: the FCM token is "Device or other IDs", collected,
+        linked to the user, for app functionality. Not shared.
+    -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!--
+        In-app capture for the post and story composers, and the existing
+        getUserMedia audio/video recorders in kernel/vue/composables/record.
+
+        Data Safety: CAMERA maps to "Photos and videos", RECORD_AUDIO to
+        "Voice or sound recordings". Both collected, linked to the user, for app
+        functionality. Neither shared.
+
+        Deliberately NOT declared: READ_MEDIA_IMAGES / READ_MEDIA_VIDEO /
+        READ_EXTERNAL_STORAGE. The WebView file chooser and the Camera plugin
+        both go through the system photo picker, which needs no permission, and
+        declaring them would trigger Play's Photo and Video Permissions
+        declaration process for nothing.
+    -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Already used by mobile toasts via navigator.vibrate. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+</manifest>

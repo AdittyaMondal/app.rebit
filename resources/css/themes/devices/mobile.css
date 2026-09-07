@@ -8,6 +8,11 @@
 	--spacing-x-small-avatar: 32px;
 	--spacing-2x-small-avatar: 24px;
 	--spacing-safe-bottom: env(safe-area-inset-bottom);
+	/* Resolves to 0px on the web, because the Blade shell deliberately has no
+	   viewport-fit=cover -- adding it there would shift mobile-web spacing.
+	   Only the generated native shell sets it, so pt-safe-top is a no-op on
+	   the web and a real inset in the app. Same mechanism as safe-bottom. */
+	--spacing-safe-top: env(safe-area-inset-top);
 	
 	--spacing-half: 50%;
 	--spacing-icon: 1.25rem;
@@ -29,4 +34,16 @@
 	--text-par-s: 0.8125rem;
 	--text-cap-l: 0.75rem;
 	--text-cap-s: 0.6875rem;
+}
+
+/*
+ * Biometric app lock cover. Applied the instant the app is backgrounded, so the
+ * OS task-switcher screenshot shows this rather than the user's feed.
+ */
+body.app-locked::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: 99999;
+	background: var(--color-bg-pr, #000);
 }

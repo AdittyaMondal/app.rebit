@@ -25,7 +25,7 @@
 </template>
 
 <script>
-	import { defineComponent, reactive, ref, onMounted } from 'vue';
+	import { defineComponent, reactive, ref, onMounted, onUnmounted } from 'vue';
 	import { colibriEventBus } from '@/kernel/events/bus/index.js';
 	
 	import ContentModal from '@M/components/general/modals/ContentModal.vue';
@@ -54,6 +54,14 @@
 					confirmSecondary: false,
 					confirmSecondaryText: ''
 				};
+			};
+
+			const cancel = function() {
+				if(modalCallbacks.onCancel) {
+					modalCallbacks.onCancel();
+				}
+
+				state.isModalOpen = false;
 			};
 
 			onMounted(() => {
@@ -85,6 +93,14 @@
 
 					state.isModalOpen = true;
 				});
+
+				// Back button behaves as Cancel, which also runs the caller's
+				// onCancel -- dismissing without it would silently skip cleanup.
+				colibriEventBus.on('native:back', cancel);
+			});
+
+			onUnmounted(() => {
+				colibriEventBus.off('native:back', cancel);
 			});
 
 			return {
@@ -105,13 +121,7 @@
 
 					state.isModalOpen = false;
 				},
-				cancel: function() {
-					if(modalCallbacks.onCancel) {
-						modalCallbacks.onCancel();
-					}
-
-					state.isModalOpen = false;
-				}
+				cancel: cancel
 			};
 		},
 		components: {

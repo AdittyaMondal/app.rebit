@@ -106,7 +106,14 @@
                     colibriAPI().userSettings().with({
                         theme: uiTheme
                     }).putTo('account/theme/update').then(function(response) {
-                        window.location.reload();
+                        // replace('/'), not reload(): Capacitor only falls back to
+                        // index.html for paths whose last segment has no dot, and
+                        // usernames may contain dots.
+                        if (window.__NATIVE__) {
+                            window.location.replace('/');
+                        } else {
+                            window.location.reload();
+                        }
                     });
                 }
             }

@@ -290,6 +290,11 @@ class User extends Authenticatable
         return $this->hasOne(AuthorshipRequest::class, 'user_id', 'id');
     }
 
+    public function pushTokens()
+    {
+        return $this->hasMany(PushToken::class, 'user_id', 'id');
+    }
+
     public function devices()
     {
         return $this->hasMany(Device::class, 'user_id', 'id');

@@ -1,5 +1,5 @@
 <template>
-	<div class="p-4 flex items-center leading-none">
+	<div class="px-4 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] flex items-center leading-none">
 		<div class="shrink-0 w-12">
 			<PrimaryIconButton 
 				v-on:click="$emit('close')"

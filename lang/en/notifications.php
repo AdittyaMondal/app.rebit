@@ -14,11 +14,15 @@ return [
 		'account_linked' => 'Your accounts have been successfully linked.',
 		'deposit_success' => 'Your deposit has been successfully completed.',
 		'payment_received' => 'New payment received.',
+		'message_received' => 'New message',
 	],
     'post' => [
 		'post_reacted' => 'reacted to your post',
 		'comment_reacted' => 'reacted to your comment',
 		'post_commented' => 'commented on your post',
+	],
+	'chat' => [
+		'message_attachment' => 'sent you an attachment',
 	],
 	'user' => [
 		'followed' => 'has started following you',

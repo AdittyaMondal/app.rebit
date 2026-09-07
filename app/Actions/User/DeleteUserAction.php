@@ -40,6 +40,7 @@ use App\Models\Report;
 use App\Models\StoryView;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class DeleteUserAction
@@ -56,6 +57,8 @@ class DeleteUserAction
     public function execute()
     {
         try {
+            DB::beginTransaction();
+
             $this->unfollowAllUsers();
 
             $this->deleteAllBlocks();
@@ -79,6 +82,8 @@ class DeleteUserAction
             $this->deleteUserNotifications();
 
             $this->deleteUserDevices();
+
+            $this->deleteApiTokens();
 
             $this->resetUserChildAccounts();
 
@@ -121,9 +126,25 @@ class DeleteUserAction
                 Storage::disk(static_storage_disk())->delete($this->userData->cover);
             }
 
-            return $this->userData->delete();
+            $deleted = (bool) $this->userData->delete();
+
+            DB::commit();
+
+            return $deleted;
         } catch (Throwable $th) {
-            timeline_log($th->getMessage());
+            /*
+             * Previously this logged the message to the *timeline* log and
+             * returned null, while the caller went on to report success. A
+             * half-deleted account that the user believes is gone is both a
+             * data-protection problem and a store-policy one, so callers now
+             * get a false they can act on, and the exception is reported
+             * properly rather than filed under "timeline".
+             */
+            DB::rollBack();
+
+            report($th);
+
+            return false;
         }
     }
 
@@ -255,6 +276,15 @@ class DeleteUserAction
 
     private function deleteUserDevices() {
         $this->userData->devices()->delete();
+    }
+
+    /**
+     * personal_access_tokens is polymorphic with no foreign key, and User has no
+     * deleting hook, so tokens would otherwise outlive the account and keep
+     * authenticating against an orphaned tokenable_id.
+     */
+    private function deleteApiTokens() {
+        $this->userData->tokens()->delete();
     }
 
     private function resetUserChildAccounts() {
