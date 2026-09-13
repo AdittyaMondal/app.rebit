@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 #
-# Production image for Rebit (ColibriPlus / Laravel 12 + Vue 3).
+# Production image for Rebit (ColibriPlus / Laravel 13 + Vue 3).
 #
 # Built for Dokploy: code is baked in (no bind mounts), assets are compiled
 # during the build, and the web stage serves plain HTTP on port 80 so Dokploy's
@@ -9,7 +9,8 @@
 # Stages:
 #   assets  -> npm ci + vite build + the five Tailwind dark-theme passes
 #   vendor  -> composer install --no-dev
-#   base    -> PHP 8.3 runtime + extensions + ffmpeg (shared by every service)
+#   base    -> PHP 8.4 runtime + extensions + ffmpeg (shared by every service)
+#              8.4 is required: Symfony 8, pulled in by Laravel 13, needs >=8.4.1
 #   web     -> base + nginx + supervisor  (the only stage that exposes a port)
 #   worker  -> base only; horizon / reverb / scheduler override the command
 
@@ -90,7 +91,7 @@ RUN mkdir -p plugins \
 
 
 # ------------------------------------------------------------------ base ----
-FROM php:8.3-fpm-bookworm AS base
+FROM php:8.4-fpm-bookworm AS base
 WORKDIR /var/www/html
 
 ENV COMPOSER_ALLOW_SUPERUSER=1 \
@@ -108,7 +109,7 @@ RUN set -eux; \
     docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
     # NOTE on opcache: --disable-opcache-jit lowers the build's memory ceiling
     # (zend_jit.c is one huge translation unit that OOM-kills small builders),
-    # but on PHP 8.3 it produces an opcache.so that fails to load at runtime
+    # but it produces an opcache.so that fails to load at runtime
     # with "undefined symbol: jit_globals". So build it normally and give the
     # builder enough RAM instead - roughly 4 GB. A 2 GB builder will die with
     # "cc: fatal error: Killed signal terminated program cc1".
