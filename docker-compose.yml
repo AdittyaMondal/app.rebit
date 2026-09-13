@@ -42,8 +42,11 @@ x-app: &app
     # so they survive service recreation, renames, `compose down -v`, and
     # `docker volume prune`. Create them once on the host:
     #   mkdir -p /var/rebit/storage /var/rebit/logs && chown -R 33:33 /var/rebit
-    - ${STORAGE_PATH:-/var/rebit/storage}:/var/www/html/storage/app
-    - ${LOGS_PATH:-/var/rebit/logs}:/var/www/html/storage/logs
+    # Default is per-project so two environments on one host (main and dev)
+    # never share an uploads directory. Sharing it would surface dev uploads
+    # in production and make a delete in one remove the file from the other.
+    - ${STORAGE_PATH:-/var/rebit/${COMPOSE_PROJECT_NAME:-default}/storage}:/var/www/html/storage/app
+    - ${LOGS_PATH:-/var/rebit/${COMPOSE_PROJECT_NAME:-default}/logs}:/var/www/html/storage/logs
   depends_on:
     redis:   { condition: service_started }
   networks: [rebit]
