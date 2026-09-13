@@ -49,7 +49,12 @@ x-app: &app
     - ${LOGS_PATH:-/var/rebit/${COMPOSE_PROJECT_NAME:-default}/logs}:/var/www/html/storage/logs
   depends_on:
     redis:   { condition: service_started }
-  networks: [rebit]
+  # Every service needs dokploy-network, not just the web one. The database is
+  # a standalone Dokploy service that lives there, so a worker confined to the
+  # internal network waits on <db>:3306 forever, exits, and restarts. Reverb
+  # never binds 13000, the app's nginx gets connection refused proxying /app,
+  # and the browser reports the WebSocket connection as not established.
+  networks: [rebit, dokploy-network]
 
 services:
   # ---- web: nginx + php-fpm. The only service Dokploy routes a domain to ----
